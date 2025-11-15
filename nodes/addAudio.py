@@ -1,12 +1,13 @@
 import os
 import subprocess
 import tempfile
-import folder_paths
+import torch
+import torchaudio
 from ..func import set_file_name, video_type, audio_type, has_audio
 
 class AddAudio:
     """
-    Improved AddAudio node with VHS-compatible inputs/outputs.
+    Enhanced AddAudio node with VHS-compatible inputs/outputs.
     Accepts AUDIO data type and optional video_path for lossless remux.
     """
 
@@ -24,14 +25,24 @@ class AddAudio:
                 }),
             },
             "optional": {
-                # Accept AUDIO from VHS nodes or other audio processing nodes
                 "audio": ("AUDIO", {
                     "tooltip": "Processed audio from upstream nodes (VHS, TTS, RVC, etc.)"
                 }),
-                # Alternative: accept audio file path if no audio input connected
                 "audio_file_path": ("STRING", {
                     "default": "",
                     "tooltip": "Path to audio file (used only if audio input not connected)"
+                }),
+                "audio_codec": (["copy", "aac", "mp3", "opus"], {
+                    "default": "aac",
+                    "tooltip": "Audio codec (copy = lossless if compatible)"
+                }),
+                "audio_bitrate": ("STRING", {
+                    "default": "192k",
+                    "tooltip": "Audio bitrate (e.g., 128k, 192k, 320k)"
+                }),
+                "filename_prefix": ("STRING", {
+                    "default": "",
+                    "tooltip": "Prefix for output filename (optional)"
                 }),
                 "delay_play": ("INT", {
                     "default": 0,
@@ -47,11 +58,15 @@ class AddAudio:
     OUTPUT_NODE = True
     CATEGORY = "🔥FFmpeg"
 
-    def add_audio_improved(self, video_path, output_path, audio=None, audio_file_path="", delay_play=0):
+    def add_audio_improved(self, video_path, output_path, audio=None, audio_file_path="",
+                          audio_codec="aac", audio_bitrate="192k", filename_prefix="", delay_play=0):
         """
-        Improved AddAudio that accepts AUDIO data type from VHS/TTS nodes.
-        Falls back to audio_file_path if no audio input connected.
+        Enhanced AddAudio with full codec control and robust error handling.
         """
+        # Initialize temp file variables at function scope
+        temp_audio_file = None
+        temp_audio_path = None
+
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()
@@ -64,22 +79,22 @@ class AddAudio:
 
             # Validate output directory
             if not os.path.isdir(output_path):
-                raise ValueError(f"output_path: {output_path} is not a directory")
+                os.makedirs(output_path, exist_ok=True)
+                print(f"📁 Created output directory: {output_path}")
 
-            # Handle audio input - priority to AUDIO data type
-            temp_audio_file = None
-
+            # Handle audio input
             if audio is not None:
-                # Audio data type from VHS or other nodes
-                # VHS AUDIO format: {'waveform': tensor, 'sample_rate': int}
                 print("📥 Received AUDIO data from upstream node")
 
-                # Save AUDIO to temporary file for FFmpeg processing
-                import torch
-                import torchaudio
-
-                waveform = audio['waveform'] # Shape: [batch, channels, samples]
+                waveform = audio['waveform']
                 sample_rate = audio['sample_rate']
+
+                # Robust batch dimension handling
+                while waveform.dim() > 2:
+                    waveform = waveform.squeeze(0)
+
+                if waveform.dim() == 1:
+                    waveform = waveform.unsqueeze(0)
 
                 # Create temporary audio file
                 temp_audio_file = tempfile.NamedTemporaryFile(
@@ -90,17 +105,11 @@ class AddAudio:
                 temp_audio_path = temp_audio_file.name
                 temp_audio_file.close()
 
-                # Save waveform to temporary WAV file
-                # Ensure correct shape: [channels, samples]
-                if waveform.dim() == 3:
-                    waveform = waveform.squeeze(0) # Remove batch dimension
-
                 torchaudio.save(temp_audio_path, waveform.cpu(), sample_rate)
                 audio_source = temp_audio_path
                 print(f"💾 Saved AUDIO to temporary file: {audio_source}")
 
             elif audio_file_path and os.path.isfile(audio_file_path):
-                # Fallback to file path
                 audio_source = os.path.abspath(audio_file_path)
                 print(f"📁 Using audio file path: {audio_source}")
 
@@ -109,29 +118,54 @@ class AddAudio:
             else:
                 raise ValueError("No audio input provided. Connect AUDIO input or specify audio_file_path")
 
-            # Generate output filename
-            file_name = set_file_name(video_path)
+            # Generate output filename with optional prefix
+            base_name = set_file_name(video_path)
+            if filename_prefix:
+                file_name = f"{filename_prefix}_{base_name}"
+            else:
+                file_name = base_name
+
             output_file_path = os.path.join(output_path, file_name)
 
-            # Build FFmpeg command for lossless remux
-            # Uses -c:v copy (video stream copied without re-encoding)
+            # Smart codec selection based on container
+            _, ext = os.path.splitext(output_file_path)
+            ext = ext.lower()
+
+            if ext == '.mkv' and audio_codec == 'aac':
+                # MKV can use copy for most codecs
+                print("ℹ️  MKV container detected - attempting audio stream copy")
+                final_audio_codec = 'copy'
+            elif ext in ['.mp4', '.m4v'] and audio_codec == 'copy':
+                # MP4 needs AAC or MP3
+                print("ℹ️  MP4 container detected - using AAC for compatibility")
+                final_audio_codec = 'aac'
+            else:
+                final_audio_codec = audio_codec
+
+            # Build FFmpeg command
             command = [
                 'ffmpeg',
-                '-i', video_path, # Input video
-                '-itsoffset', str(delay_play), # Audio delay
-                '-i', audio_source, # Input audio
-                '-map', '0:v', # Map video from first input
-                '-map', '1:a', # Map audio from second input
-                '-c:v', 'copy', # Copy video stream (LOSSLESS!)
-                '-c:a', 'aac', # Encode audio to AAC (MP4 compatible)
-                '-b:a', '192k', # Audio bitrate
-                '-shortest', # Match shortest stream duration
-                '-y', # Overwrite output file
-                output_file_path,
+                '-i', video_path,
+                '-itsoffset', str(delay_play),
+                '-i', audio_source,
+                '-map', '0:v',
+                '-map', '1:a',
+                '-c:v', 'copy',  # LOSSLESS VIDEO!
             ]
 
-            print(f"🔧 Running FFmpeg command:")
-            print(f" {' '.join(command)}")
+            # Add audio codec parameters
+            if final_audio_codec == 'copy':
+                command.extend(['-c:a', 'copy'])
+            else:
+                command.extend(['-c:a', final_audio_codec, '-b:a', audio_bitrate])
+
+            command.extend([
+                '-shortest',
+                '-y',
+                output_file_path,
+            ])
+
+            print(f"🔧 FFmpeg command: {' '.join(command)}")
 
             # Execute FFmpeg
             result = subprocess.run(
@@ -141,31 +175,39 @@ class AddAudio:
                 text=True
             )
 
-            # Check for errors
+            # Enhanced error handling
             if result.returncode != 0:
-                print(f"❌ FFmpeg error: {result.stderr}")
-                raise ValueError(f"FFmpeg failed: {result.stderr}")
+                error_lines = result.stderr.split('\n')
+                relevant_errors = [line for line in error_lines if 'error' in line.lower()]
+                error_msg = '\n'.join(relevant_errors[-3:]) if relevant_errors else result.stderr
+
+                raise ValueError(
+                    f"FFmpeg remux failed. Common causes:\n"
+                    f"• Audio/video format incompatibility\n"
+                    f"• Invalid file paths\n"
+                    f"• FFmpeg not installed\n\n"
+                    f"FFmpeg output: {error_msg}"
+                )
             else:
                 print(f"✅ Lossless remux completed: {output_file_path}")
 
             # Clean up temporary audio file
-            if temp_audio_file is not None:
+            if temp_audio_path is not None:
                 try:
                     os.unlink(temp_audio_path)
-                    print(f"🗑️ Cleaned up temporary audio file")
-                except:
-                    pass
+                    print(f"🗑️  Cleaned up temporary audio file")
+                except Exception as e:
+                    print(f"⚠️  Could not delete temp file: {e}")
 
-            # Return VHS_FILENAMES format for compatibility
+            # Return VHS_FILENAMES format
             filenames = (True, [output_file_path])
-
             return (output_file_path, filenames)
 
         except Exception as e:
             # Clean up temp file on error
-            if temp_audio_file is not None:
+            if temp_audio_path is not None:
                 try:
                     os.unlink(temp_audio_path)
                 except:
                     pass
-            raise ValueError(f"AddAudioImproved error: {e}")
+            raise ValueError(f"AddAudio error: {e}")
