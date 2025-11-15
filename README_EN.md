@@ -168,10 +168,13 @@ ___
 
 ###### Parameter Description
 **video_path**: local video path,e.g.:`C:\Users\Desktop\111.mp4`<br>
-**audio_from**: the audio source can be from an audio file or from a video file, that is, audio_file or video_file.<br>
-**file_path**: if audio_from is set to audio_file, then enter the path of an audio file here,if audio_from is set to video_file, then enter the path of a video file here, for example: `C:\Users\Desktop\111.mp3` or `C:\Users\Desktop\111.mp4`<br>
-**delay_play**: the audio delay playback time is measured in seconds, with a default value of 0.<br>
 **output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
+**audio**: Processed audio from upstream nodes (VHS, TTS, RVC, etc.).<br>
+**audio_file_path**: Path to audio file (used only if audio input not connected).<br>
+**audio_codec**: Audio codec (copy = lossless if compatible).<br>
+**audio_bitrate**: Audio bitrate (e.g., 128k, 192k, 320k).<br>
+**filename_prefix**: Prefix for output filename (optional).<br>
+**delay_play**: the audio delay playback time is measured in seconds, with a default value of 0.<br>
 
 ___
 

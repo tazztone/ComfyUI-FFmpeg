@@ -168,10 +168,13 @@ ___
 
 ###### 参数说明
 **video_path**: 视频路径，比如：`C:\Users\Desktop\111.mp4`<br>
-**audio_from**: 音频来源，可以来源于音频文件，也可以来源于视频文件，即audio_file、video_file。<br>
-**file_path**: 如果audio_from为audio_file，这里就填入一个音频文件路径，如果audio_from为video_file，那么这里就填入一个视频文件路径，比如：`C:\Users\Desktop\111.mp3` 或者 `C:\Users\Desktop\111.mp4`<br>
-**delay_play**: 音频延迟播放时间，单位为秒，默认值为0。<br>
 **output_path**: 视频保存路径，比如：`C:\Users\Desktop\output`<br>
+**audio**: 来自上游节点的音频数据（VHS、TTS、RVC等）。<br>
+**audio_file_path**: 音频文件路径（仅当未连接音频输入时使用）。<br>
+**audio_codec**: 音频编解码器（copy = 无损（如果兼容））。<br>
+**audio_bitrate**: 音频比特率（例如，128k, 192k, 320k）。<br>
+**filename_prefix**: 输出文件名的前缀（可选）。<br>
+**delay_play**: 音频延迟播放时间，单位为秒，默认值为0。<br>
 
 ___
 
