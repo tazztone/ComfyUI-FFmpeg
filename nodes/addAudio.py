@@ -1,98 +1,171 @@
 import os
 import subprocess
-from ..func import set_file_name,video_type,audio_type,has_audio
+import tempfile
+import folder_paths
+from ..func import set_file_name, video_type, audio_type, has_audio
 
 class AddAudio:
-    def __init__(self):
-        pass
+    """
+    Improved AddAudio node with VHS-compatible inputs/outputs.
+    Accepts AUDIO data type and optional video_path for lossless remux.
+    """
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
-            "required": { 
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
-                "audio_from":(["audio_file","video_file"], {"default":"audio_file",}),
-                "file_path": ("STRING", {"default":"C:/Users/Desktop/output",}),
-                'delay_play':("INT",{"default":0,"min":0,}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output/",}),
+            "required": {
+                "video_path": ("STRING", {
+                    "default": "C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to original video file for lossless remux"
+                }),
+                "output_path": ("STRING", {
+                    "default": "C:/Users/Desktop/output/",
+                    "tooltip": "Directory to save remuxed video"
+                }),
+            },
+            "optional": {
+                # Accept AUDIO from VHS nodes or other audio processing nodes
+                "audio": ("AUDIO", {
+                    "tooltip": "Processed audio from upstream nodes (VHS, TTS, RVC, etc.)"
+                }),
+                # Alternative: accept audio file path if no audio input connected
+                "audio_file_path": ("STRING", {
+                    "default": "",
+                    "tooltip": "Path to audio file (used only if audio input not connected)"
+                }),
+                "delay_play": ("INT", {
+                    "default": 0,
+                    "min": 0,
+                    "tooltip": "Audio delay in seconds"
+                }),
             },
         }
 
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("video_complete_path",)
-    FUNCTION = "add_audio"
+    RETURN_TYPES = ("STRING", "VHS_FILENAMES")
+    RETURN_NAMES = ("video_path", "filenames")
+    FUNCTION = "add_audio_improved"
     OUTPUT_NODE = True
     CATEGORY = "🔥FFmpeg"
-  
-    def add_audio(self, video_path, audio_from, file_path,delay_play,output_path):
+
+    def add_audio_improved(self, video_path, output_path, audio=None, audio_file_path="", delay_play=0):
+        """
+        Improved AddAudio that accepts AUDIO data type from VHS/TTS nodes.
+        Falls back to audio_file_path if no audio input connected.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
-            file_path = os.path.abspath(file_path).strip()
             output_path = os.path.abspath(output_path).strip()
-             # 视频不存在
-            if not video_path.lower().endswith(video_type()):
-                raise ValueError("video_path："+video_path+"不是视频文件（video_path:"+video_path+" is not a video file）")
-            if not os.path.isfile(video_path):
-                raise ValueError("video_path："+video_path+"不存在（video_path:"+video_path+" does not exist）")
-            
-            if not os.path.isfile(file_path):
-                raise ValueError("file_path："+file_path+"不存在（file_path:"+file_path+" does not exist）")
-            
-            #判断output_path是否是一个目录
-            if not os.path.isdir(output_path):
-                raise ValueError("output_path："+output_path+"不是目录（output_path:"+output_path+" is not a directory）")
-            
-            if audio_from == "video_file":
-                if not file_path.lower().endswith(video_type()):
-                    raise ValueError("file_path："+file_path+"不是视频文件（file_path:"+file_path+" is not a video file）")
-                
-                if not has_audio(file_path):
-                    raise ValueError("file_path："+file_path+"没有音频，请选择一个有音频的视频文件。（file_path:"+file_path+" has no audio, please select a video file that has audio.）")
-                
-            else:
-                if not file_path.lower().endswith(audio_type()):
-                    raise ValueError("file_path："+file_path+"不是音频文件（file_path:"+file_path+" is not a audio file）")
-            
-            file_name = set_file_name(video_path)
-            
-            output_path = os.path.join(output_path, file_name)
-            
-            # ffmpeg -i video.mp4 -i audio.mp3 -c:v copy -c:a aac -strict experimental -shortest output.mp4
-            
-            if audio_from == "audio_file":
-                #ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 1:a -c:v copy -c:a copy -shortest output.mp4
-                command = [
-                    'ffmpeg', '-i', video_path, '-itsoffset', str(delay_play),# 输入视频路径
-                    '-i', file_path, # 输入音频文件路径
-                    '-map', '0:v',   #从第一个输入文件（video.mp4）中选择视频流。
-                    '-map', '1:a',   #从第二个输入文件（audio.mp3）中选择音频流
-                    '-c:v', 'copy',  # 复制视频流
-                    '-c:a', 'copy',  # 复制音频流
-                    '-shortest', #-shortest 参数让音频或视频的时间对齐，即音频或视频的长度较短的那个为准
-                    output_path,
-                ]
-            else:
-                # ffmpeg -i source_video.mp4 -i target_video.mp4 -map 0:a -map 1:v -c:v copy -c:a aac -strict experimental -shortest output.mp4
-                command = [
-                    'ffmpeg', '-itsoffset',str(delay_play),
-                    '-i', file_path,'-i',video_path,  # 输入视频路径
-                    '-map', '0:a', '-map', '1:v', '-c:v', 'copy', '-c:a', 'copy',
-                    '-strict', 'experimental', 
-                    '-shortest',
-                    output_path,
-                ]
-            
-            # 执行命令并检查错误
-            result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            # 检查返回码
-            if result.returncode != 0:
-                # 如果有错误，输出错误信息
-                 print(f"Error: {result.stderr.decode('utf-8')}")
-                 raise ValueError(f"Error: {result.stderr.decode('utf-8')}")
-            else:
-                # 输出标准输出信息
-                print(result.stdout)
 
-            return (output_path,)
+            # Validate video path
+            if not video_path.lower().endswith(video_type()):
+                raise ValueError(f"video_path: {video_path} is not a video file")
+            if not os.path.isfile(video_path):
+                raise ValueError(f"video_path: {video_path} does not exist")
+
+            # Validate output directory
+            if not os.path.isdir(output_path):
+                raise ValueError(f"output_path: {output_path} is not a directory")
+
+            # Handle audio input - priority to AUDIO data type
+            temp_audio_file = None
+
+            if audio is not None:
+                # Audio data type from VHS or other nodes
+                # VHS AUDIO format: {'waveform': tensor, 'sample_rate': int}
+                print("📥 Received AUDIO data from upstream node")
+
+                # Save AUDIO to temporary file for FFmpeg processing
+                import torch
+                import torchaudio
+
+                waveform = audio['waveform'] # Shape: [batch, channels, samples]
+                sample_rate = audio['sample_rate']
+
+                # Create temporary audio file
+                temp_audio_file = tempfile.NamedTemporaryFile(
+                    delete=False,
+                    suffix='.wav',
+                    dir=output_path
+                )
+                temp_audio_path = temp_audio_file.name
+                temp_audio_file.close()
+
+                # Save waveform to temporary WAV file
+                # Ensure correct shape: [channels, samples]
+                if waveform.dim() == 3:
+                    waveform = waveform.squeeze(0) # Remove batch dimension
+
+                torchaudio.save(temp_audio_path, waveform.cpu(), sample_rate)
+                audio_source = temp_audio_path
+                print(f"💾 Saved AUDIO to temporary file: {audio_source}")
+
+            elif audio_file_path and os.path.isfile(audio_file_path):
+                # Fallback to file path
+                audio_source = os.path.abspath(audio_file_path)
+                print(f"📁 Using audio file path: {audio_source}")
+
+                if not audio_file_path.lower().endswith(audio_type()):
+                    raise ValueError(f"audio_file_path: {audio_file_path} is not an audio file")
+            else:
+                raise ValueError("No audio input provided. Connect AUDIO input or specify audio_file_path")
+
+            # Generate output filename
+            file_name = set_file_name(video_path)
+            output_file_path = os.path.join(output_path, file_name)
+
+            # Build FFmpeg command for lossless remux
+            # Uses -c:v copy (video stream copied without re-encoding)
+            command = [
+                'ffmpeg',
+                '-i', video_path, # Input video
+                '-itsoffset', str(delay_play), # Audio delay
+                '-i', audio_source, # Input audio
+                '-map', '0:v', # Map video from first input
+                '-map', '1:a', # Map audio from second input
+                '-c:v', 'copy', # Copy video stream (LOSSLESS!)
+                '-c:a', 'aac', # Encode audio to AAC (MP4 compatible)
+                '-b:a', '192k', # Audio bitrate
+                '-shortest', # Match shortest stream duration
+                '-y', # Overwrite output file
+                output_file_path,
+            ]
+
+            print(f"🔧 Running FFmpeg command:")
+            print(f" {' '.join(command)}")
+
+            # Execute FFmpeg
+            result = subprocess.run(
+                command,
+                stderr=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                text=True
+            )
+
+            # Check for errors
+            if result.returncode != 0:
+                print(f"❌ FFmpeg error: {result.stderr}")
+                raise ValueError(f"FFmpeg failed: {result.stderr}")
+            else:
+                print(f"✅ Lossless remux completed: {output_file_path}")
+
+            # Clean up temporary audio file
+            if temp_audio_file is not None:
+                try:
+                    os.unlink(temp_audio_path)
+                    print(f"🗑️ Cleaned up temporary audio file")
+                except:
+                    pass
+
+            # Return VHS_FILENAMES format for compatibility
+            filenames = (True, [output_file_path])
+
+            return (output_file_path, filenames)
+
         except Exception as e:
-            raise ValueError(e)
+            # Clean up temp file on error
+            if temp_audio_file is not None:
+                try:
+                    os.unlink(temp_audio_path)
+                except:
+                    pass
+            raise ValueError(f"AddAudioImproved error: {e}")
