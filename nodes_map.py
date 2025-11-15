@@ -18,8 +18,12 @@ from .nodes.imagesSave import *
 from .nodes.pipVideo import *
 from .nodes.videoTransition import *
 from .nodes.videoPlayback import *
+from .nodes.genericFFmpeg import *
+from .nodes.losslessRemux import *
 
 NODE_CLASS_MAPPINGS = {
+    "LosslessRemux": LosslessRemux,
+    "GenericFFmpeg": GenericFFmpeg,
     "Video2Frames": Video2Frames,
     "Frames2Video": Frames2Video,
     "AddTextWatermark": AddTextWatermark,
@@ -44,6 +48,8 @@ NODE_CLASS_MAPPINGS = {
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "LosslessRemux": "🔥LosslessRemux",
+    "GenericFFmpeg": "🔥GenericFFmpeg",
     "Video2Frames": "🔥Video2Frames",
     "Frames2Video": "🔥Frames2Video",
     "AddTextWatermark": "🔥AddTextWatermark",
