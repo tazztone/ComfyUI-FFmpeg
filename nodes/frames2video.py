@@ -3,6 +3,12 @@ import subprocess
 from ..func import get_image_size,generate_template_string
 
 class Frames2Video:
+    """A node to convert a sequence of image frames into a video.
+
+    This node takes a directory of image frames and converts them into a video
+    file. It allows specifying the frame rate, output video name, and an
+    optional audio track.
+    """
  
     # 初始化方法
     def __init__(self): 
@@ -10,6 +16,11 @@ class Frames2Video:
     
     @classmethod
     def INPUT_TYPES(s):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "frame_path": ("STRING", {"default": "C:/Users/Desktop",}), 
@@ -36,6 +47,25 @@ class Frames2Video:
     CATEGORY = "🔥FFmpeg" 
 
     def frames2video(self,frame_path,fps,video_name,output_path,audio_path,device):
+        """Converts a sequence of image frames into a video.
+
+        This method uses FFmpeg to create a video from a directory of images.
+
+        Args:
+            frame_path (str): The path to the directory containing the image
+                frames.
+            fps (float): The frame rate of the output video.
+            video_name (str): The name of the output video file (without
+                extension).
+            output_path (str): The directory to save the output video file.
+            audio_path (str): The path to an optional audio file to include in
+                the video.
+            device (str): The device to use for encoding ("CPU" or "GPU").
+
+        Returns:
+            tuple: A tuple containing the input frame path and the output
+                   video path.
+        """
         try:
             frame_path = os.path.abspath(frame_path).strip()
             output_path = os.path.abspath(output_path).strip()

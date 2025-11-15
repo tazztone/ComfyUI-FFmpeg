@@ -8,6 +8,11 @@ font_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.normpath(__file_
 folder_paths.folder_names_and_paths["fonts"] = ([font_dir], {'.ttf'})
 
 class AddTextWatermark:
+    """A node to add a text watermark to a video.
+
+    This node overlays text onto a video at a specified position, with a
+    customizable font, size, and color.
+    """
  
     # 初始化方法
     def __init__(self): 
@@ -15,6 +20,11 @@ class AddTextWatermark:
     
     @classmethod
     def INPUT_TYPES(s):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -35,6 +45,24 @@ class AddTextWatermark:
     CATEGORY = "🔥FFmpeg" 
 
     def add_text_watermark(self,video_path,output_path,font_file,font_size,font_color,text,position_x,position_y):
+        """Adds a text watermark to a video.
+
+        This method uses FFmpeg to draw text on a video.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output video file.
+            font_file (str): The name of the font file to use.
+            font_size (int): The font size.
+            font_color (str): The font color.
+            text (str): The text to write on the video.
+            position_x (int): The x-coordinate of the text.
+            position_y (int): The y-coordinate of the text.
+
+        Returns:
+            tuple: A tuple containing the input video path and the output
+                   video path.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()

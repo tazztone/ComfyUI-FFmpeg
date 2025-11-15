@@ -4,11 +4,21 @@ from datetime import datetime
 from ..func import video_type,set_file_name,validate_time_format
 
 class SingleCuttingVideo:
+    """A node to cut a single segment from a video.
+
+    This node extracts a portion of a video based on a specified start and end
+    time.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -26,6 +36,19 @@ class SingleCuttingVideo:
   
     # 视频切割,根据关键帧切割，所以时间不能太短，不能保证每一段视频都有关键帧，所以每一段时长不一定是segment_time，只是最接近的
     def single_cutting_video(self, video_path, output_path,start_time,end_time):
+        """Cuts a single segment from a video.
+
+        This method uses FFmpeg to extract a clip from a video file.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output video clip.
+            start_time (str): The start time of the clip in HH:MM:SS format.
+            end_time (str): The end time of the clip in HH:MM:SS format.
+
+        Returns:
+            tuple: A tuple containing the path to the output video clip.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()

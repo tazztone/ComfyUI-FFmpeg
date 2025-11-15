@@ -3,11 +3,21 @@ import subprocess
 from ..func import video_type
 
 class ExtractAudio:
+    """A node to extract audio from a video file.
+
+    This node takes a video file and extracts its audio track, saving it as a
+    separate audio file in the specified format.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -23,6 +33,19 @@ class ExtractAudio:
     CATEGORY = "🔥FFmpeg"
   
     def extract_audio(self, video_path, output_path, audio_format):
+        """Extracts audio from a video file.
+
+        This method uses FFmpeg to extract the audio track from a video file
+        and save it in the specified format.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output audio file.
+            audio_format (str): The desired audio format.
+
+        Returns:
+            tuple: A tuple containing the path to the output audio file.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()

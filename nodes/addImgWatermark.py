@@ -4,6 +4,10 @@ from ..func import get_image_size,set_file_name,video_type
 
 
 class AddImgWatermark:
+    """A node to add an image watermark to a video.
+
+    This node overlays an image onto a video at a specified position and size.
+    """
  
     # 初始化方法
     def __init__(self): 
@@ -11,6 +15,11 @@ class AddImgWatermark:
     
     @classmethod
     def INPUT_TYPES(s):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -29,6 +38,21 @@ class AddImgWatermark:
     CATEGORY = "🔥FFmpeg" 
 
     def add_img_watermark(self,video_path,output_path,watermark_image,watermark_img_width,position_x,position_y):
+        """Adds an image watermark to a video.
+
+        This method uses FFmpeg to overlay an image onto a video.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output video file.
+            watermark_image (str): The path to the watermark image file.
+            watermark_img_width (int): The width of the watermark image.
+            position_x (int): The x-coordinate of the watermark.
+            position_y (int): The y-coordinate of the watermark.
+
+        Returns:
+            tuple: A tuple containing the path to the output video file.
+        """
         try:
             
             video_path = os.path.abspath(video_path).strip()

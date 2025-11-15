@@ -5,11 +5,21 @@ import subprocess
 from ..func import video_type
 
 class Video2Frames:
+    """A node to extract frames from a video.
+
+    This node takes a video file and extracts its frames as individual images.
+    It also extracts the audio track and provides video metadata.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -25,6 +35,20 @@ class Video2Frames:
     CATEGORY = "🔥FFmpeg"
   
     def video2frames(self, video_path, output_path, frames_max_width):
+        """Extracts frames from a video.
+
+        This method uses FFmpeg to extract frames and audio from a video file.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output frames and
+                audio.
+            frames_max_width (int): The maximum width of the output frames.
+
+        Returns:
+            tuple: A tuple containing the path to the frames, FPS, audio path,
+                   total frames, and output path.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()

@@ -5,13 +5,21 @@ import folder_paths
 from ..func import set_file_name, video_type, audio_type, has_audio
 
 class AddAudio:
-    """
-    Improved AddAudio node with VHS-compatible inputs/outputs.
-    Accepts AUDIO data type and optional video_path for lossless remux.
+    """A node to add audio to a video file.
+
+    This node takes a video file and an audio source (either from an upstream
+    node or a file path) and combines them into a new video file. It performs
+    a lossless remux, meaning the video stream is copied without re-encoding,
+    preserving its original quality.
     """
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": {
                 "video_path": ("STRING", {
@@ -48,9 +56,25 @@ class AddAudio:
     CATEGORY = "🔥FFmpeg"
 
     def add_audio_improved(self, video_path, output_path, audio=None, audio_file_path="", delay_play=0):
-        """
-        Improved AddAudio that accepts AUDIO data type from VHS/TTS nodes.
-        Falls back to audio_file_path if no audio input connected.
+        """Adds audio to a video file.
+
+        This method takes a video file and an audio source and combines them
+        using FFmpeg. It prioritizes audio data from an upstream node but can
+        fall back to an audio file path.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output video file.
+            audio (dict, optional): Audio data from an upstream node.
+                Defaults to None.
+            audio_file_path (str, optional): The path to an audio file.
+                Defaults to "".
+            delay_play (int, optional): The audio delay in seconds.
+                Defaults to 0.
+
+        Returns:
+            tuple: A tuple containing the path to the output video file and
+                   a tuple with a boolean and a list of filenames.
         """
         try:
             video_path = os.path.abspath(video_path).strip()
