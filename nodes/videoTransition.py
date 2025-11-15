@@ -7,11 +7,21 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 class VideoTransition:
+    """A node to create a transition between two videos.
+
+    This node uses FFmpeg's xfade filter to create a transition effect
+    between two video clips.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video1_path": ("STRING", {"default":"C:/Users/Desktop/video1.mp4",}),
@@ -33,6 +43,25 @@ class VideoTransition:
     CATEGORY = "🔥FFmpeg"
   
     def video_transition(self, video1_path, video2_path,reference_video, device,transition, transition_duration, offset,output_path):
+        """Creates a transition between two videos.
+
+        This method uses FFmpeg to apply a transition effect.
+
+        Args:
+            video1_path (str): The path to the first video file.
+            video2_path (str): The path to the second video file.
+            reference_video (str): Which video to use as a reference for the
+                output resolution and FPS ("video1" or "video2").
+            device (str): The device to use for encoding ("cpu" or "cuda").
+            transition (str): The name of the transition effect.
+            transition_duration (float): The duration of the transition in
+                seconds.
+            offset (float): The start time of the transition in the first video.
+            output_path (str): The directory to save the output video file.
+
+        Returns:
+            tuple: A tuple containing the path to the output video file.
+        """
         try:
             video1_path = os.path.abspath(video1_path).strip()
             video2_path = os.path.abspath(video2_path).strip()

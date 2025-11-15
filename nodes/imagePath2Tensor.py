@@ -13,11 +13,21 @@ class AnyType(str):
 any_type = AnyType("*")
 
 class ImagePath2Tensor:
+    """A node to convert a list of image paths to a tensor.
+
+    This node takes a list of image paths, loads the images, and converts them
+    into a single tensor.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "image_paths": (any_type,),
@@ -31,6 +41,18 @@ class ImagePath2Tensor:
     CATEGORY = "🔥FFmpeg/auxiliary tool"
   
     def image_path_to_tensor(self, image_paths):
+        """Converts a list of image paths to a tensor.
+
+        This method loads images from the given paths and stacks them into a
+        single tensor.
+
+        Args:
+            image_paths (list): A list of paths to the image files.
+
+        Returns:
+            tuple: A tuple containing the image tensor and the number of
+                   images.
+        """
         
         #['D:\\Cache\\222\\frame_00000121.png', 'D:\\Cache\\222\\frame_00000122.png']
         images = []

@@ -7,11 +7,21 @@ import math
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class PipVideo:
+    """A node to create a picture-in-picture (PiP) video.
+
+    This node overlays one video on top of another, with options for
+    positioning, scaling, audio selection, and chroma keying.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video1_path": ("STRING", {"default":"C:/Users/Desktop/video1.mp4", "tooltip": "说明：画中画背景画面！"}),
@@ -37,6 +47,30 @@ class PipVideo:
                      可以设置前景画面的缩放系数和是否去掉绿幕背景等设置."""
 
     def pip_video(self, video1_path, video2_path,device,use_audio,use_duration, align_type,pip_fg_zoom, output_path,scale_and_crop,fps,is_chromakey):
+        """Creates a picture-in-picture video.
+
+        This method uses FFmpeg to overlay one video on top of another.
+
+        Args:
+            video1_path (str): The path to the background video file.
+            video2_path (str): The path to the foreground video file.
+            device (str): The device to use for encoding ("cpu" or "cuda").
+            use_audio (str): Which video's audio to use ("video1" or "video2").
+            use_duration (str): Which video's duration to use ("video1" or
+                "video2").
+            align_type (str): The alignment of the foreground video.
+            pip_fg_zoom (float): The zoom factor for the foreground video.
+            output_path (str): The directory to save the output video file.
+            scale_and_crop (str): The scaling and cropping to apply to the
+                background video.
+            fps (float): The frame rate of the output video.
+            is_chromakey (bool): Whether to apply chroma keying to the
+                foreground video.
+
+        Returns:
+            tuple: A tuple containing the path to the output video file,
+                   width, height, duration, and fps.
+        """
         try:
             video1_path = os.path.abspath(video1_path).strip()
             video2_path = os.path.abspath(video2_path).strip()

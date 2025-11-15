@@ -3,11 +3,18 @@ import subprocess
 from ..func import set_file_name,video_type
 
 class VideoFlip:
+    """A node to flip a video horizontally, vertically, or both.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -23,6 +30,19 @@ class VideoFlip:
     CATEGORY = "🔥FFmpeg"
   
     def video_flip(self, video_path, output_path, flip_type):
+        """Flips a video.
+
+        This method uses FFmpeg to flip a video.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output video file.
+            flip_type (str): The type of flip to apply ("horizontal",
+                "vertical", or "both").
+
+        Returns:
+            tuple: A tuple containing the path to the output video file.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()

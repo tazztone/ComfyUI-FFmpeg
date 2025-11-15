@@ -13,6 +13,11 @@ class AddAudio:
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": {
                 "video_path": ("STRING", {

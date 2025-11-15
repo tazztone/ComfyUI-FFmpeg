@@ -3,11 +3,21 @@ import subprocess
 from ..func import video_type
 
 class MultiCuttingVideo:
+    """A node to cut a video into multiple segments of a specified duration.
+
+    This node uses FFmpeg to split a video into smaller clips based on a
+    given segment time.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -24,6 +34,19 @@ class MultiCuttingVideo:
   
     # 视频切割,根据关键帧切割，所以时间不能太短，不能保证每一段视频都有关键帧，所以每一段时长不一定是segment_time，只是最接近的
     def multi_cutting_video(self, video_path, output_path,segment_time):
+        """Cuts a video into multiple segments.
+
+        This method uses FFmpeg's segment muxer to split a video into
+        multiple parts.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output video segments.
+            segment_time (int): The duration of each segment in seconds.
+
+        Returns:
+            tuple: A tuple containing the output path.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()
