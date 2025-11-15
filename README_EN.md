@@ -226,15 +226,15 @@ Adds an audio track to a video.
 
 ![](./assets/12.png)
 
-**Parameters:**
-
-*   `video_path`: The file path to the input video.
-*   `audio_from`: The source of the audio (`audio_file` or `video_file`).
-*   `file_path`: The file path to the audio source.
-*   `delay_play`: The audio delay in seconds.
-*   `output_path`: The directory to save the output video.
-
----
+###### Parameter Description
+**video_path**: local video path,e.g.:`C:\Users\Desktop\111.mp4`<br>
+**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
+**audio**: Processed audio from upstream nodes (VHS, TTS, RVC, etc.).<br>
+**audio_file_path**: Path to audio file (used only if audio input not connected).<br>
+**audio_codec**: Audio codec (copy = lossless if compatible).<br>
+**audio_bitrate**: Audio bitrate (e.g., 128k, 192k, 320k).<br>
+**filename_prefix**: Prefix for output filename (optional).<br>
+**delay_play**: the audio delay playback time is measured in seconds, with a default value of 0.<br>
 
 ### 🔥 PipVideo
 

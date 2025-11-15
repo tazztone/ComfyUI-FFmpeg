@@ -226,13 +226,15 @@
 
 ![](./assets/12.png)
 
-**参数：**
-
-*   `video_path`: 输入视频的文件路径。
-*   `audio_from`: 音频来源（`audio_file` 或 `video_file`）。
-*   `file_path`: 音频源的文件路径。
-*   `delay_play`: 音频延迟（以秒为单位）。
-*   `output_path`: 保存输出视频的目录。
+###### 参数说明
+**video_path**: 视频路径，比如：`C:\Users\Desktop\111.mp4`<br>
+**output_path**: 视频保存路径，比如：`C:\Users\Desktop\output`<br>
+**audio**: 来自上游节点的音频数据（VHS、TTS、RVC等）。<br>
+**audio_file_path**: 音频文件路径（仅当未连接音频输入时使用）。<br>
+**audio_codec**: 音频编解码器（copy = 无损（如果兼容））。<br>
+**audio_bitrate**: 音频比特率（例如，128k, 192k, 320k）。<br>
+**filename_prefix**: 输出文件名的前缀（可选）。<br>
+**delay_play**: 音频延迟播放时间，单位为秒，默认值为0。<br>
 
 ---
 
