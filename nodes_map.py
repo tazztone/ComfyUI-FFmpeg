@@ -12,6 +12,7 @@ from .nodes.mergingVideoByPlenty import *
 from .nodes.stitchingVideo import *
 from .nodes.multiCuttingVideo import *
 from .nodes.singleCuttingVideo import *
+from .nodes.addAudioLegacy import *
 from .nodes.addAudio import *
 from .nodes.imagesSave import *
 from .nodes.pipVideo import *
@@ -34,6 +35,7 @@ NODE_CLASS_MAPPINGS = {
     "MultiCuttingVideo": MultiCuttingVideo,
     "SingleCuttingVideo": SingleCuttingVideo,
     "AddAudio": AddAudio,
+    "AddAudioLegacy": AddAudioLegacy,
     "ImagesSave": ImagesSave,
     "PipVideo": PipVideo,
     "VideoTransition": VideoTransition,
@@ -57,6 +59,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MultiCuttingVideo": "🔥MultiCuttingVideo",
     "SingleCuttingVideo": "🔥SingleCuttingVideo",
     "AddAudio": "🔥AddAudio",
+    "AddAudioLegacy": "🔥AddAudio (from path)",
     "ImagesSave": "🔥ImagesSave",
     "PipVideo": "🔥PipVideo",
     "VideoTransition": "🔥VideoTransition",
