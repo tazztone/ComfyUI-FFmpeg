@@ -1,19 +1,17 @@
 import os
 import subprocess
-from ..func import get_image_size,generate_template_string
+import tempfile
+import shutil
+import torch
+import torchaudio
+from PIL import Image
+import numpy as np
+from ..func import get_image_size, generate_template_string
 
 class Frames2Video:
-    """A node to convert a sequence of image frames into a video.
+    def __init__(self):
+        pass
 
-    This node takes a directory of image frames and converts them into a video
-    file. It allows specifying the frame rate, output video name, and an
-    optional audio track.
-    """
- 
-    # 初始化方法
-    def __init__(self): 
-        pass 
-    
     @classmethod
     def INPUT_TYPES(s):
         """Specifies the input types for the node.
@@ -22,148 +20,94 @@ class Frames2Video:
             dict: A dictionary containing the input types.
         """
         return {
-            "required": { 
-                "frame_path": ("STRING", {"default": "C:/Users/Desktop",}), 
-                "fps": ("FLOAT", {
-                    "default": 30, 
-                    "min": 1,
-                    "max": 120,
-                    "step": 1,
-                    "display": "number",
-                }),
+            "required": {
+                "fps": ("FLOAT", {"default": 30, "min": 1, "max": 120, "step": 1, "display": "number"}),
                 "video_name": ("STRING", {"default": "new_video"}),
                 "output_path": ("STRING", {"default": "C:/Users/Desktop/output"}),
-                "device":(["CPU","GPU"],{"default": "CPU",}),
+                "device": (["CPU", "GPU"], {"default": "CPU",}),
             },
-            "optional":{
-                "audio_path":("STRING",{"default": "C:/Users/audio.mp3",}),
-                }
+            "optional": {
+                "images": ("IMAGE", {}),
+                "audio": ("AUDIO", {}),
+                "frame_path": ("STRING", {"default": ""}),
+                "audio_path": ("STRING", {"default": ""}),
+            }
         }
 
-    RETURN_TYPES = ("STRING","STRING",)
-    RETURN_NAMES = ("frame_path","output_path",)
-    FUNCTION = "frames2video" 
+    RETURN_TYPES = ("STRING", "STRING",)
+    RETURN_NAMES = ("frame_path", "output_path",)
+    FUNCTION = "frames2video"
     OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg" 
+    CATEGORY = "🔥FFmpeg"
 
-    def frames2video(self,frame_path,fps,video_name,output_path,audio_path,device):
-        """Converts a sequence of image frames into a video.
+    def frames2video(self, fps, video_name, output_path, device, images=None, audio=None, frame_path="", audio_path=""):
+        temp_frame_dir = None
+        temp_audio_file = None
 
-        This method uses FFmpeg to create a video from a directory of images.
-
-        Args:
-            frame_path (str): The path to the directory containing the image
-                frames.
-            fps (float): The frame rate of the output video.
-            video_name (str): The name of the output video file (without
-                extension).
-            output_path (str): The directory to save the output video file.
-            audio_path (str): The path to an optional audio file to include in
-                the video.
-            device (str): The device to use for encoding ("CPU" or "GPU").
-
-        Returns:
-            tuple: A tuple containing the input frame path and the output
-                   video path.
-        """
         try:
-            frame_path = os.path.abspath(frame_path).strip()
             output_path = os.path.abspath(output_path).strip()
-            if audio_path != "":
-                audio_path = os.path.abspath(audio_path).strip()
-                if not os.path.exists(audio_path):
-                    raise ValueError("audio_path："+audio_path+"不存在（audio_path:"+audio_path+" does not exist）")
-            if not os.path.exists(frame_path):
-                raise ValueError("frame_path："+frame_path+"不存在（frame_path:"+frame_path+" does not exist）")
-                
-            #判断output_path是否是一个目录
             if not os.path.isdir(output_path):
-                raise ValueError("output_path："+output_path+"不是目录（output_path:"+output_path+" is not a directory）")
-            
-            #output_path =  f"{output_path}\\{video_name}.mp4" # 将输出目录和输出文件名合并为一个输出路径
-            output_path =  os.path.join(output_path, f"{video_name}.mp4")
-            # 获取输入目录中的所有图像文件
-            valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff')
-            # 获取所有图片并按文件名排序
-            images = [os.path.join(frame_path, f) for f in os.listdir(frame_path) if f.endswith(valid_extensions)]
-            # 按文件名进行排序
-            images.sort()
-            
-            if len(images) == 0:
-                raise FileNotFoundError("目录："+frame_path+"中没有图片文件（No image files found in directory："+frame_path+"）")
+                raise ValueError(f"output_path: {output_path} is not a directory")
 
-            # 构建ffmpeg命令
-            width,height = get_image_size(images[0]);
-            img_template_string = generate_template_string(os.path.basename(images[0]))
-            if audio_path != '':
-                if device == "CPU":
-                    cmd = [
-                        'ffmpeg',
-                        '-framerate', str(fps),
-                        '-i', f'{frame_path}/{img_template_string}',
-                        '-i', audio_path,  # 添加音频文件路径
-                        '-vf', f'scale={width}:{height}',
-                        '-c:v', 'libx264',
-                        '-crf', '28',
-                        '-pix_fmt', 'yuv420p',
-                        '-shortest',  
-                        '-y',
-                        str(output_path)
-                    ]
-                else:
-                    cmd = [
-                        'ffmpeg',
-                        '-framerate', str(fps),
-                        '-i', f'{frame_path}/{img_template_string}',
-                        '-i', audio_path,  # 添加音频文件路径
-                        '-vf', f'scale={width}:{height}',
-                        '-c:v', 'h264_nvenc',  # 使用 GPU 加速的 NVENC 编码器
-                        '-preset', 'fast',  # 选择一个合适的 preset
-                        '-cq', '22',  # 设置质量，适应NVENC（类似 CRF）
-                        '-pix_fmt', 'yuv420p',
-                        '-shortest',  
-                        '-y',
-                        str(output_path)
-                    ]
+            output_path = os.path.join(output_path, f"{video_name}.mp4")
 
+            if images is not None:
+                temp_frame_dir = tempfile.mkdtemp()
+                for i, img in enumerate(images):
+                    img_np = (img.cpu().numpy() * 255).astype(np.uint8)
+                    pil_img = Image.fromarray(img_np)
+                    pil_img.save(os.path.join(temp_frame_dir, f"{i:05d}.png"))
+                frame_source = temp_frame_dir
+                width, height = get_image_size(os.path.join(temp_frame_dir, "00000.png"))
+                img_template_string = "%05d.png"
             else:
-                if device == "CPU":
-                    cmd = [
-                        'ffmpeg',
-                        '-framerate', str(fps),
-                        '-i', f'{frame_path}/{img_template_string}',
-                        '-vf', f'scale={width}:{height}',
-                        '-c:v', 'libx264',
-                        '-crf', '28',
-                        '-pix_fmt', 'yuv420p',
-                        '-shortest',  
-                        '-y',
-                        str(output_path)
-                    ]
-                else:
-                    cmd = [
-                        'ffmpeg',
-                        '-framerate', str(fps),
-                        '-i', f'{frame_path}/{img_template_string}',
-                        '-vf', f'scale={width}:{height}',
-                        '-c:v', 'h264_nvenc',  # 使用 GPU 加速的 NVENC 编码器
-                        '-preset', 'fast',  # 选择一个合适的 preset
-                        '-cq', '22',  # 设置质量，适应NVENC（类似 CRF）
-                        '-pix_fmt', 'yuv420p',
-                        '-shortest',  
-                        '-y',
-                        str(output_path)
-                    ]
-            # 执行ffmpeg命令
+                if not frame_path or not os.path.isdir(frame_path):
+                    raise ValueError(f"frame_path: {frame_path} is not a valid directory")
+                frame_source = os.path.abspath(frame_path).strip()
+                valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff')
+                image_files = [f for f in os.listdir(frame_source) if f.endswith(valid_extensions)]
+                image_files.sort()
+                if not image_files:
+                    raise FileNotFoundError(f"No image files found in directory: {frame_source}")
+                width, height = get_image_size(os.path.join(frame_source, image_files[0]))
+                img_template_string = generate_template_string(image_files[0])
+
+            if audio is not None:
+                temp_audio_file = tempfile.mktemp(suffix='.wav')
+                waveform = audio['waveform']
+                sample_rate = audio['sample_rate']
+                while waveform.dim() > 2:
+                    waveform = waveform.squeeze(0)
+                torchaudio.save(temp_audio_file, waveform.cpu(), sample_rate)
+                audio_source = temp_audio_file
+            elif audio_path and os.path.isfile(audio_path):
+                audio_source = os.path.abspath(audio_path).strip()
+            else:
+                audio_source = None
+            
+            common_args = ['-framerate', str(fps), '-i', f'{frame_source}/{img_template_string}']
+            if audio_source:
+                common_args.extend(['-i', audio_source])
+            
+            common_args.extend(['-vf', f'scale={width}:{height}', '-pix_fmt', 'yuv420p', '-shortest', '-y', str(output_path)])
+
+            if device == "CPU":
+                cmd = ['ffmpeg'] + common_args + ['-c:v', 'libx264', '-crf', '28']
+            else:
+                cmd = ['ffmpeg'] + common_args + ['-c:v', 'h264_nvenc', '-preset', 'fast', '-cq', '22']
+
             result = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             if result.returncode != 0:
-                # 如果有错误，输出错误信息
-                 print(f"Error: {result.stderr.decode('utf-8')}")
-                 raise ValueError(f"Error: {result.stderr.decode('utf-8')}")
+                raise ValueError(f"Error: {result.stderr.decode('utf-8')}")
             else:
-                # 输出标准输出信息
                 print(result.stdout)
-            frame_path = str(frame_path) # 输出路径为字符串
-            return (frame_path,output_path)
-        except Exception as e:
-            raise ValueError(e)
+
+            return (frame_source if images is None else "in-memory images", output_path)
+
+        finally:
+            if temp_frame_dir:
+                shutil.rmtree(temp_frame_dir)
+            if temp_audio_file:
+                os.unlink(temp_audio_file)
+
+        return ("", "")
