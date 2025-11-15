@@ -4,165 +4,225 @@
     <br> <font size=5>English | <a href="README.md">中文</a></font>
 </p>
 
-
 ## Introduction
 
-Encapsulate the commonly used functions of FFmpeg into ComfyUI nodes, making it convenient for users to perform various video processing tasks within ComfyUI.<br>
+**ComfyUI-FFmpeg** is a powerful extension for ComfyUI that wraps frequently used FFmpeg functionalities into intuitive nodes. This allows you to perform a wide range of video processing tasks directly within your ComfyUI workflow, streamlining your creative process.
 
-## Tips
+## Prerequisites
 
-You need to install FFmpeg before using this node, the FFmpeg installation method can refer to [here](https://www.bilibili.com/read/cv28108185/?spm_id_from=333.999.0.0&jump_opus=1)
+Before using this extension, you must have **FFmpeg** installed on your system and accessible from the command line. For installation instructions, please refer to the official FFmpeg documentation or community guides.
 
-## Installation 
+## Installation
 
-#### Method 1:
+You can install ComfyUI-FFmpeg using one of the following methods:
 
-1. Go to comfyUI custom_nodes folder, `ComfyUI/custom_nodes/`
-2. `git clone https://github.com/MoonHugo/ComfyUI-FFmpeg.git`
-3. `cd ComfyUI-FFmpeg`
-4. `pip install -r requirements.txt`
-5. restart ComfyUI
+### Method 1: Git Clone
 
-#### Method 2:
-Directly download the node source package, then extract it into the custom_nodes directory, and finally restart ComfyUI.
+1.  Navigate to the `custom_nodes` directory within your ComfyUI installation:
+    ```sh
+    cd ComfyUI/custom_nodes/
+    ```
+2.  Clone the repository:
+    ```sh
+    git clone https://github.com/MoonHugo/ComfyUI-FFmpeg.git
+    ```
+3.  Install the required dependencies:
+    ```sh
+    cd ComfyUI-FFmpeg
+    pip install -r requirements.txt
+    ```
+4.  Restart ComfyUI.
 
-#### Method 3：
-Install through ComfyUI-Manager by searching for 'ComfyUI-FFmpeg' and installing it.
+### Method 2: Manual Download
 
-## Nodes introduction
+1.  Download the source code as a ZIP archive.
+2.  Extract the contents of the ZIP file into the `ComfyUI/custom_nodes/` directory.
+3.  Restart ComfyUI.
 
-##### Video2Frames Node: The function is to convert a video into images and save them to a specified directory.<br>
+### Method 3: ComfyUI-Manager
+
+1.  Open the ComfyUI-Manager.
+2.  Search for "ComfyUI-FFmpeg" and install it.
+3.  Restart ComfyUI.
+
+## Node Reference
+
+This section provides a detailed overview of each node available in ComfyUI-FFmpeg.
+
+---
+
+### 🔥 Video2Frames
+
+Extracts frames from a video and saves them as individual images.
 
 ![](./assets/1.png)
 
-###### Parameter Description
-**video_path**: the local video path, e.g.：`C:\Users\Desktop\222.mp4`<br>
-**output_path**: the path to save the output images, e.g.：`C:\Users\Desktop\output`<br>
-**frames_max_width**: this parameter can be used to resize the video. The default value is 0, which means the video will not be resized. If frames_max_width is larger than the actual width of the video, the video will not be enlarged and will retain its original width. If frames_max_width is smaller than the actual width of the video, the video will be scaled down.
+**Parameters:**
 
-___
+*   `video_path`: The file path to the input video (e.g., `C:\Users\Desktop\video.mp4`).
+*   `output_path`: The directory where the extracted frames will be saved (e.g., `C:\Users\Desktop\output`).
+*   `frames_max_width`: The maximum width for the output frames. If set to `0`, the original width is maintained. If the specified width is smaller than the original, the frames will be scaled down while preserving the aspect ratio.
 
-##### Frames2Video Node: The function is to convert images into a video and save it to a specified directory.<br>
+---
+
+### 🔥 Frames2Video
+
+Converts a sequence of images into a video file.
+
 ![](./assets/2.png)
 
-###### Parameter Description
-**frame_path**: local image path, e.g.:`C:\Users\Desktop\output`<br>
-**fps**: video frame rate, default is`30`<br>
-**video_name**: saved video name, e.g.:`222.mp4`<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**audio_path**: video audio path,e.g.:`C:\Users\Desktop\222.mp3`<br>
-___
+**Parameters:**
 
-##### AddTextWatermark Node: The function is to add a text watermark to the video.<br>
+*   `frame_path`: The directory containing the input image frames (e.g., `C:\Users\Desktop\output`).
+*   `fps`: The frame rate of the output video. Default is `30`.
+*   `video_name`: The name of the output video file (e.g., `my_video.mp4`).
+*   `output_path`: The directory where the output video will be saved (e.g., `C:\Users\Desktop\output`).
+*   `audio_path`: (Optional) The file path to an audio file to be included in the video (e.g., `C:\Users\Desktop\audio.mp3`).
+
+---
+
+### 🔥 AddTextWatermark
+
+Adds a text watermark to a video.
 
 ![](./assets/3.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\222.mp4`<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**font_file**: font file: The font file needs to be placed in the`custom_nodes\ComfyUI-FFmpeg\fonts` directory. Not only English fonts, but Chinese fonts can also be used.,e.g.:`ComfyUI\custom_nodes\ComfyUI-FFmpeg\fonts\Alibaba-PuHuiTi-Heavy.ttf`<br>
-**font_size**: watermark text size,e.g.:`40`<br>
-**font_color**: watermark text color,e.g.:`#FFFFFF` or `white`<br>
-**position_x**: watermark text x-coordinate,e.g.:`100`<br>
-**position_y**: watermark text y-coordinate,e.g.:`100`<br>
+**Parameters:**
 
-___
+*   `video_path`: The file path to the input video.
+*   `output_path`: The directory to save the watermarked video.
+*   `font_file`: The font file for the watermark text. Place your font files in the `ComfyUI-FFmpeg/fonts` directory.
+*   `font_size`: The font size of the watermark text.
+*   `font_color`: The color of the watermark text (e.g., `#FFFFFF` or `white`).
+*   `position_x`: The x-coordinate for the watermark's position.
+*   `position_y`: The y-coordinate for the watermark's position.
 
-##### AddImgWatermark Node: The function is to add an image watermark to the video.<br>
+---
+
+### 🔥 AddImgWatermark
+
+Adds an image watermark to a video.
 
 ![](./assets/4.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\222.mp4`<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**watermark_image**: watermark image path,e.g.:`C:\Users\Desktop\watermark.png`<br>
-**watermark_img_width**: watermark image width,e.g.:`100`<br>
-**position_x**: watermark image x-coordinate in the video,e.g.:`100`<br>
-**position_y**: watermark image y-coordinate in the video,e.g.:`100`<br>
-___
+**Parameters:**
 
-##### VideoFlip Node: The function is to flip the video<br>
+*   `video_path`: The file path to the input video.
+*   `output_path`: The directory to save the watermarked video.
+*   `watermark_image`: The file path to the watermark image.
+*   `watermark_img_width`: The width of the watermark image.
+*   `position_x`: The x-coordinate for the watermark's position.
+*   `position_y`: The y-coordinate for the watermark's position.
+
+---
+
+### 🔥 VideoFlip
+
+Flips a video horizontally, vertically, or both.
 
 ![](./assets/5.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\222.mp4`<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**flip_type**: flip type, e.g. `horizontal` horizontal flip, `vertical` vertical flip, `both` horizontal plus vertical flip<br>
+**Parameters:**
 
-___
+*   `video_path`: The file path to the input video.
+*   `output_path`: The directory to save the flipped video.
+*   `flip_type`: The type of flip to apply (`horizontal`, `vertical`, or `both`).
 
-##### ExtractAudio Node：The purpose is to extract the audio from the video<br>
+---
+
+### 🔥 ExtractAudio
+
+Extracts the audio track from a video file.
 
 ![](./assets/6.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\222.mp4`<br>
-**output_path**: audio save path,e.g.:`C:\Users\Desktop\output`<br>
-**audio_format**: save audio formats, including **.m4a** , **.mp3** , **.wav** , **.aac** , **.flac** , **.wma** , **.ogg** , **.ac3** , **.amr** , **.aiff** , **.opus** , **.m4b** , **.caf** , **.dts** etc. <br>
+**Parameters:**
 
-___
+*   `video_path`: The file path to the input video.
+*   `output_path`: The directory to save the extracted audio.
+*   `audio_format`: The desired format for the output audio file (e.g., `.mp3`, `.wav`, `.aac`).
 
-##### MergingVideoByTwo Node: The purpose is to merge two videos, for example, to combine two one-hour videos into a single two-hour video.<br>
+---
+
+### 🔥 MergingVideoByTwo
+
+Merges two video files into a single video.
 
 ![](./assets/7.png)
 
-###### Parameter Description
-**video1_path**: local video path,e.g.:`C:\Users\Desktop\111.mp4`<br>
-**video2_path**: local video path,e.g.:`C:\Users\Desktop\222.mp4`<br>
-**device**: there are two options: CPU and GPU,if you encounter an error while merging two videos using the CPU option, you can try using the GPU instead.<br>
-**resolution_reference**: What is the size of the merged video? You can refer to either the first video or the second video, that is, video1 or video2.<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
+**Parameters:**
 
-___
+*   `video1_path`: The file path to the first video.
+*   `video2_path`: The file path to the second video.
+*   `device`: The processing device to use (`CPU` or `GPU`).
+*   `resolution_reference`: Specifies which video (`video1` or `video2`) to use as a reference for the output resolution.
+*   `output_path`: The directory to save the merged video.
 
-##### MergingVideoByPlenty Node: The purpose is to merge multiple short videos that have the same encoding format, resolution, and frame rate into a longer video.<br>
+---
+
+### 🔥 MergingVideoByPlenty
+
+Merges multiple short videos with the same encoding, resolution, and frame rate into a single long video.
 
 ![](./assets/11.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\111`,All videos in the specified path must have the same encoding format, frame rate, and resolution.<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
+**Parameters:**
 
-___
+*   `video_path`: The directory containing the video files to be merged.
+*   `output_path`: The directory to save the merged video.
 
-##### StitchingVideo Node: The purpose is to stitching two videos, which can be done in two ways: horizontal stitching and vertical stitching.<br>
+---
+
+### 🔥 StitchingVideo
+
+Stitches two videos together, either horizontally or vertically.
 
 ![](./assets/8.png)
 
-###### Parameter Description
-**video1_path**: local video path,e.g.:`C:\Users\Desktop\111.mp4`<br>
-**video2_path**: local video path,e.g.:`C:\Users\Desktop\222.mp4`<br>
-**device**: there are two options: CPU and GPU, if you encounter an error while stitching two videos using the CPU, you can try using the GPU instead.<br>
-**use_audio**: which audio will be used in the stitched video? You can choose the audio from either the first video or the second video, that is, from video1 or video2.<br>
-**stitching_type**: the methods for stitching videos are divided into two types: horizontal stitching and vertical stitching.<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**scale_and_crop**: Scale and crop to match video1's dimensions.<br>
-___
+**Parameters:**
 
-##### MultiCuttingVideo Node: The purpose is to split one video into several smaller videos.<br>
+*   `video1_path`: The file path to the first video.
+*   `video2_path`: The file path to the second video.
+*   `device`: The processing device to use (`CPU` or `GPU`).
+*   `use_audio`: Specifies which video's audio to use in the stitched output (`video1` or `video2`).
+*   `stitching_type`: The stitching orientation (`horizontal` or `vertical`).
+*   `output_path`: The directory to save the stitched video.
+*   `scale_and_crop`: Whether to scale and crop the output to match the dimensions of `video1`.
+
+---
+
+### 🔥 MultiCuttingVideo
+
+Cuts a video into multiple segments of a specified duration.
 
 ![](./assets/9.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\111.mp4`<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**segment_time**: the length of each cut video is measured in seconds. It’s important to note that the video is cut based on keyframes, so the duration cannot be too short. Since there is no guarantee that each segment of the video will have a keyframe, the duration of each segment may not be the same, but it will be the closest possible.<br>
+**Parameters:**
 
-___
+*   `video_path`: The file path to the input video.
+*   `output_path`: The directory to save the video segments.
+*   `segment_time`: The duration of each segment in seconds. Note that cuts are made at the nearest keyframe, so the actual segment duration may vary slightly.
 
-##### SingleCuttingVideo Node: The purpose is to cut a specific time segment from a designated video.<br>
+---
+
+### 🔥 SingleCuttingVideo
+
+Extracts a single segment from a video based on a specified start and end time.
 
 ![](./assets/10.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\111.mp4`<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**start_time**: set the start time for the cut; for example, setting it to 00:00:10 means cutting from the 10th second of the video.<br>
-**end_time**: set the end time for the cut; for example, setting it to 00:05:00 means cutting until the 5th minute of the video.<br>
-___
+**Parameters:**
 
-##### AddAudio Node: The purpose is to add audio to the video.<br>
+*   `video_path`: The file path to the input video.
+*   `output_path`: The directory to save the extracted segment.
+*   `start_time`: The start time of the segment in `HH:MM:SS` format.
+*   `end_time`: The end time of the segment in `HH:MM:SS` format.
+
+---
+
+### 🔥 AddAudio
+
+Adds an audio track to a video.
 
 ![](./assets/12.png)
 
@@ -176,62 +236,69 @@ ___
 **filename_prefix**: Prefix for output filename (optional).<br>
 **delay_play**: the audio delay playback time is measured in seconds, with a default value of 0.<br>
 
-___
+### 🔥 PipVideo
 
-##### PipVideo Node: Add picture-in-picture functionality to videos<br>
+Creates a picture-in-picture (PiP) effect by overlaying one video on top of another.
 
 ![](./assets/13.png)
 
-###### Parameter Description
-**video1_path**: The background video for picture-in-picture (PIP), e.g.:`C:\Users\Desktop\111.mp4`<br>
-**video2_path**: The foreground video for PIP, e.g.:`C:\Users\Desktop\222.mp4`<br>
-**device**: Choose between CPU and GPU. If errors occur with CPU, try switching to GPU.<br>
-**use_audio**: Select which video's audio to use in the final output—either video1 or video2.<br>
-**use_duration**: Determine the final video's duration based on video1 or video2.<br>
-**align_type**: Position of the foreground video on the background—options: top-left, top-right, bottom-left, bottom-right, or center.<br>
-**pip_fg_zoom**: PIP foreground scaling factor—larger values make the foreground smaller (scaled relative to background dimensions).<br>
-**output_path**: Output video save path, e.g.:`C:\Users\Desktop\output`<br>
-**scale_and_crop**: Scaling and cropping ratio.<br>
-**fps**: v<br>
-**is_chromakey**: Whether to apply green screen (chroma key) background removal.<br>
+**Parameters:**
 
-___
+*   `video1_path`: The file path to the background video.
+*   `video2_path`: The file path to the foreground video.
+*   `device`: The processing device to use (`CPU` or `GPU`).
+*   `use_audio`: Specifies which video's audio to use in the output (`video1` or `video2`).
+*   `use_duration`: Specifies which video's duration to use for the output (`video1` or `video2`).
+*   `align_type`: The position of the foreground video (`top-left`, `top-right`, `bottom-left`, `bottom-right`, or `center`).
+*   `pip_fg_zoom`: The scaling factor for the foreground video. A larger value results in a smaller foreground.
+*   `output_path`: The directory to save the PiP video.
+*   `scale_and_crop`: The scaling and cropping ratio.
+*   `fps`: The frame rate of the output video.
+*   `is_chromakey`: Whether to apply a green screen (chroma key) effect to the foreground video.
 
-##### VideoTransition Node: Add Transition Animation Effects to Two Videos<br>
+---
+
+### 🔥 VideoTransition
+
+Adds a transition effect between two videos.
 
 ![](./assets/14.png)
 
-###### Parameter Description
-**video1_path**: local video path,e.g.:`C:\Users\Desktop\111.mp4`<br>
-**video2_path**: local video path,e.g.:`C:\Users\Desktop\222.mp4`<br>
-**reference_video**: Specifies which video serves as the reference for determining the output video's dimensions and frame rate.<br>
-**device**: Choose between CPU and GPU. If errors occur with CPU, try switching to GPU.<br>
-**transition**: Transition effect name. Default options include:'fade', 'wipeleft', 'wiperight', 'wipeup', 'wipedown','slideleft', 'slideright', 'slideup', 'slidedown','circlecrop', 'rectcrop', 'distance', 'fadeblack', 'fadewhite','radial', 'smoothleft', 'smoothright', 'smoothup', 'smoothdown','circleopen', 'circleclose', 'vertopen', 'vertclose','horzopen', 'horzclose', 'dissolve', 'pixelize','diagtl', 'diagtr', 'diagbl', 'diagbr','hlslice', 'hrslice', 'vuslice', 'vdslice','hblur', 'fadegrays', 'wipetl', 'wipetr', 'wipebl', 'wipebr','squeezeh', 'squeezev', 'zoomin', 'fadefast', 'fadeslow','hlwind', 'hrwind', 'vuwind', 'vdwind','coverleft', 'coverright', 'coverup', 'coverdown','revealleft', 'revealright', 'revealup', 'revealdown'，To check available transitions for your local FFmpeg version, run: `ffmpeg -hide_banner -h filter=xfade`.<br>
-**transition_duration**: Transition duration in seconds. Maximum value: 3 seconds; cannot be < 0.1.<br>
-**offset**: Transition start time in seconds. Cannot be ≥ (duration of video1 duration minus transition_duration).<br>
-**output_path**: Output video save path, e.g.:`C:\Users\Desktop\output`<br>
+**Parameters:**
 
-___
+*   `video1_path`: The file path to the first video.
+*   `video2_path`: The file path to the second video.
+*   `reference_video`: Specifies which video to use as a reference for the output resolution and frame rate.
+*   `device`: The processing device to use (`CPU` or `GPU`).
+*   `transition`: The name of the transition effect. To see a list of available transitions, run `ffmpeg -hide_banner -h filter=xfade`.
+*   `transition_duration`: The duration of the transition in seconds.
+*   `offset`: The start time of the transition in the first video.
+*   `output_path`: The directory to save the output video.
 
-##### VideoPlayback Node: The function is to play the video in reverse.<br>
+---
+
+### 🔥 VideoPlayback
+
+Reverses the playback of a video.
 
 ![](./assets/15.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\222.mp4`<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**reverse_audio**: Whether to reverse the audio playback, default is True.<br>
+**Parameters:**
 
+*   `video_path`: The file path to the input video.
+*   `output_path`: The directory to save the reversed video.
+*   `reverse_audio`: Whether to reverse the audio as well.
 
-___
+---
 
-## Social Account Homepage
-- Bilibili：[My BILIBILI Homepage](https://space.bilibili.com/1303099255)
+## Socials
+
+-   **Bilibili:** [My Bilibili Homepage](https://space.bilibili.com/1303099255)
 
 ## Acknowledgments
 
-Thanks to all the contributors of the FFmpeg repository. [FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg)
+A special thanks to the contributors of the [FFmpeg](https://github.com/FFmpeg/FFmpeg) repository.
 
-## Star history
+## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=MoonHugo/ComfyUI-FFmpeg&type=Date)](https://star-history.com/#MoonHugo/ComfyUI-FFmpeg&Date)

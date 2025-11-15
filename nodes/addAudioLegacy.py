@@ -3,11 +3,21 @@ import subprocess
 from ..func import set_file_name,video_type,audio_type,has_audio
 
 class AddAudioLegacy:
+    """A node to add audio to a video file from a file path.
+
+    This node takes a video file and an audio file (or a video file with an
+    audio track) and combines them into a new video file.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": {
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -25,6 +35,23 @@ class AddAudioLegacy:
     CATEGORY = "🔥FFmpeg"
 
     def add_audio(self, video_path, audio_from, file_path,delay_play,output_path):
+        """Adds audio to a video file from a file path.
+
+        This method takes a video file and an audio source (either an audio
+        file or another video file) and combines them using FFmpeg.
+
+        Args:
+            video_path (str): The path to the input video file.
+            audio_from (str): The source of the audio ("audio_file" or
+                "video_file").
+            file_path (str): The path to the audio file or video file
+                containing the audio.
+            delay_play (int): The audio delay in seconds.
+            output_path (str): The directory to save the output video file.
+
+        Returns:
+            tuple: A tuple containing the path to the output video file.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             file_path = os.path.abspath(file_path).strip()

@@ -6,11 +6,21 @@ import shutil
 from ..func import video_type
 
 class ExtractAudio:
+    """A node to extract audio from a video file.
+
+    This node takes a video file and extracts its audio track, saving it as a
+    separate audio file in the specified format.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": {
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),

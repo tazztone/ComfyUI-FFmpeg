@@ -11,11 +11,21 @@ import numpy as np
 from ..func import video_type
 
 class Video2Frames:
+    """A node to extract frames from a video.
+
+    This node takes a video file and extracts its frames as individual images.
+    It also extracts the audio track and provides video metadata.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": {
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),

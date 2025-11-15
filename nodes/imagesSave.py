@@ -6,11 +6,21 @@ from ..func import save_image,clear_memory
 file_name_num_start = 0
 
 class ImagesSave:
+    """A node to save a batch of images to a specified directory.
+
+    This node takes a tensor of images and saves each image as a separate file
+    in the output directory.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "images": ("IMAGE", ),
@@ -25,6 +35,15 @@ class ImagesSave:
     CATEGORY = "🔥FFmpeg/auxiliary tool"
   
     def images_save(self, images,output_path):
+        """Saves a batch of images to a specified directory.
+
+        Args:
+            images (torch.Tensor): A tensor of images to save.
+            output_path (str): The directory to save the images to.
+
+        Returns:
+            tuple: A tuple containing the number of images saved.
+        """
         try:
             output_path = os.path.abspath(output_path).strip()
             #判断output_path是否是一个目录

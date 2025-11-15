@@ -14,6 +14,11 @@ class Frames2Video:
 
     @classmethod
     def INPUT_TYPES(s):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": {
                 "fps": ("FLOAT", {"default": 30, "min": 1, "max": 120, "step": 1, "display": "number"}),

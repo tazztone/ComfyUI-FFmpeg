@@ -5,11 +5,21 @@ import time
 from ..func import get_video_files,set_file_name
 
 class MergingVideoByPlenty:
+    """A node to merge multiple video files from a directory into a single video.
+
+    This node concatenates all video files in a specified directory into a
+    single output video file.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/",}),
@@ -24,6 +34,18 @@ class MergingVideoByPlenty:
     CATEGORY = "🔥FFmpeg"
   
     def merging_video_by_plenty(self, video_path, output_path):
+        """Merges multiple video files from a directory.
+
+        This method uses FFmpeg's concat demuxer to merge video files.
+
+        Args:
+            video_path (str): The path to the directory containing the video
+                files.
+            output_path (str): The directory to save the output video file.
+
+        Returns:
+            tuple: A tuple containing the path to the output video file.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()

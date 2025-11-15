@@ -14,6 +14,16 @@ from concurrent.futures import ThreadPoolExecutor,as_completed
 from comfy.model_management import unload_all_models, soft_empty_cache
 
 def get_xfade_transitions():
+    """Retrieves a list of available FFmpeg xfade transitions.
+
+    This function executes the `ffmpeg -h filter=xfade` command to get a list
+    of supported cross-fade transitions. It then parses the output to extract
+    the transition names.
+
+    Returns:
+        list: A sorted list of available xfade transition names. If FFmpeg is
+              not found or an error occurs, it returns an empty list.
+    """
     try:
         #执行命令：ffmpeg -hide_banner -h filter=xfade 查看可用的转场效果，执行ffmpeg命令获取xfade过滤器帮助信息
         result = subprocess.run(
@@ -63,6 +73,15 @@ def get_xfade_transitions():
         return []
 
 def copy_image(image_path, destination_directory):
+    """Copies a single image to a destination directory.
+
+    Args:
+        image_path (str): The path to the image file.
+        destination_directory (str): The directory to copy the image to.
+
+    Returns:
+        str: The path to the copied image, or None if an error occurred.
+    """
     try:
         # 获取图片文件名
         image_name = os.path.basename(image_path)
@@ -77,6 +96,15 @@ def copy_image(image_path, destination_directory):
         return None
 
 def copy_images_to_directory(image_paths, destination_directory):
+    """Copies a list of images to a destination directory in parallel.
+
+    Args:
+        image_paths (list): A list of paths to the image files.
+        destination_directory (str): The directory to copy the images to.
+
+    Returns:
+        list: A list of paths to the copied images.
+    """
     # 如果目标目录不存在，创建它
     if not os.path.exists(destination_directory):
         os.makedirs(destination_directory)
@@ -101,6 +129,16 @@ def copy_images_to_directory(image_paths, destination_directory):
     return [path for path in copied_paths if path is not None]
 
 def get_image_paths_from_directory(directory, start_index, length):
+    """Gets a specified number of image paths from a directory.
+
+    Args:
+        directory (str): The directory to get the image paths from.
+        start_index (int): The starting index of the images to get.
+        length (int): The number of images to get.
+
+    Returns:
+        list: A list of image paths.
+    """
     image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff'}
     
     # 创建排序后的文件生成器，直接在生成器中过滤
@@ -132,16 +170,55 @@ def get_image_paths_from_directory(directory, start_index, length):
 #     return image_paths
 
 def generate_template_string(filename):
+    """Generates a template string for FFmpeg based on a filename.
+
+    This function takes a filename and replaces the first sequence of digits
+    with a C-style format specifier (e.g., `%03d`).
+
+    Args:
+        filename (str): The filename to generate the template string from.
+
+    Returns:
+        str: The generated template string.
+    """
     match = re.search(r'\d+', filename)
     return re.sub(r'\d+', lambda x: f'%0{len(x.group())}d', filename) if match else filename
 
 def tensor2pil(image):
+    """Converts a tensor to a PIL image.
+
+    Args:
+        image (torch.Tensor): The tensor to convert.
+
+    Returns:
+        PIL.Image.Image: The converted PIL image.
+    """
     return Image.fromarray(np.clip(255. * image.cpu().numpy().squeeze(), 0, 255).astype(np.uint8))
 
 def pil2tensor(image):
+    """Converts a PIL image to a tensor.
+
+    Args:
+        image (PIL.Image.Image): The PIL image to convert.
+
+    Returns:
+        torch.Tensor: The converted tensor.
+    """
     return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
 
 def getVideoInfo(video_path):
+    """Gets information about a video file.
+
+    This function uses `ffprobe` to get the video's FPS, width, height, and
+    duration.
+
+    Args:
+        video_path (str): The path to the video file.
+
+    Returns:
+        dict: A dictionary containing the video's information, or an empty
+              dictionary if an error occurred.
+    """
     command = [
             'ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 
             'stream=avg_frame_rate,duration,width,height', '-of', 'json', video_path
@@ -172,6 +249,14 @@ def getVideoInfo(video_path):
     return return_data
 
 def get_image_size(image_path):
+    """Gets the size of an image.
+
+    Args:
+        image_path (str): The path to the image file.
+
+    Returns:
+        tuple: A tuple containing the width and height of the image.
+    """
     # 打开图像文件
     with Image.open(image_path) as img:
         # 获取图像的宽度和高度
@@ -179,6 +264,14 @@ def get_image_size(image_path):
         return width, height
     
 def has_audio(video_path):
+    """Checks if a video file has an audio stream.
+
+    Args:
+        video_path (str): The path to the video file.
+
+    Returns:
+        bool: True if the video has an audio stream, False otherwise.
+    """
     cmd = [
         'ffprobe', 
         '-v', 'error', 
@@ -192,6 +285,14 @@ def has_audio(video_path):
     return result.stdout.decode().strip() == 'audio'
 
 def set_file_name(video_path):
+    """Generates a new filename based on the current timestamp.
+
+    Args:
+        video_path (str): The original path of the video file.
+
+    Returns:
+        str: The new filename.
+    """
     file_name = os.path.basename(video_path)
     file_extension = os.path.splitext(file_name)[1]
     #文件名根据年月日时分秒来命名
@@ -199,15 +300,41 @@ def set_file_name(video_path):
     return file_name
 
 def video_type():
+    """Returns a tuple of supported video file extensions.
+
+    Returns:
+        tuple: A tuple of video file extensions.
+    """
     return ('.mp4', '.avi', '.mov', '.mkv','.rmvb','.wmv','.flv')
 def audio_type():
+    """Returns a tuple of supported audio file extensions.
+
+    Returns:
+        tuple: A tuple of audio file extensions.
+    """
     return ('.mp3', '.wav', '.aac', '.flac','.m4a','.wma','.ogg','.amr','.ape','.ac3','.aiff','.opus','.m4b','.caf','.dts')
 
 def validate_time_format(time_str):
+    """Validates a time string in HH:MM:SS format.
+
+    Args:
+        time_str (str): The time string to validate.
+
+    Returns:
+        bool: True if the time string is valid, False otherwise.
+    """
     pattern = r'^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|\d{1,2})$'
     return bool(re.match(pattern, time_str))
 
 def get_video_files(directory):
+    """Gets all video files from a directory.
+
+    Args:
+        directory (str): The directory to get the video files from.
+
+    Returns:
+        list: A sorted list of video file paths.
+    """
     video_extensions = ['*.mp4', '*.avi', '*.mov', '*.mkv','*.rmvb', '*.wmv', '*.flv']
     video_files = []
     for ext in video_extensions:
@@ -217,9 +344,16 @@ def get_video_files(directory):
     return video_files
 
 def save_image(image, path):
+    """Saves an image to a specified path.
+
+    Args:
+        image (torch.Tensor): The image tensor to save.
+        path (str): The path to save the image to.
+    """
     tensor2pil(image).save(path)
     
 def clear_memory():
+    """Clears the GPU memory."""
     gc.collect()
     unload_all_models()
     soft_empty_cache()

@@ -6,11 +6,21 @@ import torch
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class MergingVideoByTwo:
+    """A node to merge two video files into a single video.
+
+    This node concatenates two video files, handling audio and resolution
+    differences.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video1_path": ("STRING", {"default":"C:/Users/Desktop/video1.mp4",}),
@@ -28,6 +38,22 @@ class MergingVideoByTwo:
     CATEGORY = "🔥FFmpeg"
   
     def merging_video_by_two(self, video1_path, video2_path,device,resolution_reference,output_path):
+        """Merges two video files.
+
+        This method uses FFmpeg to concatenate two video files, with options
+        for handling different resolutions and audio streams.
+
+        Args:
+            video1_path (str): The path to the first video file.
+            video2_path (str): The path to the second video file.
+            device (str): The device to use for encoding ("cpu" or "cuda").
+            resolution_reference (str): Which video to use as a reference for
+                the output resolution ("video1" or "video2").
+            output_path (str): The directory to save the output video file.
+
+        Returns:
+            tuple: A tuple containing the path to the output video file.
+        """
         try:
             video1_path = os.path.abspath(video1_path).strip()
             video2_path = os.path.abspath(video2_path).strip()

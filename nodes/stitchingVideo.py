@@ -8,11 +8,21 @@ import time
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class StitchingVideo:
+    """A node to stitch two videos together, either horizontally or vertically.
+
+    This node combines two video files side-by-side or one on top of the
+    other.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video1_path": ("STRING", {"default":"C:/Users/Desktop/video1.mp4",}),
@@ -32,6 +42,24 @@ class StitchingVideo:
     CATEGORY = "🔥FFmpeg"
   
     def stitching_video(self, video1_path, video2_path,device,use_audio,stitching_type,output_path,scale_and_crop):
+        """Stitches two videos together.
+
+        This method uses FFmpeg to combine two videos.
+
+        Args:
+            video1_path (str): The path to the first video file.
+            video2_path (str): The path to the second video file.
+            device (str): The device to use for encoding ("cpu" or "cuda").
+            use_audio (str): Which video's audio to use ("video1" or "video2").
+            stitching_type (str): The type of stitching ("horizontal" or
+                "vertical").
+            output_path (str): The directory to save the output video file.
+            scale_and_crop (str): Whether to scale and crop the output video
+                ("yes" or "no").
+
+        Returns:
+            tuple: A tuple containing the path to the output video file.
+        """
         try:
             video1_path = os.path.abspath(video1_path).strip()
             video2_path = os.path.abspath(video2_path).strip()

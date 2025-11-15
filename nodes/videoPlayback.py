@@ -3,11 +3,21 @@ import subprocess
 from ..func import set_file_name,video_type
 
 class VideoPlayback:
+    """A node to reverse a video.
+
+    This node reverses the playback of a video, with an option to also reverse
+    the audio.
+    """
     def __init__(self):
         pass
 
     @classmethod
     def INPUT_TYPES(cls):
+        """Specifies the input types for the node.
+
+        Returns:
+            dict: A dictionary containing the input types.
+        """
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
@@ -23,6 +33,19 @@ class VideoPlayback:
     CATEGORY = "🔥FFmpeg"
   
     def video_playback(self, video_path, output_path, reverse_audio):
+        """Reverses a video.
+
+        This method uses FFmpeg to reverse a video.
+
+        Args:
+            video_path (str): The path to the input video file.
+            output_path (str): The directory to save the output video file.
+            reverse_audio (str): Whether to reverse the audio ("True" or
+                "False").
+
+        Returns:
+            tuple: A tuple containing the path to the output video file.
+        """
         try:
             video_path = os.path.abspath(video_path).strip()
             output_path = os.path.abspath(output_path).strip()
