@@ -1,7 +1,7 @@
 <h1 align="center">ComfyUI-FFmpeg</h1>
 
 <p align="center">
-    <br> <font size=5>English | <a href="README.md">中文</a></font>
+    <br> <font size=5>English | <a href="README_CN.md">中文</a></font>
 </p>
 
 ## Introduction
@@ -288,6 +288,59 @@ Reverses the playback of a video.
 *   `video_path`: The file path to the input video.
 *   `output_path`: The directory to save the reversed video.
 *   `reverse_audio`: Whether to reverse the audio as well.
+
+---
+
+### 🔥 Filtergraph
+
+Apply a raw FFmpeg filtergraph to a video.
+
+**Parameters:**
+
+*   `video`: The file path to the input video.
+*   `filtergraph`: The FFmpeg filtergraph string.
+*   `output_path`: The directory to save the processed video.
+*   `output_ext`: The file extension for the output video.
+
+---
+
+### 🔥 StreamMapping
+
+Apply stream mapping to a video.
+
+**Parameters:**
+
+*   `video`: The file path to the input video.
+*   `maps`: The FFmpeg stream mapping string.
+*   `output_path`: The directory to save the processed video.
+*   `output_ext`: The file extension for the output video.
+
+---
+
+### 🔥 Subtitle
+
+A node to handle subtitles.
+
+**Parameters:**
+
+*   `video`: The file path to the input video.
+*   `subtitle_file`: The file path to the subtitle file.
+*   `action`: The subtitle action to perform (`burn`, `add`, or `extract`).
+*   `output_path`: The directory to save the processed video.
+*   `output_ext`: The file extension for the output video.
+
+---
+
+### 🔥 AudioFilter
+
+Apply a raw FFmpeg audio filtergraph to an audio stream.
+
+**Parameters:**
+
+*   `audio`: The file path to the input audio.
+*   `filtergraph`: The FFmpeg audio filtergraph string.
+*   `output_path`: The directory to save the processed audio.
+*   `output_ext`: The file extension for the output audio.
 
 ---
 
