@@ -20,8 +20,12 @@ from .nodes.videoTransition import *
 from .nodes.videoPlayback import *
 from .nodes.genericFFmpeg import *
 from .nodes.losslessRemux import *
+from .nodes.streamAnalysis import *
+from .nodes.keyframeAwareCutting import *
 
 NODE_CLASS_MAPPINGS = {
+    "StreamAnalysis": StreamAnalysis,
+    "KeyframeAwareCutting": KeyframeAwareCutting,
     "LosslessRemux": LosslessRemux,
     "GenericFFmpeg": GenericFFmpeg,
     "Video2Frames": Video2Frames,
@@ -48,6 +52,8 @@ NODE_CLASS_MAPPINGS = {
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "StreamAnalysis": "🔥StreamAnalysis",
+    "KeyframeAwareCutting": "🔥KeyframeAwareCutting",
     "LosslessRemux": "🔥LosslessRemux",
     "GenericFFmpeg": "🔥GenericFFmpeg",
     "Video2Frames": "🔥Video2Frames",
