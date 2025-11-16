@@ -323,7 +323,7 @@ def validate_time_format(time_str):
     Returns:
         bool: True if the time string is valid, False otherwise.
     """
-    pattern = r'^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|\d{1,2})$'
+    pattern = r'^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$'
     return bool(re.match(pattern, time_str))
 
 def get_video_files(directory):

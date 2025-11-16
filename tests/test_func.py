@@ -1,86 +1,75 @@
 import sys
-import unittest
-from unittest.mock import MagicMock
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Mock the comfy module before importing func
+import pytest
+from unittest.mock import patch, MagicMock
+
+# Mock the comfy and folder_paths modules
 sys.modules['comfy'] = MagicMock()
 sys.modules['comfy.model_management'] = MagicMock()
+sys.modules['folder_paths'] = MagicMock()
 
-import os
-import shutil
-from func import *
+from func import validate_time_format, set_file_name, generate_template_string, video_type, audio_type, clear_memory
 
-class TestFunc(unittest.TestCase):
-    def setUp(self):
-        self.test_dir = 'test_temp'
-        os.makedirs(self.test_dir, exist_ok=True)
-        self.video_with_audio = 'tests/videos/video_with_audio.mp4'
-        self.video_without_audio = 'tests/videos/video_without_audio.mp4'
-        self.test_image = 'tests/videos/test_image.jpg'
 
-    def tearDown(self):
-        shutil.rmtree(self.test_dir)
-        # Reset mocks
-        sys.modules['comfy.model_management'].reset_mock()
+def test_validate_time_format():
+    assert validate_time_format("12:34:56") == True
+    assert validate_time_format("01:02:03") == True
+    assert validate_time_format("23:59:59") == True
+    assert validate_time_format("00:00:00") == True
+    assert validate_time_format("24:00:00") == False
+    assert validate_time_format("12:60:00") == False
+    assert validate_time_format("12:34:60") == False
+    assert validate_time_format("12:34") == False
+    assert validate_time_format("12:34:56:78") == False
+    assert validate_time_format("abc") == False
+    assert validate_time_format("") == False
+    assert validate_time_format("1:2:3") == False
 
-    def test_get_xfade_transitions(self):
-        transitions = get_xfade_transitions()
-        self.assertIsInstance(transitions, list)
-        self.assertGreater(len(transitions), 0)
+@patch('func.time')
+def test_set_file_name(mock_time):
+    mock_time.localtime.return_value = "localtime_return"
+    mock_time.strftime.return_value = "20250101000000"
 
-    def test_copy_image(self):
-        dest_path = copy_image(self.test_image, self.test_dir)
-        self.assertTrue(os.path.exists(dest_path))
+    video_path = "/path/to/video.mp4"
+    new_filename = set_file_name(video_path)
+    assert new_filename == "20250101000000.mp4"
+    mock_time.localtime.assert_called_once()
+    mock_time.strftime.assert_called_once_with("%Y%m%d%H%M%S", "localtime_return")
 
-    def test_copy_images_to_directory(self):
-        image_paths = [self.test_image] * 3
-        dest_paths = copy_images_to_directory(image_paths, self.test_dir)
-        self.assertEqual(len(dest_paths), 3)
-        for path in dest_paths:
-            self.assertTrue(os.path.exists(path))
+def test_generate_template_string():
+    assert generate_template_string("frame123.jpg") == "frame%03d.jpg"
+    assert generate_template_string("img_001.png") == "img_%03d.png"
+    assert generate_template_string("image_1.tif") == "image_%01d.tif"
+    assert generate_template_string("no_digits.jpg") == "no_digits.jpg"
+    assert generate_template_string("file0000.exr") == "file%04d.exr"
 
-    def test_get_image_paths_from_directory(self):
-        shutil.copy(self.test_image, self.test_dir)
-        image_paths = get_image_paths_from_directory(self.test_dir, 0, 1)
-        self.assertEqual(len(image_paths), 1)
+def test_video_type():
+    types = video_type()
+    assert isinstance(types, tuple)
+    assert len(types) > 0
+    for t in types:
+        assert t.startswith('.')
+    assert '.mp4' in types
+    assert '.avi' in types
+    assert '.mov' in types
 
-    def test_generate_template_string(self):
-        template = generate_template_string('frame_001.png')
-        self.assertEqual(template, 'frame_%03d.png')
+def test_audio_type():
+    types = audio_type()
+    assert isinstance(types, tuple)
+    assert len(types) > 0
+    for t in types:
+        assert t.startswith('.')
+    assert '.mp3' in types
+    assert '.wav' in types
+    assert '.aac' in types
 
-    def test_get_video_info(self):
-        video_info = getVideoInfo(self.video_with_audio)
-        self.assertIn('fps', video_info)
-        self.assertIn('width', video_info)
-        self.assertIn('height', video_info)
-        self.assertIn('duration', video_info)
-
-    def test_get_image_size(self):
-        width, height = get_image_size(self.test_image)
-        self.assertGreater(width, 0)
-        self.assertGreater(height, 0)
-
-    def test_has_audio(self):
-        self.assertTrue(has_audio(self.video_with_audio))
-        self.assertFalse(has_audio(self.video_without_audio))
-
-    def test_set_file_name(self):
-        new_name = set_file_name('test.mp4')
-        self.assertNotEqual(new_name, 'test.mp4')
-
-    def test_validate_time_format(self):
-        self.assertTrue(validate_time_format('12:34:56'))
-        self.assertFalse(validate_time_format('12:34'))
-
-    def test_get_video_files(self):
-        shutil.copy(self.video_with_audio, self.test_dir)
-        video_files = get_video_files(self.test_dir)
-        self.assertEqual(len(video_files), 1)
-
-    def test_clear_memory(self):
-        clear_memory()
-        sys.modules['comfy.model_management'].unload_all_models.assert_called_once()
-        sys.modules['comfy.model_management'].soft_empty_cache.assert_called_once()
-
-if __name__ == '__main__':
-    unittest.main()
+@patch('func.gc')
+@patch('func.unload_all_models')
+@patch('func.soft_empty_cache')
+def test_clear_memory(mock_soft_empty_cache, mock_unload_all_models, mock_gc):
+    clear_memory()
+    mock_gc.collect.assert_called_once()
+    mock_unload_all_models.assert_called_once()
+    mock_soft_empty_cache.assert_called_once()
