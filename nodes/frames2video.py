@@ -45,11 +45,13 @@ class Frames2Video:
         temp_audio_file = None
 
         try:
-            output_path = os.path.abspath(output_path).strip()
-            if not os.path.isdir(output_path):
-                raise ValueError(f"output_path: {output_path} is not a directory")
+            output_dir = os.path.abspath(output_path).strip()
+            # Ensure the output directory exists
+            if not os.path.isdir(output_dir):
+                os.makedirs(output_dir, exist_ok=True)
+                print(f"📁 Created output directory: {output_dir}")
 
-            output_path = os.path.join(output_path, f"{video_name}.mp4")
+            output_file_path = os.path.join(output_dir, f"{video_name}.mp4")
 
             if images is not None:
                 temp_frame_dir = tempfile.mkdtemp()
@@ -89,7 +91,7 @@ class Frames2Video:
             if audio_source:
                 common_args.extend(['-i', audio_source])
             
-            common_args.extend(['-vf', f'scale={width}:{height}', '-pix_fmt', 'yuv420p', '-shortest', '-y', str(output_path)])
+            common_args.extend(['-vf', f'scale={width}:{height}', '-pix_fmt', 'yuv420p', '-shortest', '-y', str(output_file_path)])
 
             if device == "CPU":
                 cmd = ['ffmpeg'] + common_args + ['-c:v', 'libx264', '-crf', '28']
@@ -102,7 +104,7 @@ class Frames2Video:
             else:
                 print(result.stdout)
 
-            return (frame_source if images is None else "in-memory images", output_path)
+            return (frame_source if images is None else "in-memory images", output_file_path)
 
         finally:
             if temp_frame_dir:
