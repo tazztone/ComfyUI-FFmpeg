@@ -1,7 +1,7 @@
 <h1 align="center">ComfyUI-FFmpeg</h1>
 
 <p align="center">
-    <br> <font size=5>中文 | <a href="README_EN.md">English</a></font>
+    <br> <font size=5>中文 | <a href="README.md">English</a></font>
 </p>
 
 ## 介绍
@@ -290,6 +290,59 @@
 *   `video_path`: 输入视频的文件路径。
 *   `output_path`: 保存倒放视频的目录。
 *   `reverse_audio`: 是否也倒放音频。
+
+---
+
+### 🔥 Filtergraph
+
+对视频应用原始 FFmpeg 滤镜图。
+
+**参数：**
+
+*   `video`: 输入视频的文件路径。
+*   `filtergraph`: FFmpeg 滤镜图字符串。
+*   `output_path`: 保存处理后视频的目录。
+*   `output_ext`: 输出视频的文件扩展名。
+
+---
+
+### 🔥 StreamMapping
+
+对视频应用流映射。
+
+**参数：**
+
+*   `video`: 输入视频的文件路径。
+*   `maps`: FFmpeg 流映射字符串。
+*   `output_path`: 保存处理后视频的目录。
+*   `output_ext`: 输出视频的文件扩展名。
+
+---
+
+### 🔥 Subtitle
+
+处理字幕的节点。
+
+**参数：**
+
+*   `video`: 输入视频的文件路径。
+*   `subtitle_file`: 字幕文件的文件路径。
+*   `action`: 要执行的字幕操作（`burn`、`add` 或 `extract`）。
+*   `output_path`: 保存处理后视频的目录。
+*   `output_ext`: 输出视频的文件扩展名。
+
+---
+
+### 🔥 AudioFilter
+
+对音频流应用原始 FFmpeg 音频滤镜图。
+
+**参数：**
+
+*   `audio`: 输入音频的文件路径。
+*   `filtergraph`: FFmpeg 音频滤镜图字符串。
+*   `output_path`: 保存处理后音频的目录。
+*   `output_ext`: 输出音频的文件扩展名。
 
 ---
 

@@ -22,8 +22,16 @@ from .nodes.genericFFmpeg import *
 from .nodes.losslessRemux import *
 from .nodes.streamAnalysis import *
 from .nodes.keyframeAwareCutting import *
+from .nodes.filtergraph import *
+from .nodes.streamMapping import *
+from .nodes.subtitle import *
+from .nodes.audioFilter import *
 
 NODE_CLASS_MAPPINGS = {
+    "Filtergraph": Filtergraph,
+    "StreamMapping": StreamMapping,
+    "Subtitle": Subtitle,
+    "AudioFilter": AudioFilter,
     "StreamAnalysis": StreamAnalysis,
     "KeyframeAwareCutting": KeyframeAwareCutting,
     "LosslessRemux": LosslessRemux,
@@ -52,6 +60,10 @@ NODE_CLASS_MAPPINGS = {
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "Filtergraph": "🔥Filtergraph",
+    "StreamMapping": "🔥StreamMapping",
+    "Subtitle": "🔥Subtitle",
+    "AudioFilter": "🔥AudioFilter",
     "StreamAnalysis": "🔥StreamAnalysis",
     "KeyframeAwareCutting": "🔥KeyframeAwareCutting",
     "LosslessRemux": "🔥LosslessRemux",
