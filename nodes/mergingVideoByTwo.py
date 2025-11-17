@@ -23,11 +23,26 @@ class MergingVideoByTwo:
         """
         return {
             "required": { 
-                "video1_path": ("STRING", {"default":"C:/Users/Desktop/video1.mp4",}),
-                "video2_path": ("STRING", {"default":"C:/Users/Desktop/video2.mp4",}),
-                "device": (["cpu","cuda"], {"default":device,}),
-                "resolution_reference": (["video1","video2"], {"default":"video1",}),
-                "output_path": ("STRING", {"default": "C:/Users/Desktop/output"}),
+                "video1_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video1.mp4",
+                    "tooltip": "Path to the first video file."
+                }),
+                "video2_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video2.mp4",
+                    "tooltip": "Path to the second video file."
+                }),
+                "device": (["cpu","cuda"], {
+                    "default":device,
+                    "tooltip": "Device to use for encoding. 'cuda' is faster if available."
+                }),
+                "resolution_reference": (["video1","video2"], {
+                    "default":"video1",
+                    "tooltip": "Which video to use as a reference for the output resolution."
+                }),
+                "output_path": ("STRING", {
+                    "default": "C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the merged video file."
+                }),
             },
         }
 

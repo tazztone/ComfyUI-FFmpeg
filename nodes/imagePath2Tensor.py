@@ -30,7 +30,9 @@ class ImagePath2Tensor:
         """
         return {
             "required": { 
-                "image_paths": (any_type,),
+                "image_paths": (any_type, {
+                    "tooltip": "A list of image file paths to be converted to a tensor."
+                }),
             },
         }
 

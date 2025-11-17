@@ -21,10 +21,22 @@ class SingleCuttingVideo:
         """
         return {
             "required": { 
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output",}),
-                "start_time": ("STRING", {"default":"00:00:00",}),
-                "end_time": ("STRING", {"default":"00:00:10",}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to be cut."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the output video clip."
+                }),
+                "start_time": ("STRING", {
+                    "default":"00:00:00",
+                    "tooltip": "Start time of the clip in HH:MM:SS format."
+                }),
+                "end_time": ("STRING", {
+                    "default":"00:00:10",
+                    "tooltip": "End time of the clip in HH:MM:SS format."
+                }),
             },
         }
 

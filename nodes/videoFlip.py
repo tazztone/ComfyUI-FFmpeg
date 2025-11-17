@@ -17,9 +17,18 @@ class VideoFlip:
         """
         return {
             "required": { 
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output",}),
-                "flip_type": (["horizontal","vertical","both"], {"default":"horizontal",}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to be flipped."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the flipped video file."
+                }),
+                "flip_type": (["horizontal","vertical","both"], {
+                    "default":"horizontal",
+                    "tooltip": "The direction to flip the video."
+                }),
             },
         }
 

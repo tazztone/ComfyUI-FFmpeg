@@ -25,15 +25,32 @@ class GenericFFmpeg:
         default_args = "-i {media_in_1} -c:v libx264 -preset slow -crf 22 -c:a copy {output_file}"
         return {
             "required": {
-                "ffmpeg_args": ("STRING", {"default": default_args, "multiline": True}),
-                "output_path": ("STRING", {"default": "output"}),
-                "output_ext": ("STRING", {"default": "mp4"}),
+                "ffmpeg_args": ("STRING", {
+                    "default": default_args, "multiline": True,
+                    "tooltip": "FFmpeg command arguments. Use placeholders like {media_in_1}, {media_in_2}, {image_in_1}, {audio_in_1}, and {output_file}."
+                }),
+                "output_path": ("STRING", {
+                    "default": "output",
+                    "tooltip": "Directory to save the output file."
+                }),
+                "output_ext": ("STRING", {
+                    "default": "mp4",
+                    "tooltip": "File extension for the output file (e.g., 'mp4', 'webm')."
+                }),
             },
             "optional": {
-                "media_in_1": ("STRING", {}),
-                "media_in_2": ("STRING", {}),
-                "images": ("IMAGE", {}),
-                "audio": ("AUDIO", {}),
+                "media_in_1": ("STRING", {
+                    "tooltip": "Path to the first input media file (for {media_in_1})."
+                }),
+                "media_in_2": ("STRING", {
+                    "tooltip": "Path to the second input media file (for {media_in_2})."
+                }),
+                "images": ("IMAGE", {
+                    "tooltip": "Image frames for the {image_in_1} placeholder (e.g., for creating a video from images)."
+                }),
+                "audio": ("AUDIO", {
+                    "tooltip": "Audio data for the {audio_in_1} placeholder."
+                }),
             }
         }
 

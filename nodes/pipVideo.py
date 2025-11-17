@@ -24,17 +24,50 @@ class PipVideo:
         """
         return {
             "required": { 
-                "video1_path": ("STRING", {"default":"C:/Users/Desktop/video1.mp4", "tooltip": "说明：画中画背景画面！"}),
-                "video2_path": ("STRING", {"default":"C:/Users/Desktop/video2.mp4", "tooltip": "说明：画中画前景画面！"}),
-                "device": (["cpu","cuda"], {"default":device,}),
-                "use_audio": (["video1","video2"], {"default":"video1", "tooltip": "说明：最终视频使用哪个视频的音轨！"}),
-                "use_duration": (["video1","video2"], {"default":"video2", "tooltip": "说明：使用哪个视频作为最终参考时长！"}),
-                "align_type":(["top-left","top-right", "bottom-left", "bottom-right", "center"], {"default":"center",}),
-                "pip_fg_zoom": ("FLOAT", { "default": 2.5, "min": 1, "max": 100, "step": 0.5, "tooltip": "说明：画中画背景缩放系数，越大前景画面越小，值为背景宽高的缩小倍数！"}),
-                "output_path": ("STRING", {"default": "C:/Users/Desktop/output"}),
-                "scale_and_crop": (["none","540*960", "960*540"], {"default": "none", "tooltip": "说明：缩放和裁剪比例！"}),  # 新增参数控制缩放裁剪
-                "fps": ("FLOAT", {"min": 0, "max": 60, "step": 0.1, "default": 30.0, "tooltip": "说明：画中画合并后的强制帧率，设置为0将使用video2的帧率，设置为1为将使用video2的帧率！"}),
-                "is_chromakey": ("BOOLEAN", { "default": False ,"label_on": "绿幕去背景", "label_off": "关闭绿幕透明", "tooltip": "说明：是否进行绿幕去背景！"}),  #是否画中画 绿幕透明
+                "video1_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video1.mp4",
+                    "tooltip": "Path to the background video file."
+                }),
+                "video2_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video2.mp4",
+                    "tooltip": "Path to the foreground video file (the picture-in-picture)."
+                }),
+                "device": (["cpu","cuda"], {
+                    "default":device,
+                    "tooltip": "Device to use for encoding. 'cuda' is faster if available."
+                }),
+                "use_audio": (["video1","video2"], {
+                    "default":"video1",
+                    "tooltip": "Which video's audio track to use in the final output."
+                }),
+                "use_duration": (["video1","video2"], {
+                    "default":"video2",
+                    "tooltip": "Which video's duration to use as the reference for the final output."
+                }),
+                "align_type":(["top-left","top-right", "bottom-left", "bottom-right", "center"], {
+                    "default":"center",
+                    "tooltip": "Position of the foreground video on the background video."
+                }),
+                "pip_fg_zoom": ("FLOAT", {
+                    "default": 2.5, "min": 1, "max": 100, "step": 0.5,
+                    "tooltip": "Zoom factor for the foreground video. A larger value makes the foreground video smaller."
+                }),
+                "output_path": ("STRING", {
+                    "default": "C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the output video file."
+                }),
+                "scale_and_crop": (["none","540*960", "960*540"], {
+                    "default": "none",
+                    "tooltip": "Scaling and cropping options for the background video."
+                }),
+                "fps": ("FLOAT", {
+                    "min": 0, "max": 60, "step": 0.1, "default": 30.0,
+                    "tooltip": "Frames per second for the output video. Set to 0 to use video1's FPS, or 1 to use video2's FPS."
+                }),
+                "is_chromakey": ("BOOLEAN", {
+                    "default": False ,"label_on": "Enable Chroma Key", "label_off": "Disable Chroma Key",
+                    "tooltip": "Enable green screen removal for the foreground video."
+                }),
             },
         }
 

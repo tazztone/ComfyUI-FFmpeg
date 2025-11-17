@@ -21,16 +21,38 @@ class Frames2Video:
         """
         return {
             "required": {
-                "fps": ("FLOAT", {"default": 30, "min": 1, "max": 120, "step": 1, "display": "number"}),
-                "video_name": ("STRING", {"default": "new_video"}),
-                "output_path": ("STRING", {"default": "C:/Users/Desktop/output"}),
-                "device": (["CPU", "GPU"], {"default": "CPU",}),
+                "fps": ("FLOAT", {
+                    "default": 30, "min": 1, "max": 120, "step": 1, "display": "number",
+                    "tooltip": "Frames per second for the output video."
+                }),
+                "video_name": ("STRING", {
+                    "default": "new_video",
+                    "tooltip": "Name of the output video file (without extension)."
+                }),
+                "output_path": ("STRING", {
+                    "default": "C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the output video file."
+                }),
+                "device": (["CPU", "GPU"], {
+                    "default": "CPU",
+                    "tooltip": "Device to use for video encoding. GPU is faster if available."
+                }),
             },
             "optional": {
-                "images": ("IMAGE", {}),
-                "audio": ("AUDIO", {}),
-                "frame_path": ("STRING", {"default": ""}),
-                "audio_path": ("STRING", {"default": ""}),
+                "images": ("IMAGE", {
+                    "tooltip": "Image frames to be converted to video."
+                }),
+                "audio": ("AUDIO", {
+                    "tooltip": "Audio to be added to the video."
+                }),
+                "frame_path": ("STRING", {
+                    "default": "",
+                    "tooltip": "Path to a directory of image frames. Used if 'images' is not provided."
+                }),
+                "audio_path": ("STRING", {
+                    "default": "",
+                    "tooltip": "Path to an audio file. Used if 'audio' is not provided."
+                }),
             }
         }
 

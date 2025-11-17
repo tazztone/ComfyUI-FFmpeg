@@ -17,11 +17,25 @@ class Subtitle:
         """
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "subtitle_file": ("STRING", {"default": "subtitle.srt"}),
-                "action": (["burn", "add", "extract"],),
-                "output_path": ("STRING", {"default": "output"}),
-                "output_ext": ("STRING", {"default": "mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "Path to the input video file."
+                }),
+                "subtitle_file": ("STRING", {
+                    "default": "subtitle.srt",
+                    "tooltip": "Path to the subtitle file (e.g., .srt, .ass)."
+                }),
+                "action": (["burn", "add", "extract"], {
+                    "tooltip": "'burn' permanently adds subtitles to the video, 'add' includes them as a separate track, and 'extract' saves the subtitles from the video."
+                }),
+                "output_path": ("STRING", {
+                    "default": "output",
+                    "tooltip": "The directory where the output file will be saved."
+                }),
+                "output_ext": ("STRING", {
+                    "default": "mp4",
+                    "tooltip": "The file extension for the output video file."
+                }),
             },
         }
 

@@ -17,12 +17,22 @@ class LosslessRemux:
         """
         return {
             "required": {
-                "output_path": ("STRING", {"default": "output"}),
-                "output_format": (["mp4", "mkv", "mov", "webm"],),
+                "output_path": ("STRING", {
+                    "default": "output",
+                    "tooltip": "Directory to save the remuxed media file."
+                }),
+                "output_format": (["mp4", "mkv", "mov", "webm"], {
+                    "tooltip": "The container format for the output file."
+                }),
             },
             "optional": {
-                "media_path": ("STRING", {"default": ""}),
-                "media_in": ("VHS_FILENAMES",),
+                "media_path": ("STRING", {
+                    "default": "",
+                    "tooltip": "Path to the media file to be remuxed. Used if 'media_in' is not provided."
+                }),
+                "media_in": ("VHS_FILENAMES", {
+                    "tooltip": "VHS_FILENAMES tuple from an upstream node. Takes priority over 'media_path'."
+                }),
             }
         }
 

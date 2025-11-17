@@ -20,9 +20,18 @@ class MultiCuttingVideo:
         """
         return {
             "required": { 
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output",}),
-                "segment_time": ("INT",{"default":10,"min":1,}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to be cut into multiple segments."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the output video segments."
+                }),
+                "segment_time": ("INT",{
+                    "default":10,"min":1,
+                    "tooltip": "Duration of each segment in seconds."
+                }),
             },
         }
 

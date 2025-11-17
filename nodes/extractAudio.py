@@ -23,12 +23,24 @@ class ExtractAudio:
         """
         return {
             "required": {
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to extract audio from."
+                }),
             },
             "optional": {
-                "output_format": (["wav", "mp3", "flac"], {"default": "wav"}),
-                "save_to_disk": ("BOOLEAN", {"default": False}),
-                "output_path": ("STRING", {"default":""}),
+                "output_format": (["wav", "mp3", "flac"], {
+                    "default": "wav",
+                    "tooltip": "The format to save the extracted audio in."
+                }),
+                "save_to_disk": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Whether to save the extracted audio to disk as a permanent file."
+                }),
+                "output_path": ("STRING", {
+                    "default":"",
+                    "tooltip": "The directory to save the extracted audio file to. If not provided, the default ComfyUI output directory will be used."
+                }),
             }
         }
 

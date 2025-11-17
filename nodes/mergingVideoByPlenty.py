@@ -22,8 +22,14 @@ class MergingVideoByPlenty:
         """
         return {
             "required": { 
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/",}),
-                "output_path": ("STRING", {"default": "C:/Users/Desktop/output"}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/",
+                    "tooltip": "Directory containing the video files to be merged."
+                }),
+                "output_path": ("STRING", {
+                    "default": "C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the merged video file."
+                }),
             },
         }
 

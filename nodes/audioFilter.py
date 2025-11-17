@@ -17,10 +17,22 @@ class AudioFilter:
         """
         return {
             "required": {
-                "audio": ("STRING", {"default": "audio.mp3"}),
-                "filtergraph": ("STRING", {"default": "loudnorm,acompressor", "multiline": True}),
-                "output_path": ("STRING", {"default": "output"}),
-                "output_ext": ("STRING", {"default": "mp3"}),
+                "audio": ("STRING", {
+                    "default": "audio.mp3",
+                    "tooltip": "Path to the input audio file."
+                }),
+                "filtergraph": ("STRING", {
+                    "default": "loudnorm,acompressor", "multiline": True,
+                    "tooltip": "The FFmpeg audio filtergraph to apply. E.g., 'loudnorm,acompressor'. See FFmpeg documentation for more details."
+                }),
+                "output_path": ("STRING", {
+                    "default": "output",
+                    "tooltip": "The directory where the output audio file will be saved."
+                }),
+                "output_ext": ("STRING", {
+                    "default": "mp3",
+                    "tooltip": "The file extension for the output audio file (e.g., 'mp3', 'wav')."
+                }),
             },
         }
 

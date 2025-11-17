@@ -17,10 +17,22 @@ class KeyframeAwareCutting:
         """
         return {
             "required": {
-                "video_path": ("STRING", {"default": "C:/Users/Desktop/video.mp4"}),
-                "start_time": ("STRING", {"default": "00:00:00"}),
-                "end_time": ("STRING", {"default": "00:00:10"}),
-                "output_path": ("STRING", {"default": "C:/Users/Desktop/output"}),
+                "video_path": ("STRING", {
+                    "default": "C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to be cut."
+                }),
+                "start_time": ("STRING", {
+                    "default": "00:00:00",
+                    "tooltip": "Start time for the cut (HH:MM:SS). The cut will snap to the nearest keyframe."
+                }),
+                "end_time": ("STRING", {
+                    "default": "00:00:10",
+                    "tooltip": "End time for the cut (HH:MM:SS). The cut will snap to the nearest keyframe."
+                }),
+                "output_path": ("STRING", {
+                    "default": "C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the output video file."
+                }),
             },
         }
 
