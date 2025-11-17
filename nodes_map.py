@@ -21,7 +21,7 @@ from .nodes.videoPlayback import *
 from .nodes.genericFFmpeg import *
 from .nodes.losslessRemux import *
 from .nodes.streamAnalysis import *
-from .nodes.keyframeAwareCutting import *
+from .nodes.losslesscut import *
 from .nodes.filtergraph import *
 from .nodes.streamMapping import *
 from .nodes.subtitle import *
@@ -33,7 +33,7 @@ NODE_CLASS_MAPPINGS = {
     "Subtitle": Subtitle,
     "AudioFilter": AudioFilter,
     "StreamAnalysis": StreamAnalysis,
-    "KeyframeAwareCutting": KeyframeAwareCutting,
+    "LosslessCut": LosslessCut,
     "LosslessRemux": LosslessRemux,
     "GenericFFmpeg": GenericFFmpeg,
     "Video2Frames": Video2Frames,
@@ -65,7 +65,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Subtitle": "🔥Subtitle",
     "AudioFilter": "🔥AudioFilter",
     "StreamAnalysis": "🔥StreamAnalysis",
-    "KeyframeAwareCutting": "🔥KeyframeAwareCutting",
+    "LosslessCut": "🔥LosslessCut",
     "LosslessRemux": "🔥LosslessRemux",
     "GenericFFmpeg": "🔥GenericFFmpeg",
     "Video2Frames": "🔥Video2Frames",
