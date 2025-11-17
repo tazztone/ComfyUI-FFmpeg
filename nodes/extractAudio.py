@@ -5,107 +5,41 @@ import torchaudio
 import shutil
 from ..func import video_type
 
+import os
+import subprocess
+import tempfile
+import torchaudio
+import shutil
+import folder_paths
+
 class ExtractAudio:
-    """A node to extract audio from a video file.
-
-    This node takes a video file and extracts its audio track, saving it as a
-    separate audio file in the specified format.
     """
-    def __init__(self):
-        pass
-
+    A node to extract audio from a video file.
+    This node takes a video file and extracts its audio track, saving it as a separate audio file.
+    """
     @classmethod
     def INPUT_TYPES(cls):
-        """Specifies the input types for the node.
-
-        Returns:
-            dict: A dictionary containing the input types.
-        """
         return {
             "required": {
-                "video_path": ("STRING", {
-                    "default":"C:/Users/Desktop/video.mp4",
-                    "tooltip": "Path to the video file to extract audio from."
-                }),
+                "video": ("STRING", {"default": "video.mp4"}),
+                "filename": ("STRING", {"default": "extracted_audio.wav"}),
             },
-            "optional": {
-                "output_format": (["wav", "mp3", "flac"], {
-                    "default": "wav",
-                    "tooltip": "The format to save the extracted audio in."
-                }),
-                "save_to_disk": ("BOOLEAN", {
-                    "default": False,
-                    "tooltip": "Whether to save the extracted audio to disk as a permanent file."
-                }),
-                "output_path": ("STRING", {
-                    "default":"",
-                    "tooltip": "The directory to save the extracted audio file to. If not provided, the default ComfyUI output directory will be used."
-                }),
-            }
         }
 
     RETURN_TYPES = ("AUDIO", "STRING")
-    RETURN_NAMES = ("audio", "audio_path")
     FUNCTION = "extract_audio"
-    OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg"
-  
-    def extract_audio(self, video_path, output_format="wav", save_to_disk=False, output_path=""):
-        try:
-            video_path = os.path.abspath(video_path).strip()
+    CATEGORY = "🔥FFmpeg/Audio"
 
-            if not video_path.lower().endswith(video_type()):
-                raise ValueError("video_path："+video_path+"不是视频文件（video_path:"+video_path+" is not a video file）")
-            if not os.path.isfile(video_path):
-                raise ValueError("video_path："+video_path+"不存在（video_path:"+video_path+" does not exist）")
-            
-            temp_audio = tempfile.mktemp(suffix=f'.{output_format}')
+    def extract_audio(self, video, filename):
+        if not os.path.exists(video):
+            raise FileNotFoundError(f"Video file not found: {video}")
 
-            if output_format == "mp3":
-                command = [
-                    'ffmpeg', '-i', video_path,
-                    '-vn', '-c:a', 'libmp3lame', '-q:a','2',
-                    temp_audio,
-                ]
-            elif output_format == "wav":
-                command = [
-                    'ffmpeg', '-i', video_path,
-                    '-vn','-c:a','pcm_s16le',
-                    temp_audio,
-                ]
-            elif output_format == "flac":
-                command = [
-                    'ffmpeg', '-i', video_path,
-                    '-vn','-c:a','flac',
-                    temp_audio,
-                ]
-            else:
-                raise ValueError(f"Unsupported audio format: {output_format}")
-            
-            result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            if result.returncode != 0:
-                 print(f"Error: {result.stderr.decode('utf-8')}")
-                 raise ValueError(f"Error: {result.stderr.decode('utf-8')}")
-            else:
-                print(result.stdout)
+        output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
-            waveform, sample_rate = torchaudio.load(temp_audio)
+        command = ['ffmpeg', '-y', '-i', video, '-vn', '-acodec', 'pcm_s16le', '-ar', '44100', '-ac', '2', output_path]
+        subprocess.run(command, check=True)
 
-            audio_data = {
-                'waveform': waveform.unsqueeze(0),
-                'sample_rate': sample_rate
-            }
+        waveform, sample_rate = torchaudio.load(output_path)
+        audio_data = {'waveform': waveform.unsqueeze(0), 'sample_rate': sample_rate}
 
-            if save_to_disk:
-                if not output_path or not os.path.isdir(output_path):
-                    from folder_paths import get_output_directory
-                    output_path = get_output_directory()
-
-                file_name = os.path.splitext(os.path.basename(video_path))[0]
-                final_path = os.path.join(output_path, f"{file_name}.{output_format}")
-                shutil.move(temp_audio, final_path)
-                return (audio_data, final_path)
-            else:
-                return (audio_data, temp_audio)
-        except Exception as e:
-            raise ValueError(e)
+        return (audio_data, output_path)

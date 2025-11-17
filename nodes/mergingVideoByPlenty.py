@@ -1,97 +1,55 @@
 import os
 import subprocess
-import torch
-import time
-from ..func import get_video_files,set_file_name
+import folder_paths
 
-class MergingVideoByPlenty:
-    """A node to merge multiple video files from a directory into a single video.
-
-    This node concatenates all video files in a specified directory into a
-    single output video file.
+class MergeVideoBatch:
     """
-    def __init__(self):
-        pass
-
+    A node to merge multiple video files from a directory into a single video.
+    This node concatenates all video files in a specified directory into a single output video file.
+    """
     @classmethod
     def INPUT_TYPES(cls):
-        """Specifies the input types for the node.
-
-        Returns:
-            dict: A dictionary containing the input types.
-        """
         return {
-            "required": { 
-                "video_path": ("STRING", {
-                    "default":"C:/Users/Desktop/",
-                    "tooltip": "Directory containing the video files to be merged."
-                }),
-                "output_path": ("STRING", {
-                    "default": "C:/Users/Desktop/output",
-                    "tooltip": "Directory to save the merged video file."
-                }),
+            "required": {
+                "video_directory": ("STRING", {"default": "videos"}),
+                "resolution": (["720p", "1080p", "4K"], {"default": "1080p"}),
+                "filename": ("STRING", {"default": "merged_video_batch.mp4"}),
             },
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("video_complete_path",)
-    FUNCTION = "merging_video_by_plenty"
-    OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg"
-  
-    def merging_video_by_plenty(self, video_path, output_path):
-        """Merges multiple video files from a directory.
+    FUNCTION = "merge_video_batch"
+    CATEGORY = "🔥FFmpeg/Editing"
 
-        This method uses FFmpeg's concat demuxer to merge video files.
+    def merge_video_batch(self, video_directory, resolution, filename):
+        if not os.path.isdir(video_directory):
+            raise FileNotFoundError(f"Video directory not found: {video_directory}")
 
-        Args:
-            video_path (str): The path to the directory containing the video
-                files.
-            output_path (str): The directory to save the output video file.
+        videos = sorted([os.path.join(video_directory, f) for f in os.listdir(video_directory) if f.endswith(".mp4")])
+        if not videos:
+            raise ValueError("No MP4 videos found in the directory.")
 
-        Returns:
-            tuple: A tuple containing the path to the output video file.
-        """
-        try:
-            video_path = os.path.abspath(video_path).strip()
-            output_path = os.path.abspath(output_path).strip()
+        output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
-            #判断output_path是否是一个目录
-            if not os.path.isdir(video_path):
-                raise ValueError("video_path："+video_path+"不是目录（video_path:"+video_path+" is not a directory）")
-            if not os.path.isdir(output_path):
-                raise ValueError("output_path："+output_path+"不是目录（output_path:"+output_path+" is not a directory）")
-            
-            video_files = get_video_files(video_path)
+        resolution_map = {
+            "720p": "1280:720",
+            "1080p": "1920:1080",
+            "4K": "3840:2160",
+        }
 
-            if len(video_files) == 0:
-                raise ValueError("video_path："+video_path+"目录下没有视频文件（No video files found in the video_path directory）")
-            
-            filelist_file_name = os.path.join(output_path,'filelist.txt')
-            
-            with open(filelist_file_name, 'w') as f:
-                for video in video_files:
-                    f.write(f"file '{video}'\n")
-            
-            file_name = set_file_name(video_files[0])
-            output_path = os.path.join(output_path, file_name)
-            
-            command = [
-                'ffmpeg', '-f', 'concat','-safe','0','-i',filelist_file_name,
-                '-c','copy',output_path,  # 输出视频路径
-            ]
-            
-            # 执行命令并检查错误
-            result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            # 检查返回码
-            if result.returncode != 0:
-                # 如果有错误，输出错误信息
-                 print(f"Error: {result.stderr.decode('utf-8')}")
-                 raise ValueError(f"Error: {result.stderr.decode('utf-8')}")
-            else:
-                # 输出标准输出信息
-                print(result.stdout)
+        inputs = [item for video in videos for item in ['-i', video]]
+        filter_complex = "".join([
+            f"[{i}:v]scale={resolution_map[resolution]}:force_original_aspect_ratio=decrease,pad={resolution_map[resolution]}:(ow-iw)/2:(oh-ih)/2,setsar=1[v{i}];"
+            for i in range(len(videos))
+        ])
+        filter_complex += "".join([f"[v{i}][{i}:a?]" for i in range(len(videos))]) + f"concat=n={len(videos)}:v=1:a=1[v][a]"
 
-            return (output_path,)
-        except Exception as e:
-            raise ValueError(e)
+        command = [
+            'ffmpeg', '-y', *inputs,
+            '-filter_complex', filter_complex,
+            '-map', '[v]', '-map', '[a]',
+            output_path
+        ]
+
+        subprocess.run(command, check=True)
+        return (output_path,)

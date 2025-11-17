@@ -11,8 +11,8 @@ sys.modules['comfy'] = MagicMock()
 sys.modules['comfy.model_management'] = MagicMock()
 sys.modules['folder_paths'] = MagicMock()
 
-from nodes.streamAnalysis import StreamAnalysis
-from nodes.keyframeAwareCutting import KeyframeAwareCutting
+from nodes.streamAnalysis import AnalyzeStreams
+from nodes.keyframeAwareCutting import KeyframeTrim
 
 # Mock video path for testing
 test_video_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'videos', 'test.mp4'))
@@ -31,18 +31,18 @@ def create_test_video():
     os.remove(test_video_path)
 
 def test_stream_analysis(create_test_video):
-    """Test the StreamAnalysis node."""
-    node = StreamAnalysis()
+    """Test the AnalyzeStreams node."""
+    node = AnalyzeStreams()
     result = node.analyze_streams(test_video_path)
     assert isinstance(result, tuple)
     assert isinstance(result[0], str)
     # You can add more assertions here to validate the content of the stream info
 
 def test_keyframe_aware_cutting(create_test_video):
-    """Test the KeyframeAwareCutting node."""
-    node = KeyframeAwareCutting()
+    """Test the KeyframeTrim node."""
+    node = KeyframeTrim()
     output_path = os.path.dirname(test_video_path)
-    result = node.cut_video(test_video_path, "00:00:00", "00:00:01", output_path)
+    result = node.keyframe_trim(test_video_path, "00:00:00", "00:00:01", "test_output.mp4")
     assert isinstance(result, tuple)
     assert isinstance(result[0], str)
     assert os.path.isfile(result[0])

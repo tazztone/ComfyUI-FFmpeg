@@ -8,130 +8,76 @@ from PIL import Image
 import numpy as np
 from ..func import get_image_size, generate_template_string
 
-class Frames2Video:
-    def __init__(self):
-        pass
+import os
+import subprocess
+import tempfile
+import shutil
+import torch
+import torchaudio
+from PIL import Image
+import numpy as np
+import folder_paths
 
+class Frames2Video:
     @classmethod
     def INPUT_TYPES(s):
-        """Specifies the input types for the node.
-
-        Returns:
-            dict: A dictionary containing the input types.
-        """
         return {
             "required": {
-                "fps": ("FLOAT", {
-                    "default": 30, "min": 1, "max": 120, "step": 1, "display": "number",
-                    "tooltip": "Frames per second for the output video."
-                }),
-                "video_name": ("STRING", {
-                    "default": "new_video",
-                    "tooltip": "Name of the output video file (without extension)."
-                }),
-                "output_path": ("STRING", {
-                    "default": "C:/Users/Desktop/output",
-                    "tooltip": "Directory to save the output video file."
-                }),
-                "device": (["CPU", "GPU"], {
-                    "default": "CPU",
-                    "tooltip": "Device to use for video encoding. GPU is faster if available."
-                }),
+                "images": ("IMAGE",),
+                "fps": ("INT", {"default": 24, "min": 1}),
+                "codec": (["h264_cpu", "h265_cpu", "h264_nvidia", "h265_nvidia"],),
+                "crf": ("INT", {"default": 23, "min": 0, "max": 51}),
+                "preset": (["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"],),
+                "filename": ("STRING", {"default": "output.mp4"}),
             },
             "optional": {
-                "images": ("IMAGE", {
-                    "tooltip": "Image frames to be converted to video."
-                }),
-                "audio": ("AUDIO", {
-                    "tooltip": "Audio to be added to the video."
-                }),
-                "frame_path": ("STRING", {
-                    "default": "",
-                    "tooltip": "Path to a directory of image frames. Used if 'images' is not provided."
-                }),
-                "audio_path": ("STRING", {
-                    "default": "",
-                    "tooltip": "Path to an audio file. Used if 'audio' is not provided."
-                }),
+                "audio": ("AUDIO",),
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING",)
-    RETURN_NAMES = ("frame_path", "output_path",)
-    FUNCTION = "frames2video"
-    OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg"
+    RETURN_TYPES = ("STRING",)
+    FUNCTION = "frames_to_video"
+    CATEGORY = "🔥FFmpeg/Conversion"
 
-    def frames2video(self, fps, video_name, output_path, device, images=None, audio=None, frame_path="", audio_path=""):
-        temp_frame_dir = None
-        temp_audio_file = None
+    def frames_to_video(self, images, fps, codec, crf, preset, filename, audio=None):
+        temp_dir = tempfile.mkdtemp()
+        output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
-        try:
-            output_dir = os.path.abspath(output_path).strip()
-            # Ensure the output directory exists
-            if not os.path.isdir(output_dir):
-                os.makedirs(output_dir, exist_ok=True)
-                print(f"📁 Created output directory: {output_dir}")
+        for i, img_tensor in enumerate(images):
+            img_np = (img_tensor.cpu().numpy() * 255).astype(np.uint8)
+            Image.fromarray(img_np).save(os.path.join(temp_dir, f"{i:05d}.png"))
 
-            output_file_path = os.path.join(output_dir, f"{video_name}.mp4")
+        cmd = ['ffmpeg', '-y', '-framerate', str(fps), '-i', os.path.join(temp_dir, '%05d.png')]
 
-            if images is not None:
-                temp_frame_dir = tempfile.mkdtemp()
-                for i, img in enumerate(images):
-                    img_np = (img.cpu().numpy() * 255).astype(np.uint8)
-                    pil_img = Image.fromarray(img_np)
-                    pil_img.save(os.path.join(temp_frame_dir, f"{i:05d}.png"))
-                frame_source = temp_frame_dir
-                width, height = get_image_size(os.path.join(temp_frame_dir, "00000.png"))
-                img_template_string = "%05d.png"
-            else:
-                if not frame_path or not os.path.isdir(frame_path):
-                    raise ValueError(f"frame_path: {frame_path} is not a valid directory")
-                frame_source = os.path.abspath(frame_path).strip()
-                valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff')
-                image_files = [f for f in os.listdir(frame_source) if f.endswith(valid_extensions)]
-                image_files.sort()
-                if not image_files:
-                    raise FileNotFoundError(f"No image files found in directory: {frame_source}")
-                width, height = get_image_size(os.path.join(frame_source, image_files[0]))
-                img_template_string = generate_template_string(image_files[0])
+        audio_file = None
+        if audio:
+            audio_file = tempfile.mktemp(suffix=".wav")
+            torchaudio.save(audio_file, audio['waveform'].cpu(), audio['sample_rate'])
+            cmd.extend(['-i', audio_file])
 
-            if audio is not None:
-                temp_audio_file = tempfile.mktemp(suffix='.wav')
-                waveform = audio['waveform']
-                sample_rate = audio['sample_rate']
-                while waveform.dim() > 2:
-                    waveform = waveform.squeeze(0)
-                torchaudio.save(temp_audio_file, waveform.cpu(), sample_rate)
-                audio_source = temp_audio_file
-            elif audio_path and os.path.isfile(audio_path):
-                audio_source = os.path.abspath(audio_path).strip()
-            else:
-                audio_source = None
-            
-            common_args = ['-framerate', str(fps), '-i', f'{frame_source}/{img_template_string}']
-            if audio_source:
-                common_args.extend(['-i', audio_source])
-            
-            common_args.extend(['-vf', f'scale={width}:{height}', '-pix_fmt', 'yuv420p', '-shortest', '-y', str(output_file_path)])
+        video_codec, crf_option = self._get_codec_options(codec, crf)
+        cmd.extend(['-c:v', video_codec, crf_option, str(crf), '-preset', preset, '-pix_fmt', 'yuv420p'])
 
-            if device == "CPU":
-                cmd = ['ffmpeg'] + common_args + ['-c:v', 'libx264', '-crf', '28']
-            else:
-                cmd = ['ffmpeg'] + common_args + ['-c:v', 'h264_nvenc', '-preset', 'fast', '-cq', '22']
+        if audio:
+            cmd.extend(['-c:a', 'aac', '-shortest'])
 
-            result = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            if result.returncode != 0:
-                raise ValueError(f"Error: {result.stderr.decode('utf-8')}")
-            else:
-                print(result.stdout)
+        cmd.append(output_path)
+        subprocess.run(cmd, check=True)
 
-            return (frame_source if images is None else "in-memory images", output_file_path)
+        if audio_file:
+            os.remove(audio_file)
+        shutil.rmtree(temp_dir)
 
-        finally:
-            if temp_frame_dir:
-                shutil.rmtree(temp_frame_dir)
-            if temp_audio_file:
-                os.unlink(temp_audio_file)
+        return (output_path,)
 
-        return ("", "")
+    def _get_codec_options(self, codec, crf):
+        if codec == "h264_cpu":
+            return "libx264", "-crf"
+        elif codec == "h265_cpu":
+            return "libx265", "-crf"
+        elif codec == "h264_nvidia":
+            return "h264_nvenc", "-cq"
+        elif codec == "h265_nvidia":
+            return "hevc_nvenc", "-cq"
+        else:
+            raise ValueError(f"Unsupported codec: {codec}")
