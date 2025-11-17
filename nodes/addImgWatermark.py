@@ -22,12 +22,34 @@ class AddImgWatermark:
         """
         return {
             "required": { 
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output/",}),
-                "watermark_image": ("STRING", {"default":"C:/Users/Desktop/logo.png",}),
-                "watermark_img_width":  ("INT", {"default": 100,"min": 1, "step": 1}),
-                "position_x":  ("INT", {"default": 10, "step": 1}),
-                "position_y":  ("INT", {"default": 10, "step": 1}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to add the watermark to."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output/",
+                    "tooltip": "Path to the directory where the output video will be saved."
+                }),
+                "watermark_image": ("STRING", {
+                    "default":"C:/Users/Desktop/logo.png",
+                    "tooltip": "Path to the image file to use as a watermark."
+                }),
+                "watermark_img_width":  ("INT", {
+                    "default": 100,
+                    "min": 1,
+                    "step": 1,
+                    "tooltip": "Width of the watermark image in pixels. The height will be scaled proportionally."
+                }),
+                "position_x":  ("INT", {
+                    "default": 10,
+                    "step": 1,
+                    "tooltip": "The x-coordinate of the watermark's position (from the left edge)."
+                }),
+                "position_y":  ("INT", {
+                    "default": 10,
+                    "step": 1,
+                    "tooltip": "The y-coordinate of the watermark's position (from the top edge)."
+                }),
             },
         }
 

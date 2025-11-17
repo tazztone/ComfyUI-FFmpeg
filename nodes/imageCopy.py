@@ -24,8 +24,13 @@ class ImageCopy:
         """
         return {
             "required": { 
-                "image_paths": (any_type,),
-                "output_path": ("STRING", {"default": "C:/Users/Desktop/output"}),
+                "image_paths": (any_type, {
+                    "tooltip": "A list of image file paths to be copied."
+                }),
+                "output_path": ("STRING", {
+                    "default": "C:/Users/Desktop/output",
+                    "tooltip": "The directory where the images will be copied to."
+                }),
             },
         }
 

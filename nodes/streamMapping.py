@@ -17,10 +17,22 @@ class StreamMapping:
         """
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "maps": ("STRING", {"default": "-map 0:v:0 -map 0:a:1", "multiline": True}),
-                "output_path": ("STRING", {"default": "output"}),
-                "output_ext": ("STRING", {"default": "mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "Path to the input video file."
+                }),
+                "maps": ("STRING", {
+                    "default": "-map 0:v:0 -map 0:a:1", "multiline": True,
+                    "tooltip": "Stream mapping arguments. E.g., '-map 0:v:0 -map 0:a:1'. See FFmpeg documentation for more details."
+                }),
+                "output_path": ("STRING", {
+                    "default": "output",
+                    "tooltip": "The directory where the output video file will be saved."
+                }),
+                "output_ext": ("STRING", {
+                    "default": "mp4",
+                    "tooltip": "The file extension for the output video file (e.g., 'mp4', 'mkv')."
+                }),
             },
         }
 

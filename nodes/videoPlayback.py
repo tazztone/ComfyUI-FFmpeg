@@ -20,9 +20,18 @@ class VideoPlayback:
         """
         return {
             "required": { 
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output",}),
-                "reverse_audio": (["True", "False"], {"default": "True"}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to be reversed."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the reversed video file."
+                }),
+                "reverse_audio": (["True", "False"], {
+                    "default": "True",
+                    "tooltip": "Whether to reverse the audio along with the video."
+                }),
             },
         }
 

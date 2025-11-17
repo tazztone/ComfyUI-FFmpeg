@@ -24,15 +24,38 @@ class VideoTransition:
         """
         return {
             "required": { 
-                "video1_path": ("STRING", {"default":"C:/Users/Desktop/video1.mp4",}),
-                "video2_path": ("STRING", {"default":"C:/Users/Desktop/video2.mp4",}),
-                #视频尺寸、帧率参考哪个视频
-                "reference_video": (["video1","video2"], {"default":"video1","tooltip": "参考视频是哪个视频，决定了输出视频的尺寸和帧率！（Reference video is which video, determines the size and frame rate of the output video!）"}),
-                "device": (["cpu","cuda"], {"default":device,}),
-                "transition": (get_xfade_transitions(),{"default": "fade",}),
-                "transition_duration": ("FLOAT",{"default":1,"min":0.1,"max":3.0,"step":0.1,"display":"number","tooltip": "转场持续时间，单位秒，最大值为3秒，不能小于0.1秒！（Transition duration, in seconds, the maximum value is 3 seconds, cannot be less than 0.1 seconds!）"}),
-                "offset": ("FLOAT",{"default":1,"min":0.1,"step":0.1,"display":"number","tooltip": "转场开始时间，单位秒，不能大于等于视频1的时长减去转场持续时间（transition_duration）！（Transition start time, in seconds, cannot be greater than or equal to the duration of video1 minus the transition duration (transition_duration)!）"}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output",}),
+                "video1_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video1.mp4",
+                    "tooltip": "Path to the first video file."
+                }),
+                "video2_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video2.mp4",
+                    "tooltip": "Path to the second video file."
+                }),
+                "reference_video": (["video1","video2"], {
+                    "default":"video1",
+                    "tooltip": "Which video to use as a reference for the output's resolution and frame rate."
+                }),
+                "device": (["cpu","cuda"], {
+                    "default":device,
+                    "tooltip": "Device to use for encoding. 'cuda' is faster if available."
+                }),
+                "transition": (get_xfade_transitions(),{
+                    "default": "fade",
+                    "tooltip": "The transition effect to use."
+                }),
+                "transition_duration": ("FLOAT",{
+                    "default":1,"min":0.1,"max":3.0,"step":0.1,"display":"number",
+                    "tooltip": "Duration of the transition in seconds."
+                }),
+                "offset": ("FLOAT",{
+                    "default":1,"min":0.1,"step":0.1,"display":"number",
+                    "tooltip": "Start time of the transition in the first video, in seconds."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the output video file."
+                }),
             },
         }
 

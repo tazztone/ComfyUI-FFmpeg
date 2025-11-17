@@ -27,14 +27,37 @@ class AddTextWatermark:
         """
         return {
             "required": { 
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output/",}),
-                'font_file': (["default"] + folder_paths.get_filename_list("fonts"), ),
-                'font_size': ("INT", {"default": 15, "min": 1, "max": 1000, "step": 1}),
-                'font_color': ("STRING", {"default": "#FFFFFF"}),
-                "text": ("STRING", {"default": "Watermark"}),
-                "position_x":  ("INT", {"default": 10, "step": 1}),
-                "position_y":  ("INT", {"default": 10, "step": 1}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to add the text watermark to."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output/",
+                    "tooltip": "Path to the directory where the output video will be saved."
+                }),
+                'font_file': (["default"] + folder_paths.get_filename_list("fonts"), {
+                    "tooltip": "Font file to use for the text watermark. 'default' uses FFmpeg's default font."
+                }),
+                'font_size': ("INT", {
+                    "default": 15, "min": 1, "max": 1000, "step": 1,
+                    "tooltip": "Font size of the text watermark in points."
+                }),
+                'font_color': ("STRING", {
+                    "default": "#FFFFFF",
+                    "tooltip": "Color of the text watermark. Can be a color name (e.g., 'white') or a hex code (e.g., '#FFFFFF')."
+                }),
+                "text": ("STRING", {
+                    "default": "Watermark",
+                    "tooltip": "The text to display as the watermark."
+                }),
+                "position_x":  ("INT", {
+                    "default": 10, "step": 1,
+                    "tooltip": "The x-coordinate of the text watermark's position (from the left edge)."
+                }),
+                "position_y":  ("INT", {
+                    "default": 10, "step": 1,
+                    "tooltip": "The y-coordinate of the text watermark's position (from the top edge)."
+                }),
             },
         }
 

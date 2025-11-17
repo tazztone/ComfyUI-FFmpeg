@@ -28,12 +28,24 @@ class Video2Frames:
         """
         return {
             "required": {
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to be converted to frames."
+                }),
             },
             "optional": {
-                "save_to_disk": ("BOOLEAN", {"default": False}),
-                "output_path": ("STRING", {"default": ""}),
-                "frames_max_width":("INT", {"default": 0, "min": 0, "max": 1920}),
+                "save_to_disk": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Whether to save the extracted frames to disk."
+                }),
+                "output_path": ("STRING", {
+                    "default": "",
+                    "tooltip": "Directory to save the extracted frames. Used if 'save_to_disk' is True."
+                }),
+                "frames_max_width":("INT", {
+                    "default": 0, "min": 0, "max": 1920,
+                    "tooltip": "Maximum width for the extracted frames. Set to 0 to keep the original width."
+                }),
             }
         }
 

@@ -23,8 +23,13 @@ class ImagesSave:
         """
         return {
             "required": { 
-                "images": ("IMAGE", ),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output",}),
+                "images": ("IMAGE", {
+                    "tooltip": "The images to be saved."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output",
+                    "tooltip": "The directory where the images will be saved."
+                }),
             },
         }
 

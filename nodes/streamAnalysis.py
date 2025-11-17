@@ -16,7 +16,10 @@ class StreamAnalysis:
         """
         return {
             "required": {
-                "video_path": ("STRING", {"default": "C:/Users/Desktop/video.mp4"}),
+                "video_path": ("STRING", {
+                    "default": "C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to be analyzed."
+                }),
             },
         }
 

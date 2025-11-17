@@ -19,9 +19,18 @@ class LoadImageFromDir:
         """
         return {
             "required": { 
-                "images_path": ("STRING", {"default":"C:/Users/Desktop/",}),
-                "start_index": ("INT",{"default":0,"min":0,}),
-                "length": ("INT",{"default":0,"min":0,})
+                "images_path": ("STRING", {
+                    "default":"C:/Users/Desktop/",
+                    "tooltip": "The directory containing the image files to load."
+                }),
+                "start_index": ("INT",{
+                    "default":0,"min":0,
+                    "tooltip": "The starting index of the images to load from the directory."
+                }),
+                "length": ("INT",{
+                    "default":0,"min":0,
+                    "tooltip": "The number of images to load. Set to 0 to load all images."
+                })
             },
         }
 

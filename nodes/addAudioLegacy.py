@@ -20,11 +20,27 @@ class AddAudioLegacy:
         """
         return {
             "required": {
-                "video_path": ("STRING", {"default":"C:/Users/Desktop/video.mp4",}),
-                "audio_from":(["audio_file","video_file"], {"default":"audio_file",}),
-                "file_path": ("STRING", {"default":"C:/Users/Desktop/output",}),
-                'delay_play':("INT",{"default":0,"min":0,}),
-                "output_path": ("STRING", {"default":"C:/Users/Desktop/output/",}),
+                "video_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video.mp4",
+                    "tooltip": "Path to the video file to add audio to."
+                }),
+                "audio_from":(["audio_file","video_file"], {
+                    "default":"audio_file",
+                    "tooltip": "Source of the audio to add to the video."
+                }),
+                "file_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output",
+                    "tooltip": "Path to the audio file or video file with audio to add."
+                }),
+                'delay_play':("INT",{
+                    "default":0,
+                    "min":0,
+                    "tooltip": "Delay the audio playback in seconds."
+                }),
+                "output_path": ("STRING", {
+                    "default":"C:/Users/Desktop/output/",
+                    "tooltip": "Path to the directory where the output video will be saved."
+                }),
             },
         }
 

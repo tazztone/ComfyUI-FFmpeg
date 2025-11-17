@@ -17,10 +17,22 @@ class Filtergraph:
         """
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "filtergraph": ("STRING", {"default": "crop=iw/2:ih:0:0[left];[left]vflip[out]", "multiline": True}),
-                "output_path": ("STRING", {"default": "output"}),
-                "output_ext": ("STRING", {"default": "mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "Path to the input video file."
+                }),
+                "filtergraph": ("STRING", {
+                    "default": "crop=iw/2:ih:0:0[left];[left]vflip[out]", "multiline": True,
+                    "tooltip": "The FFmpeg filtergraph to apply. E.g., 'crop=iw/2:ih:0:0[left];[left]vflip[out]'. See FFmpeg documentation for more details."
+                }),
+                "output_path": ("STRING", {
+                    "default": "output",
+                    "tooltip": "The directory where the output video file will be saved."
+                }),
+                "output_ext": ("STRING", {
+                    "default": "mp4",
+                    "tooltip": "The file extension for the output video file (e.g., 'mp4', 'webm')."
+                }),
             },
         }
 

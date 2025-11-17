@@ -25,13 +25,34 @@ class StitchingVideo:
         """
         return {
             "required": { 
-                "video1_path": ("STRING", {"default":"C:/Users/Desktop/video1.mp4",}),
-                "video2_path": ("STRING", {"default":"C:/Users/Desktop/video2.mp4",}),
-                "device": (["cpu","cuda"], {"default":device,}),
-                "use_audio": (["video1","video2"], {"default":"video1",}),
-                "stitching_type":(["horizontal","vertical"], {"default":"horizontal",}),
-                "output_path": ("STRING", {"default": "C:/Users/Desktop/output"}),
-                "scale_and_crop": (["yes", "no"], {"default": "no"}),  # 新增参数控制缩放裁剪
+                "video1_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video1.mp4",
+                    "tooltip": "Path to the first video file."
+                }),
+                "video2_path": ("STRING", {
+                    "default":"C:/Users/Desktop/video2.mp4",
+                    "tooltip": "Path to the second video file."
+                }),
+                "device": (["cpu","cuda"], {
+                    "default":device,
+                    "tooltip": "Device to use for encoding. 'cuda' is faster if available."
+                }),
+                "use_audio": (["video1","video2"], {
+                    "default":"video1",
+                    "tooltip": "Which video's audio track to use in the final output."
+                }),
+                "stitching_type":(["horizontal","vertical"], {
+                    "default":"horizontal",
+                    "tooltip": "How to stitch the videos together."
+                }),
+                "output_path": ("STRING", {
+                    "default": "C:/Users/Desktop/output",
+                    "tooltip": "Directory to save the stitched video file."
+                }),
+                "scale_and_crop": (["yes", "no"], {
+                    "default": "no",
+                    "tooltip": "Whether to scale and crop the output video to match the first video's dimensions."
+                }),
             },
         }
 
