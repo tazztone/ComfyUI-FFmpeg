@@ -2,96 +2,39 @@ import os
 import subprocess
 from ..func import set_file_name,video_type
 
-class VideoPlayback:
-    """A node to reverse a video.
+import os
+import subprocess
+import folder_paths
 
-    This node reverses the playback of a video, with an option to also reverse
-    the audio.
+class ReverseVideo:
     """
-    def __init__(self):
-        pass
-
+    A node to reverse a video.
+    """
     @classmethod
     def INPUT_TYPES(cls):
-        """Specifies the input types for the node.
-
-        Returns:
-            dict: A dictionary containing the input types.
-        """
         return {
-            "required": { 
-                "video_path": ("STRING", {
-                    "default":"C:/Users/Desktop/video.mp4",
-                    "tooltip": "Path to the video file to be reversed."
-                }),
-                "output_path": ("STRING", {
-                    "default":"C:/Users/Desktop/output",
-                    "tooltip": "Directory to save the reversed video file."
-                }),
-                "reverse_audio": (["True", "False"], {
-                    "default": "True",
-                    "tooltip": "Whether to reverse the audio along with the video."
-                }),
+            "required": {
+                "video": ("STRING", {"default": "video.mp4"}),
+                "reverse_audio": ("BOOLEAN", {"default": True}),
+                "filename": ("STRING", {"default": "reversed_video.mp4"}),
             },
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("video_complete_path",)
-    FUNCTION = "video_playback"
-    OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg"
-  
-    def video_playback(self, video_path, output_path, reverse_audio):
-        """Reverses a video.
+    FUNCTION = "reverse_video"
+    CATEGORY = "🔥FFmpeg/IO"
 
-        This method uses FFmpeg to reverse a video.
+    def reverse_video(self, video, reverse_audio, filename):
+        if not os.path.exists(video):
+            raise FileNotFoundError(f"Video file not found: {video}")
 
-        Args:
-            video_path (str): The path to the input video file.
-            output_path (str): The directory to save the output video file.
-            reverse_audio (str): Whether to reverse the audio ("True" or
-                "False").
+        output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
-        Returns:
-            tuple: A tuple containing the path to the output video file.
-        """
-        try:
-            video_path = os.path.abspath(video_path).strip()
-            output_path = os.path.abspath(output_path).strip()
-             # 视频不存在
-            if not video_path.lower().endswith(video_type()):
-                raise ValueError("video_path："+video_path+"不是视频文件（video_path:"+video_path+" is not a video file）")
-            if not os.path.isfile(video_path):
-                raise ValueError("video_path："+video_path+"不存在（video_path:"+video_path+" does not exist）")
+        command = ['ffmpeg', '-y', '-i', video, '-vf', 'reverse']
+        if reverse_audio:
+            command.extend(['-af', 'areverse'])
             
-            #判断output_path是否是一个目录
-            if not os.path.isdir(output_path):
-                raise ValueError("output_path："+output_path+"不是目录（output_path:"+output_path+" is not a directory）")
-            
-            file_name = set_file_name(video_path)
-            
-            output_path = os.path.join(output_path, file_name)
-            
-            # 构建FFmpeg命令
-            command = ['ffmpeg', '-i', video_path, '-vf', 'reverse']
-            
-            # 根据用户选择决定是否倒放音频
-            if reverse_audio == "True":
-                command.extend(['-af', 'areverse'])
-            
-            command.append(output_path)
-            
-            # 执行命令并检查错误
-            result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            # 检查返回码
-            if result.returncode != 0:
-                # 如果有错误，输出错误信息
-                 print(f"Error: {result.stderr.decode('utf-8')}")
-                 raise ValueError(f"Error: {result.stderr.decode('utf-8')}")
-            else:
-                # 输出标准输出信息
-                print(result.stdout)
+        command.append(output_path)
 
-            return (output_path,)
-        except Exception as e:
-            raise ValueError(e)
+        subprocess.run(command, check=True)
+        return (output_path,)

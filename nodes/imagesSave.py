@@ -5,72 +5,40 @@ from concurrent.futures import ThreadPoolExecutor
 from ..func import save_image,clear_memory
 file_name_num_start = 0
 
-class ImagesSave:
-    """A node to save a batch of images to a specified directory.
+import os
+import torch
+from PIL import Image
+import numpy as np
+import folder_paths
 
-    This node takes a tensor of images and saves each image as a separate file
-    in the output directory.
+class SaveImages:
     """
-    def __init__(self):
-        pass
-
+    A node to save a batch of images to a specified directory.
+    """
     @classmethod
     def INPUT_TYPES(cls):
-        """Specifies the input types for the node.
-
-        Returns:
-            dict: A dictionary containing the input types.
-        """
         return {
-            "required": { 
-                "images": ("IMAGE", {
-                    "tooltip": "The images to be saved."
-                }),
-                "output_path": ("STRING", {
-                    "default":"C:/Users/Desktop/output",
-                    "tooltip": "The directory where the images will be saved."
-                }),
+            "required": {
+                "images": ("IMAGE",),
+                "directory": ("STRING", {"default": "saved_images"}),
+                "filename_prefix": ("STRING", {"default": "image"}),
             },
         }
 
-    RETURN_TYPES = ("INT",)
-    RETURN_NAMES = ("images_length",)
-    FUNCTION = "images_save"
+    RETURN_TYPES = ()
+    FUNCTION = "save_images"
     OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg/auxiliary tool"
-  
-    def images_save(self, images,output_path):
-        """Saves a batch of images to a specified directory.
+    CATEGORY = "🔥FFmpeg/IO"
 
-        Args:
-            images (torch.Tensor): A tensor of images to save.
-            output_path (str): The directory to save the images to.
+    def save_images(self, images, directory, filename_prefix):
+        output_dir = os.path.join(folder_paths.get_output_directory(), directory)
+        os.makedirs(output_dir, exist_ok=True)
 
-        Returns:
-            tuple: A tuple containing the number of images saved.
-        """
-        try:
-            output_path = os.path.abspath(output_path).strip()
-            #判断output_path是否是一个目录
-            if not os.path.isdir(output_path):
-                raise ValueError("output_path："+output_path+"不是目录（output_path:"+output_path+" is not a directory）")
+        for i, image_tensor in enumerate(images):
+            img_np = (image_tensor.cpu().numpy() * 255).astype(np.uint8)
+            img = Image.fromarray(img_np)
             
-            count = 0
-            global file_name_num_start
-            if len(os.listdir(output_path)) == 0:
-                file_name_num_start = 0  # 要保证图片的名称的数字从0开始，否则合并视频时会报错
-            with ThreadPoolExecutor() as executor:
-                futures = []
-                for image in images:
-                    file_name_num_start += 1
-                    futures.append(executor.submit(save_image, image, os.path.join(output_path, f"output_image_{file_name_num_start:09d}.png")))
-                    count += 1
-                    
-                for future in futures:
-                    future.result()  # 确保所有任务完成
-            del images
-            clear_memory()
+            filepath = os.path.join(output_dir, f"{filename_prefix}_{i:05d}.png")
+            img.save(filepath)
             
-            return (count,)
-        except Exception as e:
-            raise ValueError(e)
+        return ()

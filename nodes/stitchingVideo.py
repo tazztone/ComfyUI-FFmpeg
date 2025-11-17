@@ -7,177 +7,51 @@ import time
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-class StitchingVideo:
-    """A node to stitch two videos together, either horizontally or vertically.
+import os
+import subprocess
+import folder_paths
 
-    This node combines two video files side-by-side or one on top of the
-    other.
+class StitchVideos:
     """
-    def __init__(self):
-        pass
-
+    A node to stitch two videos together, either horizontally or vertically.
+    This node combines two video files side-by-side or one on top of the other.
+    """
     @classmethod
     def INPUT_TYPES(cls):
-        """Specifies the input types for the node.
-
-        Returns:
-            dict: A dictionary containing the input types.
-        """
         return {
-            "required": { 
-                "video1_path": ("STRING", {
-                    "default":"C:/Users/Desktop/video1.mp4",
-                    "tooltip": "Path to the first video file."
-                }),
-                "video2_path": ("STRING", {
-                    "default":"C:/Users/Desktop/video2.mp4",
-                    "tooltip": "Path to the second video file."
-                }),
-                "device": (["cpu","cuda"], {
-                    "default":device,
-                    "tooltip": "Device to use for encoding. 'cuda' is faster if available."
-                }),
-                "use_audio": (["video1","video2"], {
-                    "default":"video1",
-                    "tooltip": "Which video's audio track to use in the final output."
-                }),
-                "stitching_type":(["horizontal","vertical"], {
-                    "default":"horizontal",
-                    "tooltip": "How to stitch the videos together."
-                }),
-                "output_path": ("STRING", {
-                    "default": "C:/Users/Desktop/output",
-                    "tooltip": "Directory to save the stitched video file."
-                }),
-                "scale_and_crop": (["yes", "no"], {
-                    "default": "no",
-                    "tooltip": "Whether to scale and crop the output video to match the first video's dimensions."
-                }),
+            "required": {
+                "video1": ("STRING", {"default": "video1.mp4"}),
+                "video2": ("STRING", {"default": "video2.mp4"}),
+                "layout": (["horizontal", "vertical"], {"default": "horizontal"}),
+                "audio_source": (["video1", "video2", "none"], {"default": "video1"}),
+                "filename": ("STRING", {"default": "stitched_video.mp4"}),
             },
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("video_complete_path",)
-    FUNCTION = "stitching_video"
-    OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg"
-  
-    def stitching_video(self, video1_path, video2_path,device,use_audio,stitching_type,output_path,scale_and_crop):
-        """Stitches two videos together.
+    FUNCTION = "stitch_videos"
+    CATEGORY = "🔥FFmpeg/Editing"
 
-        This method uses FFmpeg to combine two videos.
+    def stitch_videos(self, video1, video2, layout, audio_source, filename):
+        if not os.path.exists(video1):
+            raise FileNotFoundError(f"Video file not found: {video1}")
+        if not os.path.exists(video2):
+            raise FileNotFoundError(f"Video file not found: {video2}")
 
-        Args:
-            video1_path (str): The path to the first video file.
-            video2_path (str): The path to the second video file.
-            device (str): The device to use for encoding ("cpu" or "cuda").
-            use_audio (str): Which video's audio to use ("video1" or "video2").
-            stitching_type (str): The type of stitching ("horizontal" or
-                "vertical").
-            output_path (str): The directory to save the output video file.
-            scale_and_crop (str): Whether to scale and crop the output video
-                ("yes" or "no").
+        output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
-        Returns:
-            tuple: A tuple containing the path to the output video file.
-        """
-        try:
-            video1_path = os.path.abspath(video1_path).strip()
-            video2_path = os.path.abspath(video2_path).strip()
-            output_path = os.path.abspath(output_path).strip()
-             # 视频不存在
-            if not video1_path.lower().endswith(video_type()):
-                raise ValueError("video1_path："+video1_path+"不是视频文件（video1_path:"+video1_path+" is not a video file）")
-            if not os.path.isfile(video1_path):
-                raise ValueError("video1_path："+video1_path+"不存在（video1_path:"+video1_path+" does not exist）")
-            
-            if not video2_path.lower().endswith(video_type()):
-                raise ValueError("video2_path："+video2_path+"不是视频文件（video2_path:"+video2_path+" is not a video file）")
-            if not os.path.isfile(video2_path):
-                raise ValueError("video2_path："+video2_path+"不存在（video2_path:"+video2_path+" does not exist）")
-            
-            #判断output_path是否是一个目录
-            if not os.path.isdir(output_path):
-                raise ValueError("output_path："+output_path+"不是目录（output_path:"+output_path+" is not a directory）")
-            
-            video1_audio = has_audio(video1_path)
-            video2_audio = has_audio(video2_path)
-            
-            final_output = set_file_name(video1_path)
-            
-            #文件名根据年月日时分秒来命名
-            output_path = os.path.join(output_path, final_output)
-            
-            #CPU默认参数：
-            use_cuvid = ""
-            use_encoder = "-c:v libx264" #默认用CPU编码
+        filter_complex = f"[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[v]" if layout == 'horizontal' \
+                         else f"[0:v]pad=iw:ih*2[int];[int][1:v]overlay=0:H/2[v]"
 
-            if device == "cuda":
-                use_cuvid = "-hwaccel cuda"
-                use_encoder = "-c:v h264_nvenc"
-            
-            video_info = getVideoInfo(video1_path)
-            video_info1 = getVideoInfo(video2_path)
-            duration = video_info['duration']
-            fps = video_info['fps']
-            
-            loop_count = max(1, int(duration / video_info1['duration'] + 0.9999))
-            # libx264、libx265等编码器要求宽高必须是2的倍数，如果报错，可以把device换为GPU
-            width =  math.ceil(video_info['width']/2)*2
-            height = math.ceil(video_info['height']/2)*2
-            
-            use_audio = {
-                'video1': '0',
-                'video2': '1',
-            }.get(use_audio, '0')
-            
-            tack_type = {
-                'horizontal': 'hstack',
-                'vertical': 'vstack',
-            }.get(stitching_type, 'hstack')
-            
-            scale = {
-                'horizontal':f'-1:{height}',
-                'vertical':  f'{width}:-1',
-            }.get(stitching_type, f'{width}:-1')
-            
-            print(f">>loop_count:{loop_count}")
-            if video1_audio or video2_audio:
-                #-map 1:a 指定使用第二个视频的音频流
-                command = f'ffmpeg {use_cuvid} -i {video1_path} -i {video2_path} -filter_complex "[1:v]scale={scale}[vid2];[0:v][vid2]{tack_type}=inputs=2[v]" -map "[v]" -map {use_audio}:a? {use_encoder} -c:a aac -strict experimental {output_path}'
-            else:
-                command = f'ffmpeg {use_cuvid} -i {video1_path} -i {video2_path} -filter_complex "[1:v]scale={scale}[vid2];[0:v][vid2]{tack_type}=inputs=2[v]" -map "[v]" {use_encoder}  {output_path}'
-            
+        command = ['ffmpeg', '-y', '-i', video1, '-i', video2, '-filter_complex', filter_complex]
 
-            # 执行命令并检查错误
-            result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            
-            # 构建滤镜链
-            if scale_and_crop == "yes":
-                time.sleep(1)
-                if not os.path.isfile(output_path) or os.path.getsize(output_path) <= 0:
-                    print(f"输出视频：{output_path} 不存在或内容为空！")
-                    return (output_path,)
-                crop_video_path = os.path.join(os.path.dirname(output_path), "crop--" + final_output)
-                
-                if stitching_type == "vertical":
-                    # 修改后的垂直处理：缩放并裁剪至540x960，确保尺寸足够
-                    command = f'ffmpeg -y -i "{output_path}" -filter_complex "[0:v]scale=w={width}:h={height}:force_original_aspect_ratio=increase[scaled];[scaled]crop={width}:{height}[out]" -map "[out]" -map 0:a {use_encoder} -c:a aac "{crop_video_path}"'
-                else:
-                    # 水平模式保持原逻辑
-                    command = f'ffmpeg -y -i "{output_path}" -filter_complex "[0:v]split=2[bg][fg];[bg]scale={width}:-1,setsar=1[scaled_bg];[scaled_bg]gblur=sigma=10[blurred];[blurred]scale={width}:{height}:force_original_aspect_ratio=disable[bg_out];[fg]scale={width}:-1,setsar=1[fg_out];[bg_out][fg_out]overlay=(W-w)/2:(H-h)/2[out];[out]scale={width}:{height}:force_original_aspect_ratio=disable,setsar=1[final_out]" -map "[final_out]" -map 0:a {use_encoder} -c:a aac "{crop_video_path}"'
-                
-                print(f">>FFmpeg 缩放与裁剪命令:: {command}")
-                result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                output_path = crop_video_path
-            
-            # 检查返回码
-            if result.returncode != 0:
-                # 如果有错误，输出错误信息
-                print(f"Error: {result.stderr.decode('utf-8')}")
-            else:
-                # 输出标准输出信息
-                print(f">>FFmpeg 执行完毕！Completed!\t stdout: {result.stdout}")
-            return (output_path,)
-        except Exception as e:
-            raise ValueError(e)
+        if audio_source != "none":
+            audio_map = {'video1': '0:a', 'video2': '1:a'}
+            command.extend(['-map', '[v]', '-map', audio_map[audio_source]])
+        else:
+            command.extend(['-map', '[v]', '-an'])
+
+        command.append(output_path)
+
+        subprocess.run(command, check=True)
+        return (output_path,)

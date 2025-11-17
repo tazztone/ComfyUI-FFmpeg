@@ -1,40 +1,39 @@
-from .nodes.addTextWatermark import *
-from .nodes.frames2video import *
-from .nodes.video2frames import *
-from .nodes.addImgWatermark import *
-from .nodes.videoFlip import *
-from .nodes.extractAudio import *
-from .nodes.loadImageFromDir import *
-from .nodes.imageCopy import *
-from .nodes.imagePath2Tensor import *
-from .nodes.mergingVideoByTwo import *
-from .nodes.mergingVideoByPlenty import *
-from .nodes.stitchingVideo import *
-from .nodes.multiCuttingVideo import *
-from .nodes.singleCuttingVideo import *
-from .nodes.addAudioLegacy import *
-from .nodes.addAudio import *
-from .nodes.imagesSave import *
-from .nodes.pipVideo import *
-from .nodes.videoTransition import *
-from .nodes.videoPlayback import *
-from .nodes.genericFFmpeg import *
-from .nodes.losslessRemux import *
-from .nodes.streamAnalysis import *
-from .nodes.keyframeAwareCutting import *
-from .nodes.filtergraph import *
-from .nodes.streamMapping import *
-from .nodes.subtitle import *
-from .nodes.audioFilter import *
+from .nodes.addTextWatermark import AddTextWatermark
+from .nodes.frames2video import Frames2Video
+from .nodes.video2frames import Video2Frames
+from .nodes.addImgWatermark import AddImgWatermark
+from .nodes.videoFlip import VideoFlip
+from .nodes.extractAudio import ExtractAudio
+from .nodes.loadImageFromDir import LoadImagesFromDirectory
+from .nodes.imageCopy import CopyImages
+from .nodes.mergingVideoByTwo import MergeVideos
+from .nodes.mergingVideoByPlenty import MergeVideoBatch
+from .nodes.stitchingVideo import StitchVideos
+from .nodes.multiCuttingVideo import SplitVideo
+from .nodes.singleCuttingVideo import TrimVideo
+from .nodes.addAudioLegacy import AddAudioFile
+from .nodes.addAudio import AddAudio
+from .nodes.imagesSave import SaveImages
+from .nodes.pipVideo import PictureInPicture
+from .nodes.videoTransition import VideoTransition
+from .nodes.videoPlayback import ReverseVideo
+from .nodes.genericFFmpeg import GenericFFmpeg
+from .nodes.losslessRemux import RemuxVideo
+from .nodes.streamAnalysis import AnalyzeStreams
+from .nodes.keyframeAwareCutting import KeyframeTrim
+from .nodes.filtergraph import ApplyFiltergraph
+from .nodes.streamMapping import ApplyStreamMap
+from .nodes.subtitle import HandleSubtitles
+from .nodes.audioFilter import ApplyAudioFilter
 
 NODE_CLASS_MAPPINGS = {
-    "Filtergraph": Filtergraph,
-    "StreamMapping": StreamMapping,
-    "Subtitle": Subtitle,
-    "AudioFilter": AudioFilter,
-    "StreamAnalysis": StreamAnalysis,
-    "KeyframeAwareCutting": KeyframeAwareCutting,
-    "LosslessRemux": LosslessRemux,
+    "ApplyFiltergraph": ApplyFiltergraph,
+    "ApplyStreamMap": ApplyStreamMap,
+    "HandleSubtitles": HandleSubtitles,
+    "ApplyAudioFilter": ApplyAudioFilter,
+    "AnalyzeStreams": AnalyzeStreams,
+    "KeyframeTrim": KeyframeTrim,
+    "RemuxVideo": RemuxVideo,
     "GenericFFmpeg": GenericFFmpeg,
     "Video2Frames": Video2Frames,
     "Frames2Video": Frames2Video,
@@ -42,50 +41,47 @@ NODE_CLASS_MAPPINGS = {
     "AddImgWatermark": AddImgWatermark,
     "VideoFlip": VideoFlip,
     "ExtractAudio": ExtractAudio,
-    "LoadImageFromDir": LoadImageFromDir,
-    "ImageCopy": ImageCopy,
-    "ImagePath2Tensor": ImagePath2Tensor,
-    "MergingVideoByTwo": MergingVideoByTwo,
-    "MergingVideoByPlenty": MergingVideoByPlenty,
-    "StitchingVideo": StitchingVideo,
-    "MultiCuttingVideo": MultiCuttingVideo,
-    "SingleCuttingVideo": SingleCuttingVideo,
+    "LoadImagesFromDirectory": LoadImagesFromDirectory,
+    "CopyImages": CopyImages,
+    "MergeVideos": MergeVideos,
+    "MergeVideoBatch": MergeVideoBatch,
+    "StitchVideos": StitchVideos,
+    "SplitVideo": SplitVideo,
+    "TrimVideo": TrimVideo,
     "AddAudio": AddAudio,
-    "AddAudioLegacy": AddAudioLegacy,
-    "ImagesSave": ImagesSave,
-    "PipVideo": PipVideo,
+    "AddAudioFile": AddAudioFile,
+    "SaveImages": SaveImages,
+    "PictureInPicture": PictureInPicture,
     "VideoTransition": VideoTransition,
-    "VideoPlayback": VideoPlayback,
+    "ReverseVideo": ReverseVideo,
 }
 
-# A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Filtergraph": "🔥Filtergraph",
-    "StreamMapping": "🔥StreamMapping",
-    "Subtitle": "🔥Subtitle",
-    "AudioFilter": "🔥AudioFilter",
-    "StreamAnalysis": "🔥StreamAnalysis",
-    "KeyframeAwareCutting": "🔥KeyframeAwareCutting",
-    "LosslessRemux": "🔥LosslessRemux",
-    "GenericFFmpeg": "🔥GenericFFmpeg",
-    "Video2Frames": "🔥Video2Frames",
-    "Frames2Video": "🔥Frames2Video",
-    "AddTextWatermark": "🔥AddTextWatermark",
-    "AddImgWatermark": "🔥AddImgWatermark",
-    "VideoFlip": "🔥VideoFlip",
-    "ExtractAudio": "🔥ExtractAudio",
-    "LoadImageFromDir": "🔥LoadImageFromDir",
-    "ImageCopy": "🔥ImageCopy",
-    "ImagePath2Tensor": "🔥ImagePath2Tensor",
-    "MergingVideoByTwo": "🔥MergingVideoByTwo",
-    "MergingVideoByPlenty": "🔥MergingVideoByPlenty",
-    "StitchingVideo": "🔥StitchingVideo",
-    "MultiCuttingVideo": "🔥MultiCuttingVideo",
-    "SingleCuttingVideo": "🔥SingleCuttingVideo",
-    "AddAudio": "🔥AddAudio",
-    "AddAudioLegacy": "🔥AddAudio (from path)",
-    "ImagesSave": "🔥ImagesSave",
-    "PipVideo": "🔥PipVideo",
-    "VideoTransition": "🔥VideoTransition",
-    "VideoPlayback": "🔥VideoPlayback",
+    "ApplyFiltergraph": "🔥Apply Filtergraph",
+    "ApplyStreamMap": "🔥Apply Stream Map",
+    "HandleSubtitles": "🔥Handle Subtitles",
+    "ApplyAudioFilter": "🔥Apply Audio Filter",
+    "AnalyzeStreams": "🔥Analyze Streams",
+    "KeyframeTrim": "🔥Keyframe Trim",
+    "RemuxVideo": "🔥Remux Video",
+    "GenericFFmpeg": "🔥Generic FFmpeg",
+    "Video2Frames": "🔥Video to Frames",
+    "Frames2Video": "🔥Frames to Video",
+    "AddTextWatermark": "🔥Add Text Watermark",
+    "AddImgWatermark": "🔥Add Image Watermark",
+    "VideoFlip": "🔥Flip Video",
+    "ExtractAudio": "🔥Extract Audio",
+    "LoadImagesFromDirectory": "🔥Load Images from Directory",
+    "CopyImages": "🔥Copy Images",
+    "MergeVideos": "🔥Merge Videos",
+    "MergeVideoBatch": "🔥Merge Video Batch",
+    "StitchVideos": "🔥Stitch Videos",
+    "SplitVideo": "🔥Split Video",
+    "TrimVideo": "🔥Trim Video",
+    "AddAudio": "🔥Add Audio",
+    "AddAudioFile": "🔥Add Audio File",
+    "SaveImages": "🔥Save Images",
+    "PictureInPicture": "🔥Picture In Picture",
+    "VideoTransition": "🔥Video Transition",
+    "ReverseVideo": "🔥Reverse Video",
 }

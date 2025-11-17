@@ -5,158 +5,53 @@ import torch
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-class MergingVideoByTwo:
-    """A node to merge two video files into a single video.
+import os
+import subprocess
+import folder_paths
 
-    This node concatenates two video files, handling audio and resolution
-    differences.
+class MergeVideos:
     """
-    def __init__(self):
-        pass
-
+    A node to merge two video files into a single video.
+    This node concatenates two video files, handling audio and resolution differences.
+    """
     @classmethod
     def INPUT_TYPES(cls):
-        """Specifies the input types for the node.
-
-        Returns:
-            dict: A dictionary containing the input types.
-        """
         return {
-            "required": { 
-                "video1_path": ("STRING", {
-                    "default":"C:/Users/Desktop/video1.mp4",
-                    "tooltip": "Path to the first video file."
-                }),
-                "video2_path": ("STRING", {
-                    "default":"C:/Users/Desktop/video2.mp4",
-                    "tooltip": "Path to the second video file."
-                }),
-                "device": (["cpu","cuda"], {
-                    "default":device,
-                    "tooltip": "Device to use for encoding. 'cuda' is faster if available."
-                }),
-                "resolution_reference": (["video1","video2"], {
-                    "default":"video1",
-                    "tooltip": "Which video to use as a reference for the output resolution."
-                }),
-                "output_path": ("STRING", {
-                    "default": "C:/Users/Desktop/output",
-                    "tooltip": "Directory to save the merged video file."
-                }),
+            "required": {
+                "video1": ("STRING", {"default": "video1.mp4"}),
+                "video2": ("STRING", {"default": "video2.mp4"}),
+                "resolution": (["720p", "1080p", "4K"], {"default": "1080p"}),
+                "filename": ("STRING", {"default": "merged_video.mp4"}),
             },
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("video_complete_path",)
-    FUNCTION = "merging_video_by_two"
-    OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg"
-  
-    def merging_video_by_two(self, video1_path, video2_path,device,resolution_reference,output_path):
-        """Merges two video files.
+    FUNCTION = "merge_videos"
+    CATEGORY = "🔥FFmpeg/Editing"
 
-        This method uses FFmpeg to concatenate two video files, with options
-        for handling different resolutions and audio streams.
+    def merge_videos(self, video1, video2, resolution, filename):
+        if not os.path.exists(video1):
+            raise FileNotFoundError(f"Video file not found: {video1}")
+        if not os.path.exists(video2):
+            raise FileNotFoundError(f"Video file not found: {video2}")
 
-        Args:
-            video1_path (str): The path to the first video file.
-            video2_path (str): The path to the second video file.
-            device (str): The device to use for encoding ("cpu" or "cuda").
-            resolution_reference (str): Which video to use as a reference for
-                the output resolution ("video1" or "video2").
-            output_path (str): The directory to save the output video file.
+        output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
-        Returns:
-            tuple: A tuple containing the path to the output video file.
-        """
-        try:
-            video1_path = os.path.abspath(video1_path).strip()
-            video2_path = os.path.abspath(video2_path).strip()
-            output_path = os.path.abspath(output_path).strip()
-             # 视频不存在
-            if not video1_path.lower().endswith(video_type()):
-                raise ValueError("video1_path："+video1_path+"不是视频文件（video1_path:"+video1_path+" is not a video file）")
-            if not os.path.isfile(video1_path):
-                raise ValueError("video1_path："+video1_path+"不存在（video1_path:"+video1_path+" does not exist）")
-            
-            if not video2_path.lower().endswith(video_type()):
-                raise ValueError("video2_path："+video2_path+"不是视频文件（video2_path:"+video2_path+" is not a video file）")
-            if not os.path.isfile(video2_path):
-                raise ValueError("video2_path："+video2_path+"不存在（video2_path:"+video2_path+" does not exist）")
-            
-            #判断output_path是否是一个目录
-            if not os.path.isdir(output_path):
-                raise ValueError("output_path："+output_path+"不是目录（output_path:"+output_path+" is not a directory）")
-            
-            video1_audio = has_audio(video1_path)
-            video2_audio = has_audio(video2_path)
-            
-            final_output = set_file_name(video1_path)
-            
-            #文件名根据年月日时分秒来命名
-            output_path = os.path.join(output_path, final_output)
-            
-            video = {
-                'video1': video1_path,
-                'video2': video2_path,
-            }.get(resolution_reference, video1_path)
-            
-            video_info = getVideoInfo(video)
-            
-            width = video_info['width']
-            height = video_info['height']
-            
-            use_cuvid = ""
-            use_encoder = "-c:v libx264" #默认用CPU编码
+        resolution_map = {
+            "720p": "1280:720",
+            "1080p": "1920:1080",
+            "4K": "3840:2160",
+        }
 
-            if device == "cuda":
-                use_cuvid = "-hwaccel cuda"
-                use_encoder = "-c:v h264_nvenc"
+        command = [
+            'ffmpeg', '-y', '-i', video1, '-i', video2,
+            '-filter_complex',
+            f"[0:v]scale={resolution_map[resolution]}:force_original_aspect_ratio=decrease,pad={resolution_map[resolution]}:(ow-iw)/2:(oh-ih)/2,setsar=1[v0];"
+            f"[1:v]scale={resolution_map[resolution]}:force_original_aspect_ratio=decrease,pad={resolution_map[resolution]}:(ow-iw)/2:(oh-ih)/2,setsar=1[v1];"
+            f"[v0][0:a?][v1][1:a?]concat=n=2:v=1:a=1[v][a]",
+            '-map', '[v]', '-map', '[a]',
+            output_path
+        ]
 
-            if video1_audio and video2_audio: #两个视频都有音频
-                command = f'ffmpeg {use_cuvid} -i {video1_path} -i {video2_path} -filter_complex \
-            "[0:v]scale={width}:{height},setsar=1,setpts=PTS-STARTPTS[v0]; \
-            [1:v]scale={width}:{height},setsar=1,setpts=PTS-STARTPTS[v1]; \
-            [v0][v1]concat=n=2:v=1:a=0[outv]; \
-            [0:a][1:a]concat=n=2:v=0:a=1[outa]" \
-            -map "[outv]" -map "[outa]" -r 30 {use_encoder} -c:a aac -ar 44100 -b:a 128k {output_path}'
-            elif video1_audio and not video2_audio: #第一个视频有音频，第二个没有
-                command = f'ffmpeg {use_cuvid} -i {video1_path} -i {video2_path} -filter_complex \
-            "[0:v]scale={width}:{height},setsar=1,setpts=PTS-STARTPTS[v0]; \
-            [1:v]scale={width}:{height},setsar=1,setpts=PTS-STARTPTS[v1]; \
-            [v0][v1]concat=n=2:v=1:a=0[outv]" \
-            -map "[outv]" -map "0:a" -r 30 {use_encoder} -c:a aac -ar 44100 -b:a 128k {output_path}'
-            elif not video1_audio and video2_audio: #第一个视频没有音频，第二个有
-                video_info = getVideoInfo(video1_path)
-                duration = video_info['duration']
-                delay_time = int(duration * 1000)  # 转换为毫秒
-                
-                command = f'ffmpeg {use_cuvid} -i {video1_path} -i {video2_path} -filter_complex \
-            "[0:v]scale={width}:{height},setsar=1,setpts=PTS-STARTPTS[v0]; \
-            [1:v]scale={width}:{height},setsar=1,setpts=PTS-STARTPTS[v1]; \
-            [v0][v1]concat=n=2:v=1:a=0[outv]; \
-            [1:a]adelay={delay_time}|{delay_time}[a1]; \
-            [a1]concat=n=1:v=0:a=1[outa]" \
-            -map "[outv]" -map "[outa]" -r 30 {use_encoder} -c:a aac -ar 44100 -b:a 128k {output_path}'
-            else: #两个视频都没有音频
-                command = f'ffmpeg {use_cuvid} -i {video1_path} -i {video2_path} -filter_complex \
-            "[0:v]scale={width}:{height},setsar=1,setpts=PTS-STARTPTS[v0]; \
-            [1:v]scale={width}:{height},setsar=1,setpts=PTS-STARTPTS[v1]; \
-            [v0][v1]concat=n=2:v=1:a=0[outv]" \
-            -map "[outv]" -r 30 {use_encoder} -an {output_path}' 
-            
-            
-            # 执行命令并检查错误
-            result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            # 检查返回码
-            if result.returncode != 0:
-                # 如果有错误，输出错误信息
-                 print(f"Error: {result.stderr.decode('utf-8')}")
-                 raise ValueError(f"Error: {result.stderr.decode('utf-8')}")
-            else:
-                # 输出标准输出信息
-                print(result.stdout)
-
-            return (output_path,)
-        except Exception as e:
-            raise ValueError(e)
+        subprocess.run(command, check=True)
+        return (output_path,)

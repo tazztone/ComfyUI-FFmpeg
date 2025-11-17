@@ -1,58 +1,36 @@
-from ..func import copy_images_to_directory
+import os
+import shutil
+import folder_paths
+from PIL import Image
+import numpy as np
 
-class AnyType(str):
-    def __ne__(self, __value: object) -> bool:
-        return False
-
-
-any_type = AnyType("*")
-
-class ImageCopy:
-    """A node to copy a list of images to a specified directory.
-
-    This node takes a list of image paths and copies them to a new location.
+class CopyImages:
     """
-    def __init__(self):
-        pass
-
+    A node to copy a list of images to a specified directory.
+    """
     @classmethod
     def INPUT_TYPES(cls):
-        """Specifies the input types for the node.
-
-        Returns:
-            dict: A dictionary containing the input types.
-        """
         return {
-            "required": { 
-                "image_paths": (any_type, {
-                    "tooltip": "A list of image file paths to be copied."
-                }),
-                "output_path": ("STRING", {
-                    "default": "C:/Users/Desktop/output",
-                    "tooltip": "The directory where the images will be copied to."
-                }),
+            "required": {
+                "images": ("IMAGE",),
+                "directory": ("STRING", {"default": "copied_images"}),
             },
         }
 
-    RETURN_TYPES = ("LIST","INT","STRING")
-    RETURN_NAMES = ("image_paths","image_length","output_path")
-    FUNCTION = "image_copy"
+    RETURN_TYPES = ()
+    FUNCTION = "copy_images"
     OUTPUT_NODE = True
-    CATEGORY = "🔥FFmpeg/auxiliary tool"
-  
-    def image_copy(self, image_paths, output_path):
-        """Copies a list of images to a specified directory.
+    CATEGORY = "🔥FFmpeg/IO"
 
-        Args:
-            image_paths (list): A list of paths to the image files to copy.
-            output_path (str): The directory to copy the images to.
+    def copy_images(self, images, directory):
+        output_dir = os.path.join(folder_paths.get_output_directory(), directory)
+        os.makedirs(output_dir, exist_ok=True)
 
-        Returns:
-            tuple: A tuple containing the list of new image paths, the number
-                   of images copied, and the output path.
-        """
-        try:
-            image_output_path = copy_images_to_directory(image_paths,output_path)
-            return (image_output_path,len(image_output_path),output_path)
-        except Exception as e:
-            raise ValueError(e)
+        for i, image_tensor in enumerate(images):
+            img_np = (image_tensor.cpu().numpy() * 255).astype(np.uint8)
+            img = Image.fromarray(img_np)
+
+            filepath = os.path.join(output_dir, f"image_{i:05d}.png")
+            img.save(filepath)
+
+        return ()
