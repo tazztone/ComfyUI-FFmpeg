@@ -80,3 +80,27 @@ reverses a video, creating a playback effect. It can also reverse the audio trac
 
 ### `nodes/videoTransition.py`
 creates a transition effect between two videos using FFmpeg's `xfade` filter.
+
+### `nodes/audioFilter.py`
+applies a raw FFmpeg audio filtergraph to an audio stream.
+
+### `nodes/filtergraph.py`
+applies a raw FFmpeg filtergraph to a video.
+
+### `nodes/genericFFmpeg.py`
+a generic node to execute custom FFmpeg commands using a placeholder system. It supports IMAGE and AUDIO data types.
+
+### `nodes/keyframeAwareCutting.py`
+cuts a video at the nearest keyframes to the specified start and end times to ensure clean cuts without re-encoding.
+
+### `nodes/losslessRemux.py`
+changes the container of a video or audio file (e.g., from `.mp4` to `.mkv`) without re-encoding the streams, making the process fast and preserving quality.
+
+### `nodes/streamAnalysis.py`
+analyzes a media file and outputs its stream information in JSON format, which is useful for debugging and advanced stream manipulation.
+
+### `nodes/streamMapping.py`
+allows for manual mapping of streams from an input file to the output file, giving precise control over which video, audio, and subtitle tracks are included.
+
+### `nodes/subtitle.py`
+provides subtitle handling functionalities, allowing you to burn subtitles into a video, add them as a separate stream, or extract them from a video.
