@@ -226,15 +226,17 @@ Adds an audio track to a video.
 
 ![](./assets/12.png)
 
-###### Parameter Description
-**video_path**: local video path,e.g.:`C:\Users\Desktop\111.mp4`<br>
-**output_path**: video save path,e.g.:`C:\Users\Desktop\output`<br>
-**audio**: Processed audio from upstream nodes (VHS, TTS, RVC, etc.).<br>
-**audio_file_path**: Path to audio file (used only if audio input not connected).<br>
-**audio_codec**: Audio codec (copy = lossless if compatible).<br>
-**audio_bitrate**: Audio bitrate (e.g., 128k, 192k, 320k).<br>
-**filename_prefix**: Prefix for output filename (optional).<br>
-**delay_play**: the audio delay playback time is measured in seconds, with a default value of 0.<br>
+**Parameter Description**
+- **video_path**: Local video path, e.g.:`C:\Users\Desktop\111.mp4`
+- **output_path**: Video save path, e.g.:`C:\Users\Desktop\output`
+- **audio**: Processed audio from upstream nodes (VHS, TTS, RVC, etc.)
+- **audio_file_path**: Path to audio file (used only if audio input not connected)
+- **audio_codec**: Audio codec (copy = lossless if compatible)
+- **audio_bitrate**: Audio bitrate (e.g., 128k, 192k, 320k)
+- **filename_prefix**: Prefix for output filename (optional)
+- **delay_play**: The audio delay playback time is measured in seconds, with a default value of 0
+
+---
 
 ### 🔥 PipVideo
 
@@ -291,7 +293,40 @@ Reverses the playback of a video.
 
 ---
 
-### 🔥 Filtergraph
+### 🔥 Load Images from Directory
+
+Loads all images from a directory and returns them as an IMAGE tensor.
+
+**Parameters:**
+
+*   `directory`: The directory containing the images to load.
+
+---
+
+### 🔥 Copy Images
+
+Copies a list of images to a specified directory.
+
+**Parameters:**
+
+*   `images`: The images to copy.
+*   `directory`: The destination directory for the copied images.
+
+---
+
+### 🔥 Save Images
+
+Saves a batch of images to a specified directory.
+
+**Parameters:**
+
+*   `images`: The images to save.
+*   `directory`: The directory where images will be saved.
+*   `filename_prefix`: Prefix for the output filename.
+
+---
+
+### 🔥 Apply Filtergraph
 
 Apply a raw FFmpeg filtergraph to a video.
 
@@ -304,7 +339,7 @@ Apply a raw FFmpeg filtergraph to a video.
 
 ---
 
-### 🔥 StreamMapping
+### 🔥 Apply Stream Map
 
 Apply stream mapping to a video.
 
@@ -317,7 +352,7 @@ Apply stream mapping to a video.
 
 ---
 
-### 🔥 Subtitle
+### 🔥 Handle Subtitles
 
 A node to handle subtitles.
 
@@ -331,7 +366,7 @@ A node to handle subtitles.
 
 ---
 
-### 🔥 AudioFilter
+### 🔥 Apply Audio Filter
 
 Apply a raw FFmpeg audio filtergraph to an audio stream.
 
@@ -341,6 +376,78 @@ Apply a raw FFmpeg audio filtergraph to an audio stream.
 *   `filtergraph`: The FFmpeg audio filtergraph string.
 *   `output_path`: The directory to save the processed audio.
 *   `output_ext`: The file extension for the output audio.
+
+---
+
+### 🔥 Analyze Streams
+
+Analyzes the streams of a video file and returns detailed information about video, audio, and subtitle streams.
+
+**Parameters:**
+
+*   `video`: The file path to the input video.
+
+**Returns:**
+*   JSON string containing detailed stream information including codec, resolution, bitrate, duration, and more.
+
+---
+
+### 🔥 Keyframe Trim
+
+Cuts a video at the nearest keyframes to the specified start and end times for precise editing.
+
+**Parameters:**
+
+*   `video`: The file path to the input video.
+*   `start_time`: The start time in `HH:MM:SS` format.
+*   `end_time`: The end time in `HH:MM:SS` format.
+*   `filename`: The output filename for the trimmed video.
+
+---
+
+### 🔥 Remux Video
+
+Changes the container of a video file without re-encoding (lossless operation).
+
+**Parameters:**
+
+*   `video`: The file path to the input video.
+*   `container`: The target container format (`mp4`, `mkv`, `mov`, `webm`).
+*   `filename`: The output filename for the remuxed video.
+
+---
+
+### 🔥 Generic FFmpeg
+
+Executes custom FFmpeg commands for advanced users who need full control over FFmpeg parameters.
+
+**Parameters:**
+
+*   `video`: The file path to the input video.
+*   `ffmpeg_command`: Custom FFmpeg command string (without the base `ffmpeg -i video` part).
+*   `filename`: The output filename.
+
+**Note:** This node provides maximum flexibility for advanced users but requires knowledge of FFmpeg syntax.
+
+---
+
+### 🔥 Lossless Cut
+
+An interactive node for precise video cutting at keyframes with real-time preview and controls.
+
+**Parameters:**
+
+*   `video`: The file path to the input video.
+*   `action`: The action to perform (`cut`, `preview`, or `reset`).
+*   `in_point`: The start time in seconds.
+*   `out_point`: The end time in seconds (`-1` means end of video).
+*   `current_position`: Current playback position in seconds.
+
+**Features:**
+- Interactive timeline controls
+- Real-time frame preview
+- Keyframe-accurate cutting
+- Visual feedback during editing
 
 ---
 
