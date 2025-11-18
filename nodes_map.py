@@ -25,8 +25,10 @@ from .nodes.filtergraph import ApplyFiltergraph
 from .nodes.streamMapping import ApplyStreamMap
 from .nodes.subtitle import HandleSubtitles
 from .nodes.audioFilter import ApplyAudioFilter
+from .nodes.LosslessCut import LosslessCut
 
 NODE_CLASS_MAPPINGS = {
+    "LosslessCut": LosslessCut,
     "ApplyFiltergraph": ApplyFiltergraph,
     "ApplyStreamMap": ApplyStreamMap,
     "HandleSubtitles": HandleSubtitles,
@@ -57,6 +59,7 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "LosslessCut": "🔥Lossless Cut",
     "ApplyFiltergraph": "🔥Apply Filtergraph",
     "ApplyStreamMap": "🔥Apply Stream Map",
     "HandleSubtitles": "🔥Handle Subtitles",
