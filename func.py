@@ -13,6 +13,8 @@ from itertools import islice
 from concurrent.futures import ThreadPoolExecutor,as_completed
 from comfy.model_management import unload_all_models, soft_empty_cache
 
+_xfade_transitions_cache = None
+
 def get_xfade_transitions():
     """Retrieves a list of available FFmpeg xfade transitions.
 
@@ -24,6 +26,9 @@ def get_xfade_transitions():
         list: A sorted list of available xfade transition names. If FFmpeg is
               not found or an error occurs, it returns an empty list.
     """
+    global _xfade_transitions_cache
+    if _xfade_transitions_cache is not None:
+        return _xfade_transitions_cache
     try:
         #执行命令：ffmpeg -hide_banner -h filter=xfade 查看可用的转场效果，执行ffmpeg命令获取xfade过滤器帮助信息
         result = subprocess.run(
@@ -35,7 +40,6 @@ def get_xfade_transitions():
         
         # 命令输出在stderr中
         output = result.stdout if result.stdout else result.stderr
-        print(output)
         # 使用正则表达式匹配所有transition行
         pattern = r'^\s*(\w+)\s+-?\d+\b'
         data = output.split('\n')
@@ -62,7 +66,8 @@ def get_xfade_transitions():
                 if match and match.group(1) != 'none' and match.group(1) != 'custom':
                     transitions.append(match.group(1))
                 
-        return sorted(transitions)
+        _xfade_transitions_cache = sorted(transitions)
+        return _xfade_transitions_cache
     
     except subprocess.CalledProcessError as e:
         print(f"执行ffmpeg命令出错: {e}")
