@@ -19,9 +19,17 @@ class SaveImages:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "images": ("IMAGE",),
-                "directory": ("STRING", {"default": "saved_images"}),
-                "filename_prefix": ("STRING", {"default": "image"}),
+                "images": ("IMAGE", {
+                    "tooltip": "The images to be saved."
+                }),
+                "directory": ("STRING", {
+                    "default": "saved_images",
+                    "tooltip": "The directory to save the images to. This will be created in the ComfyUI output directory."
+                }),
+                "filename_prefix": ("STRING", {
+                    "default": "image",
+                    "tooltip": "The prefix for the saved image filenames."
+                }),
             },
         }
 

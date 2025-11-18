@@ -16,10 +16,22 @@ class TrimVideo:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "start_time": ("STRING", {"default": "00:00:00"}),
-                "end_time": ("STRING", {"default": "00:00:10"}),
-                "filename": ("STRING", {"default": "trimmed_video.mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The video file to trim."
+                }),
+                "start_time": ("STRING", {
+                    "default": "00:00:00",
+                    "tooltip": "The start time of the trim in HH:MM:SS format."
+                }),
+                "end_time": ("STRING", {
+                    "default": "00:00:10",
+                    "tooltip": "The end time of the trim in HH:MM:SS format."
+                }),
+                "filename": ("STRING", {
+                    "default": "trimmed_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

@@ -19,12 +19,31 @@ class PictureInPicture:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "background_video": ("STRING", {"default": "background.mp4"}),
-                "foreground_video": ("STRING", {"default": "foreground.mp4"}),
-                "position": (["top_left", "top_right", "bottom_left", "bottom_right", "center"],),
-                "scale": ("FLOAT", {"default": 0.5, "min": 0.1, "max": 1.0}),
-                "audio_source": (["background", "foreground", "none"], {"default": "background"}),
-                "filename": ("STRING", {"default": "pip_video.mp4"}),
+                "background_video": ("STRING", {
+                    "default": "background.mp4",
+                    "tooltip": "The main video to be used as the background."
+                }),
+                "foreground_video": ("STRING", {
+                    "default": "foreground.mp4",
+                    "tooltip": "The video to be overlaid on the background video."
+                }),
+                "position": (["top_left", "top_right", "bottom_left", "bottom_right", "center"], {
+                    "tooltip": "The position of the foreground video on the background video."
+                }),
+                "scale": ("FLOAT", {
+                    "default": 0.5,
+                    "min": 0.1,
+                    "max": 1.0,
+                    "tooltip": "The scale of the foreground video."
+                }),
+                "audio_source": (["background", "foreground", "none"], {
+                    "default": "background",
+                    "tooltip": "The audio source for the output video."
+                }),
+                "filename": ("STRING", {
+                    "default": "pip_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

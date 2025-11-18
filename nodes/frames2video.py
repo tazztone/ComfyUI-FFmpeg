@@ -23,15 +23,35 @@ class Frames2Video:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "images": ("IMAGE",),
-                "fps": ("INT", {"default": 24, "min": 1}),
-                "codec": (["h264_cpu", "h265_cpu", "h264_nvidia", "h265_nvidia"],),
-                "crf": ("INT", {"default": 23, "min": 0, "max": 51}),
-                "preset": (["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"],),
-                "filename": ("STRING", {"default": "output.mp4"}),
+                "images": ("IMAGE", {
+                    "tooltip": "The images to convert to video."
+                }),
+                "fps": ("INT", {
+                    "default": 24,
+                    "min": 1,
+                    "tooltip": "The frame rate of the output video."
+                }),
+                "codec": (["h264_cpu", "h265_cpu", "h264_nvidia", "h265_nvidia"], {
+                    "tooltip": "The video codec to use for encoding."
+                }),
+                "crf": ("INT", {
+                    "default": 23,
+                    "min": 0,
+                    "max": 51,
+                    "tooltip": "The Constant Rate Factor (CRF) for the video encoding. Lower values mean better quality and larger file size."
+                }),
+                "preset": (["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"], {
+                    "tooltip": "The encoding preset, which affects the encoding speed and compression efficiency."
+                }),
+                "filename": ("STRING", {
+                    "default": "output.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
             "optional": {
-                "audio": ("AUDIO",),
+                "audio": ("AUDIO", {
+                    "tooltip": "An optional audio track to add to the video."
+                }),
             }
         }
 

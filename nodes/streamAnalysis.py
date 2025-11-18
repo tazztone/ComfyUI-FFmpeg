@@ -14,7 +14,10 @@ class AnalyzeStreams:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The video file to analyze."
+                }),
             },
         }
 

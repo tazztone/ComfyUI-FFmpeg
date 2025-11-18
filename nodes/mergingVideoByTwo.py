@@ -18,10 +18,22 @@ class MergeVideos:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video1": ("STRING", {"default": "video1.mp4"}),
-                "video2": ("STRING", {"default": "video2.mp4"}),
-                "resolution": (["720p", "1080p", "4K"], {"default": "1080p"}),
-                "filename": ("STRING", {"default": "merged_video.mp4"}),
+                "video1": ("STRING", {
+                    "default": "video1.mp4",
+                    "tooltip": "The first video file to merge."
+                }),
+                "video2": ("STRING", {
+                    "default": "video2.mp4",
+                    "tooltip": "The second video file to merge."
+                }),
+                "resolution": (["720p", "1080p", "4K"], {
+                    "default": "1080p",
+                    "tooltip": "The resolution of the output video."
+                }),
+                "filename": ("STRING", {
+                    "default": "merged_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

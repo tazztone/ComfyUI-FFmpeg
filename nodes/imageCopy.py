@@ -12,8 +12,13 @@ class CopyImages:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "images": ("IMAGE",),
-                "directory": ("STRING", {"default": "copied_images"}),
+                "images": ("IMAGE", {
+                    "tooltip": "The images to be copied."
+                }),
+                "directory": ("STRING", {
+                    "default": "copied_images",
+                    "tooltip": "The directory to copy the images to. This will be created in the ComfyUI output directory."
+                }),
             },
         }
 

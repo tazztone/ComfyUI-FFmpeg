@@ -17,9 +17,18 @@ class ApplyAudioFilter:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio": ("AUDIO",),
-                "filtergraph": ("STRING", {"default": "loudnorm", "multiline": True}),
-                "filename": ("STRING", {"default": "filtered_audio.wav"}),
+                "audio": ("AUDIO", {
+                    "tooltip": "The audio to apply the filter to."
+                }),
+                "filtergraph": ("STRING", {
+                    "default": "loudnorm",
+                    "multiline": True,
+                    "tooltip": "The FFmpeg audio filtergraph to apply."
+                }),
+                "filename": ("STRING", {
+                    "default": "filtered_audio.wav",
+                    "tooltip": "The name of the output audio file."
+                }),
             },
         }
 

@@ -14,9 +14,17 @@ class RemuxVideo:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "container": (["mp4", "mkv", "mov", "webm"],),
-                "filename": ("STRING", {"default": "remuxed_video.mkv"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The video file to remux."
+                }),
+                "container": (["mp4", "mkv", "mov", "webm"], {
+                    "tooltip": "The target container format."
+                }),
+                "filename": ("STRING", {
+                    "default": "remuxed_video.mkv",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

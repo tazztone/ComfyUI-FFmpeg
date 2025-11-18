@@ -14,7 +14,10 @@ class LoadImagesFromDirectory:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "directory": ("STRING", {"default": "images"}),
+                "directory": ("STRING", {
+                    "default": "images",
+                    "tooltip": "The directory to load images from."
+                }),
             },
         }
 

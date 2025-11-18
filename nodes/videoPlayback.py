@@ -14,9 +14,18 @@ class ReverseVideo:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "reverse_audio": ("BOOLEAN", {"default": True}),
-                "filename": ("STRING", {"default": "reversed_video.mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The video file to reverse."
+                }),
+                "reverse_audio": ("BOOLEAN", {
+                    "default": True,
+                    "tooltip": "Whether to reverse the audio as well."
+                }),
+                "filename": ("STRING", {
+                    "default": "reversed_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 
