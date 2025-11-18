@@ -26,13 +26,34 @@ class AddTextWatermark:
         """
         return {
             "required": {
-                "video": ("STRING", {"default": "sample.mp4"}),
-                "text": ("STRING", {"default": "ComfyUI"}),
-                "font_size": ("INT", {"default": 48, "min": 1}),
-                "font_color": ("STRING", {"default": "white"}),
-                "position_x": ("INT", {"default": 10}),
-                "position_y": ("INT", {"default": 10}),
-                "font_file": (["default"] + folder_paths.get_filename_list("fonts"),),
+                "video": ("STRING", {
+                    "default": "sample.mp4",
+                    "tooltip": "The video file to add the watermark to."
+                }),
+                "text": ("STRING", {
+                    "default": "ComfyUI",
+                    "tooltip": "The text to display as the watermark."
+                }),
+                "font_size": ("INT", {
+                    "default": 48,
+                    "min": 1,
+                    "tooltip": "The font size of the watermark text."
+                }),
+                "font_color": ("STRING", {
+                    "default": "white",
+                    "tooltip": "The color of the watermark text."
+                }),
+                "position_x": ("INT", {
+                    "default": 10,
+                    "tooltip": "The x-coordinate of the watermark's position."
+                }),
+                "position_y": ("INT", {
+                    "default": 10,
+                    "tooltip": "The y-coordinate of the watermark's position."
+                }),
+                "font_file": (["default"] + folder_paths.get_filename_list("fonts"), {
+                    "tooltip": "The font file to use for the watermark text."
+                }),
             },
         }
 

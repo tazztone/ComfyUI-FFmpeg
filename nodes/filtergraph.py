@@ -16,9 +16,19 @@ class ApplyFiltergraph:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "filtergraph": ("STRING", {"default": "vf hflip", "multiline": True}),
-                "filename": ("STRING", {"default": "filtered_video.mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The video to apply the filtergraph to."
+                }),
+                "filtergraph": ("STRING", {
+                    "default": "vf hflip",
+                    "multiline": True,
+                    "tooltip": "The FFmpeg filtergraph to apply."
+                }),
+                "filename": ("STRING", {
+                    "default": "filtered_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

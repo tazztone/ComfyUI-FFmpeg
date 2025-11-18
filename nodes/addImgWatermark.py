@@ -20,11 +20,27 @@ class AddImgWatermark:
         """
         return {
             "required": {
-                "video": ("STRING", {"default": "sample.mp4"}),
-                "watermark_image": ("STRING", {"default": "logo.png"}),
-                "width": ("INT", {"default": 100, "min": 1}),
-                "position_x": ("INT", {"default": 10}),
-                "position_y": ("INT", {"default": 10}),
+                "video": ("STRING", {
+                    "default": "sample.mp4",
+                    "tooltip": "The video file to add the watermark to."
+                }),
+                "watermark_image": ("STRING", {
+                    "default": "logo.png",
+                    "tooltip": "The image file to use as a watermark."
+                }),
+                "width": ("INT", {
+                    "default": 100,
+                    "min": 1,
+                    "tooltip": "The width of the watermark image. The height will be scaled automatically."
+                }),
+                "position_x": ("INT", {
+                    "default": 10,
+                    "tooltip": "The x-coordinate of the watermark's position."
+                }),
+                "position_y": ("INT", {
+                    "default": 10,
+                    "tooltip": "The y-coordinate of the watermark's position."
+                }),
             },
         }
 

@@ -20,11 +20,26 @@ class StitchVideos:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video1": ("STRING", {"default": "video1.mp4"}),
-                "video2": ("STRING", {"default": "video2.mp4"}),
-                "layout": (["horizontal", "vertical"], {"default": "horizontal"}),
-                "audio_source": (["video1", "video2", "none"], {"default": "video1"}),
-                "filename": ("STRING", {"default": "stitched_video.mp4"}),
+                "video1": ("STRING", {
+                    "default": "video1.mp4",
+                    "tooltip": "The first video file to stitch."
+                }),
+                "video2": ("STRING", {
+                    "default": "video2.mp4",
+                    "tooltip": "The second video file to stitch."
+                }),
+                "layout": (["horizontal", "vertical"], {
+                    "default": "horizontal",
+                    "tooltip": "The layout for stitching the videos (side-by-side or top-to-bottom)."
+                }),
+                "audio_source": (["video1", "video2", "none"], {
+                    "default": "video1",
+                    "tooltip": "The audio source for the output video."
+                }),
+                "filename": ("STRING", {
+                    "default": "stitched_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

@@ -15,10 +15,21 @@ class HandleSubtitles:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "subtitle_file": ("STRING", {"default": "subtitle.srt"}),
-                "action": (["burn", "add", "extract"],),
-                "filename": ("STRING", {"default": "video_with_subs.mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The input video file."
+                }),
+                "subtitle_file": ("STRING", {
+                    "default": "subtitle.srt",
+                    "tooltip": "The subtitle file (e.g., SRT, ASS)."
+                }),
+                "action": (["burn", "add", "extract"], {
+                    "tooltip": "The action to perform with the subtitles: 'burn' them into the video, 'add' them as a soft track, or 'extract' them from the video."
+                }),
+                "filename": ("STRING", {
+                    "default": "video_with_subs.mp4",
+                    "tooltip": "The name of the output file."
+                }),
             },
         }
 

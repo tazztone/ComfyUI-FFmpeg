@@ -20,12 +20,33 @@ class VideoTransition:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video1": ("STRING", {"default": "video1.mp4"}),
-                "video2": ("STRING", {"default": "video2.mp4"}),
-                "transition": (get_xfade_transitions(), {"default": "fade"}),
-                "duration": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 10.0}),
-                "offset": ("FLOAT", {"default": 2.0, "min": 0.0}),
-                "filename": ("STRING", {"default": "transition_video.mp4"}),
+                "video1": ("STRING", {
+                    "default": "video1.mp4",
+                    "tooltip": "The first video file for the transition."
+                }),
+                "video2": ("STRING", {
+                    "default": "video2.mp4",
+                    "tooltip": "The second video file for the transition."
+                }),
+                "transition": (get_xfade_transitions(), {
+                    "default": "fade",
+                    "tooltip": "The transition effect to use."
+                }),
+                "duration": ("FLOAT", {
+                    "default": 1.0,
+                    "min": 0.1,
+                    "max": 10.0,
+                    "tooltip": "The duration of the transition in seconds."
+                }),
+                "offset": ("FLOAT", {
+                    "default": 2.0,
+                    "min": 0.0,
+                    "tooltip": "The time offset in the first video where the transition should start."
+                }),
+                "filename": ("STRING", {
+                    "default": "transition_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

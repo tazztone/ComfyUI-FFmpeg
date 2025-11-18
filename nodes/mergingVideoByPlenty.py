@@ -11,9 +11,18 @@ class MergeVideoBatch:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video_directory": ("STRING", {"default": "videos"}),
-                "resolution": (["720p", "1080p", "4K"], {"default": "1080p"}),
-                "filename": ("STRING", {"default": "merged_video_batch.mp4"}),
+                "video_directory": ("STRING", {
+                    "default": "videos",
+                    "tooltip": "The directory containing the video files to merge."
+                }),
+                "resolution": (["720p", "1080p", "4K"], {
+                    "default": "1080p",
+                    "tooltip": "The resolution of the output video."
+                }),
+                "filename": ("STRING", {
+                    "default": "merged_video_batch.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

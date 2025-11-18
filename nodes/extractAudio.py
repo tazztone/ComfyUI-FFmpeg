@@ -21,8 +21,14 @@ class ExtractAudio:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "filename": ("STRING", {"default": "extracted_audio.wav"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The video file to extract audio from."
+                }),
+                "filename": ("STRING", {
+                    "default": "extracted_audio.wav",
+                    "tooltip": "The name of the output audio file."
+                }),
             },
         }
 

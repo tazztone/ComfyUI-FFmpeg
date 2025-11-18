@@ -23,12 +23,26 @@ class Video2Frames:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "sample.mp4"}),
-                "max_width": ("INT", {"default": 0, "min": 0, "max": 4096}),
-                "save_frames": ("BOOLEAN", {"default": False}),
+                "video": ("STRING", {
+                    "default": "sample.mp4",
+                    "tooltip": "The video file to extract frames from."
+                }),
+                "max_width": ("INT", {
+                    "default": 0,
+                    "min": 0,
+                    "max": 4096,
+                    "tooltip": "The maximum width of the extracted frames. If the video is wider, it will be scaled down. 0 means no scaling."
+                }),
+                "save_frames": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Whether to save the extracted frames to a directory."
+                }),
             },
             "optional": {
-                "output_dir": ("STRING", {"default": "frames"}),
+                "output_dir": ("STRING", {
+                    "default": "frames",
+                    "tooltip": "The directory to save the frames to, if save_frames is True."
+                }),
             }
         }
 

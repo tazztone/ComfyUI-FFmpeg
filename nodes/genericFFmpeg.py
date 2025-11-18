@@ -22,9 +22,19 @@ class GenericFFmpeg:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "ffmpeg_command": ("STRING", {"default": "-vf hflip", "multiline": True}),
-                "filename": ("STRING", {"default": "generic_output.mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The input video file."
+                }),
+                "ffmpeg_command": ("STRING", {
+                    "default": "-vf hflip",
+                    "multiline": True,
+                    "tooltip": "The FFmpeg command arguments to execute."
+                }),
+                "filename": ("STRING", {
+                    "default": "generic_output.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

@@ -15,9 +15,18 @@ class AddAudioFile:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "audio_file": ("STRING", {"default": "audio.wav"}),
-                "filename": ("STRING", {"default": "video_with_audio_file.mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The video file to add the audio to."
+                }),
+                "audio_file": ("STRING", {
+                    "default": "audio.wav",
+                    "tooltip": "The audio file to add to the video."
+                }),
+                "filename": ("STRING", {
+                    "default": "video_with_audio_file.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

@@ -16,9 +16,19 @@ class ApplyStreamMap:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "stream_map": ("STRING", {"default": "-map 0:v -map 0:a:0?", "multiline": True}),
-                "filename": ("STRING", {"default": "mapped_video.mp4"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The input video file."
+                }),
+                "stream_map": ("STRING", {
+                    "default": "-map 0:v -map 0:a:0?",
+                    "multiline": True,
+                    "tooltip": "The FFmpeg stream mapping arguments."
+                }),
+                "filename": ("STRING", {
+                    "default": "mapped_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 

@@ -15,9 +15,19 @@ class SplitVideo:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "video.mp4"}),
-                "segment_duration": ("INT", {"default": 10, "min": 1}),
-                "output_prefix": ("STRING", {"default": "segment_"}),
+                "video": ("STRING", {
+                    "default": "video.mp4",
+                    "tooltip": "The video file to split."
+                }),
+                "segment_duration": ("INT", {
+                    "default": 10,
+                    "min": 1,
+                    "tooltip": "The duration of each video segment in seconds."
+                }),
+                "output_prefix": ("STRING", {
+                    "default": "segment_",
+                    "tooltip": "The prefix for the output video files."
+                }),
             },
         }
 

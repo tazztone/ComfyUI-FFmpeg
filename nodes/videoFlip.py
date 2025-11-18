@@ -17,9 +17,17 @@ class VideoFlip:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video": ("STRING", {"default": "sample.mp4"}),
-                "flip_type": (["horizontal", "vertical", "both"],),
-                "filename": ("STRING", {"default": "flipped_video.mp4"}),
+                "video": ("STRING", {
+                    "default": "sample.mp4",
+                    "tooltip": "The video file to flip."
+                }),
+                "flip_type": (["horizontal", "vertical", "both"], {
+                    "tooltip": "The type of flip to apply."
+                }),
+                "filename": ("STRING", {
+                    "default": "flipped_video.mp4",
+                    "tooltip": "The name of the output video file."
+                }),
             },
         }
 
