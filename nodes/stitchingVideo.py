@@ -1,15 +1,9 @@
 import os
 import subprocess
-from ..func import has_audio,getVideoInfo,set_file_name,video_type
-import torch
-import math
-import time
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-import os
-import subprocess
-import folder_paths
+try:
+    from ..func import validate_file_exists, get_output_path
+except ImportError:
+    from func import validate_file_exists, get_output_path
 
 class StitchVideos:
     """
@@ -44,16 +38,15 @@ class StitchVideos:
         }
 
     RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("stitched_video",)
     FUNCTION = "stitch_videos"
     CATEGORY = "🔥FFmpeg/Editing"
 
     def stitch_videos(self, video1, video2, layout, audio_source, filename):
-        if not os.path.exists(video1):
-            raise FileNotFoundError(f"Video file not found: {video1}")
-        if not os.path.exists(video2):
-            raise FileNotFoundError(f"Video file not found: {video2}")
+        validate_file_exists(video1, "Video 1")
+        validate_file_exists(video2, "Video 2")
 
-        output_path = os.path.join(folder_paths.get_output_directory(), filename)
+        output_path = get_output_path(filename)
 
         filter_complex = f"[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[v]" if layout == 'horizontal' \
                          else f"[0:v]pad=iw:ih*2[int];[int][1:v]overlay=0:H/2[v]"
@@ -68,5 +61,9 @@ class StitchVideos:
 
         command.append(output_path)
 
-        subprocess.run(command, check=True)
+        try:
+            subprocess.run(command, check=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"FFmpeg execution failed: {e}")
+
         return (output_path,)
