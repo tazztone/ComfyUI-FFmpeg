@@ -362,3 +362,51 @@ def clear_memory():
     gc.collect()
     unload_all_models()
     soft_empty_cache()
+
+def save_tensor_to_temp_file(image_tensor, prefix="temp_image", extension=".png"):
+    """Saves a ComfyUI IMAGE tensor to a temporary file.
+
+    Args:
+        image_tensor: ComfyUI IMAGE tensor (single image)
+        prefix: Filename prefix
+        extension: File extension (.png, .jpg, etc.)
+
+    Returns:
+        str: Path to the temporary file
+    """
+    import tempfile
+    temp_dir = tempfile.gettempdir()
+    timestamp = time.strftime("%Y%m%d%H%M%S", time.localtime())
+    temp_path = os.path.join(temp_dir, f"{prefix}_{timestamp}{extension}")
+    tensor2pil(image_tensor).save(temp_path)
+    return temp_path
+
+def validate_file_exists(file_path, file_type="file"):
+    """Validates that a file exists and raises appropriate error.
+
+    Args:
+        file_path: Path to validate
+        file_type: Description of file type for error message
+
+    Raises:
+        FileNotFoundError: If file doesn't exist
+    """
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"{file_type.capitalize()} file not found: {file_path}")
+    return True
+
+def get_output_path(filename, prefix="", suffix=""):
+    """Generates a standardized output path in ComfyUI's output directory.
+
+    Args:
+        filename: Base filename
+        prefix: Optional prefix to add
+        suffix: Optional suffix to add (before extension)
+
+    Returns:
+        str: Full output path
+    """
+    import folder_paths
+    base, ext = os.path.splitext(filename)
+    new_filename = f"{prefix}{base}{suffix}{ext}" if prefix or suffix else filename
+    return os.path.join(folder_paths.get_output_directory(), new_filename)

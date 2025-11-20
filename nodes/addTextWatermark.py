@@ -1,7 +1,10 @@
 import os
 import subprocess
 import folder_paths
-from ..func import set_file_name,video_type
+try:
+    from ..func import validate_file_exists, get_output_path
+except ImportError:
+    from func import validate_file_exists, get_output_path
 
 current_path = os.path.abspath(__file__)
 font_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.normpath(__file__))), 'fonts')
@@ -58,24 +61,36 @@ class AddTextWatermark:
         }
 
     RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("video_path",)
     FUNCTION = "add_text_watermark"
     CATEGORY = "🔥FFmpeg/Watermark"
 
     def add_text_watermark(self, video, text, font_size, font_color, position_x, position_y, font_file):
-        if not os.path.exists(video):
-            raise FileNotFoundError(f"Video file not found: {video}")
+        validate_file_exists(video, "Video")
 
-        output_path = os.path.join(folder_paths.get_output_directory(), f"watermarked_{os.path.basename(video)}")
+        output_path = get_output_path(os.path.basename(video), prefix="watermarked_")
 
         font_path = "default"
         if font_file != "default":
             font_path = os.path.join(font_dir, font_file)
+            # We can validate font exists too, though folder_paths likely handles it
+            validate_file_exists(font_path, "Font")
+
+        # Escape text for drawtext filter
+        # FFmpeg drawtext filter special characters escaping
+        text_escaped = text.replace(":", "\\:").replace("'", "")
+
+        font_arg = f":fontfile='{font_path}'" if font_file != "default" else ""
 
         command = [
             'ffmpeg', '-y', '-i', video,
-            '-vf', f"drawtext=text='{text}':fontfile='{font_path}':fontsize={font_size}:fontcolor={font_color}:x={position_x}:y={position_y}",
+            '-vf', f"drawtext=text='{text_escaped}'{font_arg}:fontsize={font_size}:fontcolor={font_color}:x={position_x}:y={position_y}",
             output_path
         ]
         
-        subprocess.run(command, check=True)
+        try:
+            subprocess.run(command, check=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"FFmpeg execution failed: {e}")
+
         return (output_path,)
