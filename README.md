@@ -1,9 +1,5 @@
 <h1 align="center">ComfyUI-FFmpeg</h1>
 
-<p align="center">
-    <br> <font size=5>English | <a href="README_CN.md">中文</a></font>
-</p>
-
 ## Introduction
 
 **ComfyUI-FFmpeg** is a powerful extension for ComfyUI that wraps frequently used FFmpeg functionalities into intuitive nodes. This allows you to perform a wide range of video processing tasks directly within your ComfyUI workflow, streamlining your creative process.
