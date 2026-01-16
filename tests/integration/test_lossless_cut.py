@@ -27,9 +27,6 @@ class TestLosslessCut(unittest.TestCase):
         if os.path.exists(self.video_path):
             os.remove(self.video_path)
 
-    @pytest.mark.skip(
-        reason="Complex mock interaction with folder_paths - known flaky test"
-    )
     @pytest.mark.integration
     @patch("nodes.LosslessCut.subprocess.run")
     def test_lossless_cut(self, mock_subprocess_run):
@@ -90,6 +87,7 @@ class TestLosslessCut(unittest.TestCase):
         import folder_paths
 
         temp_dir = folder_paths.get_temp_directory()
+        output_dir = folder_paths.get_output_directory()
         metadata_path = os.path.join(temp_dir, "losslesscut_data_test_node.json")
 
         self.assertTrue(os.path.exists(metadata_path))
@@ -107,7 +105,7 @@ class TestLosslessCut(unittest.TestCase):
             current_position=1.0,
         )
         self.assertTrue(
-            result["result"][0].startswith(os.path.join(temp_dir, "lossless_cut_"))
+            result["result"][0].startswith(os.path.join(output_dir, "lossless_cut_"))
         )
         self.assertTrue(os.path.exists(result["result"][0]))
 

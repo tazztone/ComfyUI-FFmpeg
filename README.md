@@ -73,9 +73,24 @@ Extracts a single segment from a video based on start/end times (`HH:MM:SS`).
 #### 🔥 Keyframe Trim
 Cuts a video at the nearest keyframes to the specified times. Ensures fast, clean cuts without re-encoding.
 
+**Inputs:**
+* `video` (STRING): Input video file.
+* `start_time` (STRING): Start timestamp (e.g., `00:00:10`).
+* `end_time` (STRING): End timestamp.
+* `filename` (STRING): Output name.
+**Outputs:**
+* `STRING`: Path to the trimmed video.
+
 #### 🔥 Lossless Cut
 **Interactive Node**: Provides a UI timeline for precise, keyframe-accurate cutting with real-time preview.
 *   **Features**: Visual timeline, play/pause controls, start/end point setting.
+
+**Inputs:**
+* `video` (STRING): Input video file.
+* `action`, `in_point`, `out_point`, `current_position` (UI interactors).
+**Outputs:**
+* `STRING`: Path to the cut video file.
+* `UI`: Frontend updates.
 
 #### 🔥 Remux Video
 Changes the container format (e.g., `.mp4` -> `.mkv`) without re-encoding streams. Instant conversion preserving 100% quality.
@@ -90,6 +105,14 @@ Overlays one video onto another with customizable position, scaling, and optiona
 
 #### 🔥 Video Transition
 Creates a transition effect (e.g., fade, wipe, slide) between two videos using FFmpeg's `xfade` filter.
+
+**Inputs:**
+* `video1`, `video2` (STRING): Input videos.
+* `transition` (STRING): Effect type (e.g., `fade`, `wipeleft`).
+* `duration` (FLOAT): Duration in seconds.
+* `offset` (FLOAT): Start offset.
+**Outputs:**
+* `STRING`: Path to generated video.
 ![](./assets/14.png)
 
 #### 🔥 Flip Video
