@@ -35,6 +35,77 @@ if "comfy" not in sys.modules:
 if "comfy.model_management" not in sys.modules:
     sys.modules["comfy.model_management"] = MagicMock()
 
+# --- Mock comfy_api for V3 nodes ---
+# Create a mock for io types that behave like real classes
+
+
+class MockComfyNode:
+    """Base class for V3 nodes in test environment."""
+
+    pass
+
+
+class MockSchema:
+    """Mock Schema class."""
+
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+
+class MockNodeOutput(tuple):
+    """Mock NodeOutput that behaves like a tuple."""
+
+    def __new__(cls, *args):
+        return super().__new__(cls, args)
+
+
+class MockInputType:
+    """Mock for io.String, io.Int, io.Float, etc."""
+
+    @staticmethod
+    def Input(name, *args, **kwargs):
+        return MagicMock(name=name)
+
+    @staticmethod
+    def Output(**kwargs):
+        return MagicMock()
+
+
+class MockHidden:
+    """Mock for io.Hidden"""
+
+    @staticmethod
+    def Input(name, *args, **kwargs):
+        return MagicMock(name=name)
+
+
+# Build mock io module
+mock_io = MagicMock()
+mock_io.ComfyNode = MockComfyNode
+mock_io.Schema = MockSchema
+mock_io.NodeOutput = MockNodeOutput
+mock_io.String = MockInputType
+mock_io.Int = MockInputType
+mock_io.Float = MockInputType
+mock_io.Boolean = MockInputType
+mock_io.Combo = MockInputType
+mock_io.Image = MockInputType
+mock_io.Audio = MockInputType
+mock_io.Hidden = MockHidden
+
+# Build mock comfy_api module structure
+mock_comfy_api = MagicMock()
+mock_comfy_api_latest = MagicMock()
+mock_comfy_api_latest.io = mock_io
+
+if "comfy_api" not in sys.modules:
+    sys.modules["comfy_api"] = mock_comfy_api
+if "comfy_api.latest" not in sys.modules:
+    sys.modules["comfy_api.latest"] = mock_comfy_api_latest
+if "comfy_api.latest.io" not in sys.modules:
+    sys.modules["comfy_api.latest.io"] = mock_io
+
 
 # Clean up at end of session
 @pytest.fixture(scope="session", autouse=True)

@@ -160,7 +160,7 @@ def test_my_node():
 
 ## Test Results Summary
 
-**Current Status**: ✅ 13 passed, 2 skipped
+**Current Status**: ✅ 29 passed, 4 skipped
 
 ```
 unit/test_func_unit.py::test_validate_time_format PASSED
@@ -169,6 +169,7 @@ unit/test_func_unit.py::test_generate_template_string PASSED
 unit/test_func_unit.py::test_video_type PASSED
 unit/test_func_unit.py::test_audio_type PASSED
 unit/test_func_unit.py::test_clear_memory PASSED
+unit/test_video_flip_v3.py::test_videoflip_v3_structure PASSED
 integration/test_nodes_general.py::test_add_img_watermark PASSED
 integration/test_nodes_general.py::test_add_text_watermark PASSED
 integration/test_nodes_general.py::test_pip_video PASSED
@@ -176,6 +177,19 @@ integration/test_nodes_general.py::test_merge_videos PASSED
 integration/test_nodes_general.py::test_stitch_videos PASSED
 integration/test_nodes_general.py::test_frames2video PASSED
 integration/test_stream_analysis.py::test_stream_analysis PASSED
-integration/test_stream_analysis.py::test_keyframe_aware_cutting SKIPPED
-integration/test_lossless_cut.py::test_lossless_cut SKIPPED
+integration/test_stream_analysis.py::test_keyframe_aware_cutting PASSED
+integration/test_lossless_cut.py::test_lossless_cut PASSED
+integration/test_video_flip_v3_integration.py::test_videoflip_v3_execution PASSED
+integration/test_v3_nodes_integration.py::test_generic_ffmpeg_v3 PASSED
+integration/test_v3_nodes_integration.py::test_analyze_streams_v3 PASSED
+integration/test_v3_nodes_integration.py::test_trim_video_v3 PASSED
+integration/test_v3_nodes_integration.py::test_split_video_v3 PASSED
+integration/test_v3_nodes_integration.py::test_reverse_video_v3 PASSED
+integration/test_v3_nodes_integration.py::test_remux_video_v3 SKIPPED
+integration/test_v3_nodes_integration.py::test_merge_videos_v3 SKIPPED
+integration/test_v3_nodes_integration.py::test_stitch_videos_v3 PASSED
+integration/test_v3_nodes_integration.py::test_apply_filtergraph_v3 PASSED
+integration/test_v3_nodes_integration.py::test_apply_stream_map_v3 PASSED
+integration/test_v3_nodes_integration.py::test_video2frames_v3 PASSED
+integration/test_v3_nodes_integration.py::test_frames2video_v3 PASSED
 ```

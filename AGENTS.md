@@ -38,16 +38,94 @@ In **ComfyUI-FFmpeg**, this communication often involves:
 
 ### Backend Development (Python)
 
-#### Node Schema & V3 Migration
-While ComfyUI is migrating to a **V3 Modern Schema** (using `define_schema` and `async comfy_entrypoint`), this repository currently uses the **V1 (Standard/Legacy) Schema**. New nodes should consider V3 syntax for future compatibility.
+#### Node Schema: V1 Legacy vs V3 Modern
 
-**V1 Structure:**
-*   **`INPUT_TYPES`**: Defines input widgets and slots.
-*   **`RETURN_TYPES`**: Tuple defining output types.
-*   **`FUNCTION`**: The entry point method name.
-*   **`CATEGORY`**: Grouping in the node menu.
+This repository supports **both** V1 and V3 node schemas. V3 nodes are suffixed with `V3` in their class names and display names.
 
-> **Critical:** The execution function **must** return a tuple, even for a single output (e.g., `return (image_output,)`).
+**V1 Structure (Legacy):**
+```python
+class MyNode:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"input": ("STRING", {"default": "value"})}}
+    RETURN_TYPES = ("STRING",)
+    FUNCTION = "execute"
+    CATEGORY = "🔥FFmpeg"
+    
+    def execute(self, input):
+        return (result,)  # Must be a tuple!
+```
+
+**V3 Structure (Modern):**
+```python
+from comfy_api.latest import io
+
+class MyNodeV3(io.ComfyNode):
+    @classmethod
+    def define_schema(cls) -> io.Schema:
+        return io.Schema(
+            node_id="MyNodeV3",
+            display_name="🔥My Node (V3)",
+            category="🔥FFmpeg",
+            inputs=[
+                io.String.Input("input", default="value", tooltip="Description"),
+            ],
+            outputs=[
+                io.String.Output(tooltip="The result"),
+            ]
+        )
+
+    @classmethod
+    def execute(cls, input) -> io.NodeOutput:
+        return io.NodeOutput(result)
+```
+
+#### V3 Migration Lessons Learned
+
+> [!IMPORTANT]
+> **Key Insight**: The `comfy_api.latest.io` module provides typed input/output classes. Use `io.String`, `io.Int`, `io.Float`, `io.Boolean`, `io.Combo`, `io.Image`, `io.Audio`, `io.Hidden`.
+
+**V3 Type Mappings:**
+| V1 Type | V3 Equivalent |
+|---------|---------------|
+| `("STRING", {...})` | `io.String.Input("name", default=..., tooltip=...)` |
+| `("INT", {...})` | `io.Int.Input("name", default=..., min=..., max=...)` |
+| `("FLOAT", {...})` | `io.Float.Input("name", default=..., min=..., max=...)` |
+| `("BOOLEAN", {...})` | `io.Boolean.Input("name", default=...)` |
+| `(["a", "b"], {...})` | `io.Combo.Input("name", ["a", "b"], default=...)` |
+| `IMAGE` | `io.Image.Input("name", tooltip=...)` (No `default`!) |
+| `AUDIO` | `io.Audio.Input("name", tooltip=...)` (No `default`!) |
+| Hidden inputs | `io.Hidden("name")` (No `.Input` or `default`!) |
+
+**Common Pitfalls:**
+1. **Return Type**: V3 uses `io.NodeOutput(val1, val2, ...)` instead of bare tuples.
+2. **Method Type**: Use **`@classmethod`** for `execute()` and include `cls` as the first argument. Using `@staticmethod` may cause `AttributeError` during node discovery.
+3. **Combo Inputs**: Pass list as second positional arg: `io.Combo.Input("name", ["opt1", "opt2"])`.
+4. **Invalid Defaults**: `io.Image.Input`, `io.Audio.Input`, and `io.Hidden` do **NOT** accept a `default` argument. Adding one causes `TypeError`.
+5. **Hidden Inputs**: Use `io.Hidden("name")` specifically. `io.Hidden.Input` does not exist in the latest V3 API.
+
+#### Testing V3 Nodes
+
+**Mock Setup for Tests:**
+V3 nodes import `comfy_api.latest.io` which doesn't exist in test environment. Add to `conftest.py`:
+
+```python
+# Mock comfy_api for V3 nodes
+class MockComfyNode: pass
+class MockNodeOutput(tuple):
+    def __new__(cls, *args):
+        return super().__new__(cls, args)
+
+mock_io = MagicMock()
+mock_io.ComfyNode = MockComfyNode
+mock_io.NodeOutput = MockNodeOutput
+mock_io.String = MockInputType  # ... etc for all types
+
+sys.modules["comfy_api.latest.io"] = mock_io
+```
+
+> [!WARNING]
+> **Critical**: Do NOT manipulate `sys.modules["comfy_api"]` at module level in test files. This conflicts with `conftest.py` mocks and causes `MagicMock` objects to leak into tests.
 
 #### Critical Data Types & Shapes
 *   **`IMAGE`**: Shape `[Batch, Height, Width, Channels]` (usually RGB). Values are floats `0.0` to `1.0`.
