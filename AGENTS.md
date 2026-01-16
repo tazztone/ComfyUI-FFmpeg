@@ -6,6 +6,16 @@ This document provides comprehensive guidelines for agents and developers workin
 
 **ComfyUI-FFmpeg** is a suite of custom nodes for ComfyUI that wraps FFmpeg functionalities. It allows users to perform video and audio processing tasks (editing, transcoding, watermarking, analysis, etc.) directly within ComfyUI workflows.
 
+## Architecture & Data Flow
+
+ComfyUI operates on a **Client-Server model**:
+*   **Server (Python):** Handles the heavy lifting—loading models, processing tensors (images/latents), and executing algorithms.
+*   **Client (JavaScript):** Handles the UI, graph connections, and widgets in the browser.
+
+In **ComfyUI-FFmpeg**, this communication often involves:
+*   **Python (Backend)**: Running FFmpeg processes, handling video files, and processing `IMAGE`/`AUDIO` tensors.
+*   **JavaScript (Frontend)**: Managing specialized widgets (like the timeline in `LosslessCut`), passing configuration to the backend, and displaying metadata.
+
 ## Code Structure
 
 *   **`nodes/`**: Contains the Python source code for individual nodes. Each file typically corresponds to one node class.
@@ -20,6 +30,27 @@ This document provides comprehensive guidelines for agents and developers workin
 
 ## Development Guidelines
 
+### Backend Development (Python)
+
+#### Node Schema
+While ComfyUI is migrating to a V3-style Modern Schema (classes inheriting from `comfy_api.latest.io.ComfyNode`), this repository currently uses the **V1 (Standard/Legacy) Schema**.
+*   **`INPUT_TYPES`**: Defines input widgets and slots.
+*   **`RETURN_TYPES` & `RETURN_NAMES`**: Defines output slots and labels.
+*   **`FUNCTION`**: The entry point method.
+*   **`CATEGORY`**: Grouping in the node menu.
+
+#### Critical Data Types
+*   **`IMAGE`**: Shape `[Batch, Height, Width, Channels]` (usually RGB). Values are floats `0.0` to `1.0`.
+*   **`AUDIO`**: ComfyUI audio tensor format (shape `[Batch, Channels, Samples]`).
+*   **`STRING`**: File paths or raw text.
+
+> **Tip:** When processing tensors, check dimensions carefully. You often need to `unsqueeze` to match shapes or normalize `0-255` integers to `0.0-1.0` floats.
+
+#### Advanced Execution Features
+*   **Lazy Evaluation:** Add `{"lazy": True}` to `INPUT_TYPES` and implement `check_lazy_status` if you want to skip execution based on downstream needs.
+*   **`IS_CHANGED`**: Return a unique value (like a hash or timestamp) to force the node to re-execute even if inputs haven't changed.
+*   **`VALIDATE_INPUTS`**: Implement this static method to check data validity before the graph starts running.
+
 ### Adding New Nodes
 1.  **Create Node File**: Add a new Python file in `nodes/`.
 2.  **Register Node**: Import the class in `nodes_map.py` and add it to `NODE_CLASS_MAPPINGS` and `NODE_DISPLAY_NAME_MAPPINGS`.
@@ -31,6 +62,9 @@ This document provides comprehensive guidelines for agents and developers workin
     *   Place JavaScript logic in `web/js/`.
     *   To serve these assets, the Python node class must define `WEB_DIRECTORY` (usually pointing to `./web` relative to the node or the root).
     *   Use `app.registerExtension` to integrate with the ComfyUI frontend.
+*   **Modern Frontend APIs**:
+    *   **Context Menus**: Use `getCanvasMenuItems` and `getNodeMenuItems` in your extension object. Avoid monkey-patching prototypes directly.
+    *   **Settings**: Register settings via `app.registerExtension({ settings: [...] })` to make them appear in the main ComfyUI settings dialog.
 *   **State Management**:
     *   **Hidden Widgets**: Use hidden inputs in `INPUT_TYPES` to pass state from the frontend (JS) to the backend (Python).
     *   **Execution Flow**: Button clicks in JS set an 'action' widget's value and call `app.queuePrompt()`. The Python node processes this and returns updated state in a `ui` dictionary (e.g., `{"ui": {"widget_name": [value]}}`). The JS `onExecuted` function then updates the hidden widgets for the next run.
@@ -63,11 +97,21 @@ This document provides comprehensive guidelines for agents and developers workin
         from func import my_helper
     ```
 
+### Documentation & Polish
+*   **Node Documentation**: Place markdown files in `web/docs/NameOfNode.md`. This content appears when users blindly click "Node Info".
+*   **i18n (Localization)**: Support multiple languages (e.g., `zh`, `en`) by creating `locales/` folders if strictly necessary, mapping node names and inputs to translated strings.
+*   **Workflow Templates**: Add example workflows (`.json`) and thumbnails to an `example_workflows` directory to help users get started quickly.
+
 ### FFmpeg Best Practices
 *   **Helper Functions**: Use `func.py` for common tasks (e.g., `save_tensor_to_temp_file`, `get_output_path`).
 *   **Security**: Always use `shlex.split()` when parsing user-provided command strings to prevent injection vulnerabilities.
 *   **In-Memory Data**: For `IMAGE` or `AUDIO` tensors, save them to a temporary file, run the FFmpeg command, and then delete the temp file.
 *   **GenericFFmpeg Placeholders**: When using generic command execution, support placeholders like `{media_in_1}` and `{output_file}` to allow flexible command construction.
+
+### Troubleshooting Tips
+*   **Visual Debugging**: Use `PromptServer.instance.send_sync("message_id", data)` in Python and listen via `api.addEventListener` in JS to send debug data to the browser console.
+*   **Frontend Issues**: Check the browser developer console (F12) for JS errors.
+*   **Binary Search**: If the suite crashes ComfyUI, disable half the nodes in `nodes_map.py` to isolate the culprit.
 
 ## Publishing to Comfy Registry
 

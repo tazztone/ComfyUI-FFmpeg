@@ -46,6 +46,7 @@ def test_stream_analysis(create_test_video):
     assert "streams" in data
 
 
+# TODO: Fix this test. It is currently skipped because it is flaky.
 @pytest.mark.skip(reason="Known flaky test - see AGENTS.md")
 @pytest.mark.integration
 def test_keyframe_aware_cutting(create_test_video):

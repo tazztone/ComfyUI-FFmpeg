@@ -306,6 +306,7 @@ def getVideoInfo(video_path):
     output = result.stdout.decode("utf-8").strip()
     # TODO: usage of print detected. Use logging or raise Error instead.
     # print(output)
+    # TODO: Standardize error reporting (e.g., return None or raise specific exception instead of empty dict)
     try:
         data = json.loads(output)
     except json.JSONDecodeError as e:
@@ -451,7 +452,7 @@ def get_video_files(directory):
         list: A sorted list of video file paths.
     """
 
-    # TODO: Centralize extension definitions with video_type() and audio_type()
+    # TODO: Centralize extension definitions with video_type() and audio_type() to avoid inconsistency
     # video_extensions = ["*.mp4", "*.avi", "*.mov", "*.mkv", "*.rmvb", "*.wmv", "*.flv"]
     video_extensions = [f"*{ext}" for ext in video_type()]
     video_files = []

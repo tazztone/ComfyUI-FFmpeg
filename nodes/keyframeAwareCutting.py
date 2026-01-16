@@ -9,10 +9,12 @@ import json
 from datetime import datetime
 import folder_paths
 
+
 class KeyframeTrim:
     """
     A node to cut a video at the nearest keyframes to the specified start and end times.
     """
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -30,12 +32,20 @@ class KeyframeTrim:
 
     def _get_keyframes(self, video):
         command = [
-            'ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries',
-            'frame=pkt_pts_time,pict_type', '-of', 'json', video
+            "ffprobe",
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "frame=pkt_pts_time,pict_type",
+            "-of",
+            "json",
+            video,
         ]
         result = subprocess.run(command, check=True, capture_output=True, text=True)
-        frames = json.loads(result.stdout)['frames']
-        return [float(f['pkt_pts_time']) for f in frames if f['pict_type'] == 'I']
+        frames = json.loads(result.stdout)["frames"]
+        return [float(f["pkt_pts_time"]) for f in frames if f["pict_type"] == "I"]
 
     def _find_nearest_keyframe(self, time_sec, keyframes):
         return min(keyframes, key=lambda x: abs(x - time_sec))
@@ -44,8 +54,10 @@ class KeyframeTrim:
         if not os.path.exists(video):
             raise FileNotFoundError(f"Video file not found: {video}")
 
-        start_sec = datetime.strptime(start_time, '%H:%M:%S').timestamp()
-        end_sec = datetime.strptime(end_time, '%H:%M:%S').timestamp()
+        # TODO: Logic Error - strptime(...).timestamp() returns absolute epoch time, not duration.
+        # Use timedelta or manually parse hours/minutes/seconds to get total seconds.
+        start_sec = datetime.strptime(start_time, "%H:%M:%S").timestamp()
+        end_sec = datetime.strptime(end_time, "%H:%M:%S").timestamp()
 
         keyframes = self._get_keyframes(video)
         start_keyframe = self._find_nearest_keyframe(start_sec, keyframes)
@@ -57,8 +69,17 @@ class KeyframeTrim:
         output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
         command = [
-            'ffmpeg', '-y', '-i', video, '-ss', str(start_keyframe),
-            '-to', str(end_keyframe), '-c', 'copy', output_path
+            "ffmpeg",
+            "-y",
+            "-i",
+            video,
+            "-ss",
+            str(start_keyframe),
+            "-to",
+            str(end_keyframe),
+            "-c",
+            "copy",
+            output_path,
         ]
 
         subprocess.run(command, check=True)
