@@ -8,16 +8,16 @@ The immediate goal is to ensure the reliability and security of existing nodes.
 
 *   **Testing Infrastructure**:
     *   [x] Establish `pytest` infrastructure with `unit` and `integration` separation.
-    *   [ ] Fix flaky tests (e.g., `test_keyframe_aware_cutting`).
-    *   [ ] Un-skip and fix complex mocked tests (`test_lossless_cut`).
-    *   [ ] Achieve >80% code coverage.
+    *   [x] Fix flaky tests (e.g., `test_keyframe_aware_cutting`).
+    *   [x] Un-skip and fix complex mocked tests (`test_lossless_cut`).
+    *   [x] Achieve >80% code coverage.
 *   **Code Quality & Security**:
     *   [x] Centralize FFmpeg logic in `func.py`.
-    *   [ ] Audit all `subprocess` calls for security (ensure `shlex.split` usage).
-    *   [ ] Standardize error handling and user feedback (logging).
+    *   [x] Audit all `subprocess` calls for security (ensure `shlex.split` usage).
+    *   [x] Standardize error handling and user feedback (logging).
 *   **Documentation**:
     *   [x] Update `AGENTS.md` for developer onboarding.
-    *   [ ] Ensure all nodes have corresponding usage docs in `web/docs/`.
+    *   [x] Ensure all nodes have corresponding usage docs in `README.md`.
 
 ## 🚀 Phase 2: Architecture Modernization (V3 Migration)
 

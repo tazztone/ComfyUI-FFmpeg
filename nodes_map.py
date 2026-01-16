@@ -27,7 +27,10 @@ from .nodes.subtitle import HandleSubtitles
 from .nodes.audioFilter import ApplyAudioFilter
 from .nodes.LosslessCut import LosslessCut
 
+from .nodes.videoFlip_v3 import VideoFlipV3
+
 NODE_CLASS_MAPPINGS = {
+    "VideoFlipV3": VideoFlipV3,
     "LosslessCut": LosslessCut,
     "ApplyFiltergraph": ApplyFiltergraph,
     "ApplyStreamMap": ApplyStreamMap,
@@ -57,6 +60,7 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "VideoFlipV3": "🔥Flip Video (V3)",
     "LosslessCut": "🔥Lossless Cut",
     "ApplyFiltergraph": "🔥Apply Filtergraph",
     "ApplyStreamMap": "🔥Apply Stream Map",

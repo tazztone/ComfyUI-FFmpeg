@@ -11,14 +11,16 @@ import time
 import glob
 from itertools import islice
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
+from typing import List, Tuple, Set, Dict, Any, Optional, Union, Generator
 
 from comfy.model_management import unload_all_models, soft_empty_cache
 
 _xfade_transitions_cache = None
 
 
-def get_xfade_transitions():
+def get_xfade_transitions() -> List[str]:
     """Retrieves a list of available FFmpeg xfade transitions.
 
     This function executes the `ffmpeg -h filter=xfade` command to get a list
@@ -126,7 +128,7 @@ def get_xfade_transitions():
         return []
 
 
-def copy_image(image_path, destination_directory):
+def copy_image(image_path: str, destination_directory: str) -> Optional[str]:
     """Copies a single image to a destination directory.
 
     Args:
@@ -150,7 +152,9 @@ def copy_image(image_path, destination_directory):
         return None
 
 
-def copy_images_to_directory(image_paths, destination_directory):
+def copy_images_to_directory(
+    image_paths: List[str], destination_directory: str
+) -> List[str]:
     """Copies a list of images to a destination directory in parallel.
 
     Args:
@@ -187,7 +191,9 @@ def copy_images_to_directory(image_paths, destination_directory):
     return [path for path in copied_paths if path is not None]
 
 
-def get_image_paths_from_directory(directory, start_index, length):
+def get_image_paths_from_directory(
+    directory: str, start_index: int, length: int
+) -> List[str]:
     """Gets a specified number of image paths from a directory.
 
     Args:
@@ -212,7 +218,7 @@ def get_image_paths_from_directory(directory, start_index, length):
     return list(selected_images)
 
 
-def generate_template_string(filename):
+def generate_template_string(filename: str) -> str:
     """Generates a template string for FFmpeg based on a filename.
 
     This function takes a filename and replaces the first sequence of digits
@@ -232,7 +238,7 @@ def generate_template_string(filename):
     )
 
 
-def tensor2pil(image):
+def tensor2pil(image: torch.Tensor) -> Image.Image:
     """Converts a tensor to a PIL image.
 
     Args:
@@ -246,7 +252,7 @@ def tensor2pil(image):
     )
 
 
-def pil2tensor(image):
+def pil2tensor(image: Image.Image) -> torch.Tensor:
     """Converts a PIL image to a tensor.
 
     Args:
@@ -258,7 +264,7 @@ def pil2tensor(image):
     return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
 
 
-def getVideoInfo(video_path):
+def getVideoInfo(video_path: str) -> Dict[str, Union[float, int]]:
     """Gets information about a video file.
 
     This function uses `ffprobe` to get the video's FPS, width, height, and
@@ -322,7 +328,7 @@ def getVideoInfo(video_path):
     return return_data
 
 
-def get_image_size(image_path):
+def get_image_size(image_path: str) -> Tuple[int, int]:
     """Gets the size of an image.
 
     Args:
@@ -338,7 +344,7 @@ def get_image_size(image_path):
         return width, height
 
 
-def has_audio(video_path):
+def has_audio(video_path: str) -> bool:
     """Checks if a video file has an audio stream.
 
     Args:
@@ -364,7 +370,7 @@ def has_audio(video_path):
     return result.stdout.decode().strip() == "audio"
 
 
-def set_file_name(video_path):
+def set_file_name(video_path: str) -> str:
     """Generates a new filename based on the current timestamp.
 
     Args:
@@ -380,7 +386,7 @@ def set_file_name(video_path):
     return file_name
 
 
-def get_image_extensions():
+def get_image_extensions() -> Set[str]:
     """Returns a set of supported image file extensions.
 
     Returns:
@@ -389,7 +395,7 @@ def get_image_extensions():
     return {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp"}
 
 
-def video_type():
+def video_type() -> Tuple[str, ...]:
     """Returns a tuple of supported video file extensions.
 
     Returns:
@@ -398,7 +404,7 @@ def video_type():
     return (".mp4", ".avi", ".mov", ".mkv", ".rmvb", ".wmv", ".flv", ".webm")
 
 
-def audio_type():
+def audio_type() -> Tuple[str, ...]:
     """Returns a tuple of supported audio file extensions.
 
     Returns:
@@ -423,7 +429,7 @@ def audio_type():
     )
 
 
-def validate_time_format(time_str):
+def validate_time_format(time_str: str) -> bool:
     """Validates a time string in HH:MM:SS format.
 
     Args:
@@ -436,7 +442,7 @@ def validate_time_format(time_str):
     return bool(re.match(pattern, time_str))
 
 
-def get_video_files(directory):
+def get_video_files(directory: str) -> List[str]:
     """Gets all video files from a directory.
 
     Args:
@@ -457,7 +463,7 @@ def get_video_files(directory):
     return video_files
 
 
-def save_image(image, path):
+def save_image(image: torch.Tensor, path: str) -> None:
     """Saves an image to a specified path.
 
     Args:
@@ -467,14 +473,16 @@ def save_image(image, path):
     tensor2pil(image).save(path)
 
 
-def clear_memory():
+def clear_memory() -> None:
     """Clears the GPU memory."""
     gc.collect()
     unload_all_models()
     soft_empty_cache()
 
 
-def save_tensor_to_temp_file(image_tensor, prefix="temp_image", extension=".png"):
+def save_tensor_to_temp_file(
+    image_tensor: torch.Tensor, prefix: str = "temp_image", extension: str = ".png"
+) -> str:
     """Saves a ComfyUI IMAGE tensor to a temporary file.
 
     Args:
@@ -494,7 +502,7 @@ def save_tensor_to_temp_file(image_tensor, prefix="temp_image", extension=".png"
     return temp_path
 
 
-def validate_file_exists(file_path, file_type="file"):
+def validate_file_exists(file_path: str, file_type: str = "file") -> bool:
     """Validates that a file exists and raises appropriate error.
 
     Args:
@@ -509,7 +517,7 @@ def validate_file_exists(file_path, file_type="file"):
     return True
 
 
-def get_output_path(filename, prefix="", suffix=""):
+def get_output_path(filename: str, prefix: str = "", suffix: str = "") -> str:
     """Generates a standardized output path in ComfyUI's output directory.
 
     Args:
