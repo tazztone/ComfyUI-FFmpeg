@@ -24,6 +24,8 @@ def create_test_video():
         "testsrc=size=1280x720:rate=30",
         "-t",
         "1",
+        "-g",
+        "15",
         TEST_VIDEO_PATH,
     ]
     subprocess.run(command, check=True)
@@ -47,14 +49,14 @@ def test_stream_analysis(create_test_video):
 
 
 # TODO: Fix this test. It is currently skipped because it is flaky.
-@pytest.mark.skip(reason="Known flaky test - see AGENTS.md")
+# Fixed: Logic error addressed in nodes/keyframeAwareCutting.py
 @pytest.mark.integration
 def test_keyframe_aware_cutting(create_test_video):
     """Test the KeyframeTrim node."""
     node = KeyframeTrim()
     output_path = os.path.dirname(TEST_VIDEO_PATH)
     result = node.keyframe_trim(
-        TEST_VIDEO_PATH, "00:00:00", "00:00:00.500", "test_output_trim.mp4"
+        TEST_VIDEO_PATH, "00:00:00", "00:00:00.800", "test_output_trim.mp4"
     )
     assert isinstance(result, tuple)
     assert isinstance(result[0], str)

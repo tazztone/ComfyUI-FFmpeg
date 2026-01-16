@@ -173,7 +173,6 @@ This document provides a brief overview of the ComfyUI-FFmpeg project structure,
 
 ### Audio Nodes
 *   **`nodes/addAudio.py`**: Adds an audio track to a video. Supports various codecs and delay.
-*   **`nodes/addAudioLegacy.py`**: Legacy version of the audio-adding node.
 *   **`nodes/extractAudio.py`**: Extracts audio tracks from video files.
 *   **`nodes/audioFilter.py`**: Applies raw FFmpeg audio filtergraphs.
 
@@ -206,20 +205,5 @@ This document provides a brief overview of the ComfyUI-FFmpeg project structure,
 *   **`nodes/streamAnalysis.py`**: Returns JSON metadata about media streams.
 *   **`nodes/streamMapping.py`**: Manually maps specific streams from input to output.
 *   **`nodes/loadImageFromDir.py`**: Scans a directory for images.
-*   **`nodes/imageCopy.py`**: Copies images to a destination.
 *   **`nodes/imagesSave.py`**: Saves an image batch to disk.
 
-## Project Roadmap & TODOs
-
-### 🧹 Cleanup & Bloat Removal
-*   **[DONE] Legacy Nodes**: Deprecate and remove `nodes/addAudioLegacy.py` (`AddAudioFile`). Use `nodes/addAudio.py` instead.
-*   **[DONE] Redundancy**: `nodes/imageCopy.py` (`CopyImages`) appears to be a subset of `nodes/imagesSave.py` (`SaveImages`). Consolidate or remove `CopyImages`.
-*   **Feature Creep Policy**: Avoid adding generic file manipulation nodes unless they are strictly required for FFmpeg workflows (e.g., handling specific tensor formats).
-
-### 🛠️ Reliability & Quality
-*   **`func.py`**:
-    *   Remove `print()` statements in production code. Use proper logging.
-    *   Improve error handling in `getVideoInfo` (JSON parsing).
-    *   Centralize file extension definitions.
-*   **Testing**: Investigate and fix `test_keyframe_aware_cutting` failure mentioned in Testing section.
-*   **Security**: Ensure all new nodes using `subprocess` utilize `shlex.split()` or list-based arguments.

@@ -2,11 +2,6 @@ import os
 import subprocess
 import json
 from datetime import datetime, timedelta
-
-import os
-import subprocess
-import json
-from datetime import datetime
 import folder_paths
 
 
@@ -38,14 +33,28 @@ class KeyframeTrim:
             "-select_streams",
             "v:0",
             "-show_entries",
-            "frame=pkt_pts_time,pict_type",
+            "frame=pkt_pts_time,pts_time,best_effort_timestamp_time,pict_type",
             "-of",
             "json",
             video,
         ]
         result = subprocess.run(command, check=True, capture_output=True, text=True)
         frames = json.loads(result.stdout)["frames"]
-        return [float(f["pkt_pts_time"]) for f in frames if f["pict_type"] == "I"]
+
+        keyframes = []
+        for f in frames:
+            # Check for 'I' (Inter-coded) or 'IDR' inside ffprobe
+            p_type = f.get("pict_type")
+            if p_type == "I":
+                time_val = (
+                    f.get("pkt_pts_time")
+                    or f.get("pts_time")
+                    or f.get("best_effort_timestamp_time")
+                )
+                if time_val:
+                    keyframes.append(float(time_val))
+
+        return keyframes
 
     def _find_nearest_keyframe(self, time_sec, keyframes):
         return min(keyframes, key=lambda x: abs(x - time_sec))
@@ -54,10 +63,27 @@ class KeyframeTrim:
         if not os.path.exists(video):
             raise FileNotFoundError(f"Video file not found: {video}")
 
-        # TODO: Logic Error - strptime(...).timestamp() returns absolute epoch time, not duration.
-        # Use timedelta or manually parse hours/minutes/seconds to get total seconds.
-        start_sec = datetime.strptime(start_time, "%H:%M:%S").timestamp()
-        end_sec = datetime.strptime(end_time, "%H:%M:%S").timestamp()
+        def parse_time(t_str):
+            try:
+                return datetime.strptime(t_str, "%H:%M:%S")
+            except ValueError:
+                return datetime.strptime(t_str, "%H:%M:%S.%f")
+
+        t_start = parse_time(start_time)
+        start_sec = timedelta(
+            hours=t_start.hour,
+            minutes=t_start.minute,
+            seconds=t_start.second,
+            microseconds=t_start.microsecond,
+        ).total_seconds()
+
+        t_end = parse_time(end_time)
+        end_sec = timedelta(
+            hours=t_end.hour,
+            minutes=t_end.minute,
+            seconds=t_end.second,
+            microseconds=t_end.microsecond,
+        ).total_seconds()
 
         keyframes = self._get_keyframes(video)
         start_keyframe = self._find_nearest_keyframe(start_sec, keyframes)

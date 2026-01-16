@@ -198,7 +198,7 @@ def get_image_paths_from_directory(directory, start_index, length):
     Returns:
         list: A list of image paths.
     """
-    image_extensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff"}
+    image_extensions = get_image_extensions()
 
     # 创建排序后的文件生成器，直接在生成器中过滤
     def image_generator():
@@ -210,23 +210,6 @@ def get_image_paths_from_directory(directory, start_index, length):
     selected_images = islice(image_generator(), start_index, start_index + length)
 
     return list(selected_images)
-
-
-# def get_image_paths_from_directory(directory, start_index, length):
-#     # 获取目录下所有文件，并按照文件名排序
-#     files = sorted(os.listdir(directory))
-
-#     # 过滤掉非图片文件（这里只检查常见图片格式）
-#     image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff'}
-#     image_files = [f for f in files if os.path.splitext(f)[1].lower() in image_extensions]
-
-#     # 获取从start_index开始的length个图片路径
-#     selected_images = image_files[start_index:start_index + length]
-
-#     # 返回完整路径列表
-#     image_paths = [os.path.join(directory, image_file) for image_file in selected_images]
-
-#     return image_paths
 
 
 def generate_template_string(filename):
@@ -304,9 +287,11 @@ def getVideoInfo(video_path):
     result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     # 将输出转化为字符串
     output = result.stdout.decode("utf-8").strip()
-    # TODO: usage of print detected. Use logging or raise Error instead.
-    # print(output)
-    # TODO: Standardize error reporting (e.g., return None or raise specific exception instead of empty dict)
+
+    if not output:
+        logging.error(f"FFprobe returned empty output for file: {video_path}")
+        return {}
+
     try:
         data = json.loads(output)
     except json.JSONDecodeError as e:
@@ -395,13 +380,22 @@ def set_file_name(video_path):
     return file_name
 
 
+def get_image_extensions():
+    """Returns a set of supported image file extensions.
+
+    Returns:
+        set: A set of image file extensions.
+    """
+    return {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp"}
+
+
 def video_type():
     """Returns a tuple of supported video file extensions.
 
     Returns:
         tuple: A tuple of video file extensions.
     """
-    return (".mp4", ".avi", ".mov", ".mkv", ".rmvb", ".wmv", ".flv")
+    return (".mp4", ".avi", ".mov", ".mkv", ".rmvb", ".wmv", ".flv", ".webm")
 
 
 def audio_type():
