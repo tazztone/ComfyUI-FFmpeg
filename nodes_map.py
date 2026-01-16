@@ -5,13 +5,13 @@ from .nodes.addImgWatermark import AddImgWatermark
 from .nodes.videoFlip import VideoFlip
 from .nodes.extractAudio import ExtractAudio
 from .nodes.loadImageFromDir import LoadImagesFromDirectory
-from .nodes.imageCopy import CopyImages
+
 from .nodes.mergingVideoByTwo import MergeVideos
 from .nodes.mergingVideoByPlenty import MergeVideoBatch
 from .nodes.stitchingVideo import StitchVideos
 from .nodes.multiCuttingVideo import SplitVideo
 from .nodes.singleCuttingVideo import TrimVideo
-from .nodes.addAudioLegacy import AddAudioFile
+
 from .nodes.addAudio import AddAudio
 from .nodes.imagesSave import SaveImages
 from .nodes.pipVideo import PictureInPicture
@@ -44,14 +44,12 @@ NODE_CLASS_MAPPINGS = {
     "VideoFlip": VideoFlip,
     "ExtractAudio": ExtractAudio,
     "LoadImagesFromDirectory": LoadImagesFromDirectory,
-    "CopyImages": CopyImages,
     "MergeVideos": MergeVideos,
     "MergeVideoBatch": MergeVideoBatch,
     "StitchVideos": StitchVideos,
     "SplitVideo": SplitVideo,
     "TrimVideo": TrimVideo,
     "AddAudio": AddAudio,
-    "AddAudioFile": AddAudioFile,
     "SaveImages": SaveImages,
     "PictureInPicture": PictureInPicture,
     "VideoTransition": VideoTransition,
@@ -75,14 +73,12 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "VideoFlip": "🔥Flip Video",
     "ExtractAudio": "🔥Extract Audio",
     "LoadImagesFromDirectory": "🔥Load Images from Directory",
-    "CopyImages": "🔥Copy Images",
     "MergeVideos": "🔥Merge Videos",
     "MergeVideoBatch": "🔥Merge Video Batch",
     "StitchVideos": "🔥Stitch Videos",
     "SplitVideo": "🔥Split Video",
     "TrimVideo": "🔥Trim Video",
     "AddAudio": "🔥Add Audio",
-    "AddAudioFile": "🔥Add Audio File",
     "SaveImages": "🔥Save Images",
     "PictureInPicture": "🔥Picture In Picture",
     "VideoTransition": "🔥Video Transition",

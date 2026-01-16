@@ -147,8 +147,8 @@ This document provides a brief overview of the ComfyUI-FFmpeg project structure,
 ## Project Roadmap & TODOs
 
 ### 🧹 Cleanup & Bloat Removal
-*   **Legacy Nodes**: Deprecate and remove `nodes/addAudioLegacy.py` (`AddAudioFile`). Use `nodes/addAudio.py` instead.
-*   **Redundancy**: `nodes/imageCopy.py` (`CopyImages`) appears to be a subset of `nodes/imagesSave.py` (`SaveImages`). Consolidate or remove `CopyImages`.
+*   **[DONE] Legacy Nodes**: Deprecate and remove `nodes/addAudioLegacy.py` (`AddAudioFile`). Use `nodes/addAudio.py` instead.
+*   **[DONE] Redundancy**: `nodes/imageCopy.py` (`CopyImages`) appears to be a subset of `nodes/imagesSave.py` (`SaveImages`). Consolidate or remove `CopyImages`.
 *   **Feature Creep Policy**: Avoid adding generic file manipulation nodes unless they are strictly required for FFmpeg workflows (e.g., handling specific tensor formats).
 
 ### 🛠️ Reliability & Quality

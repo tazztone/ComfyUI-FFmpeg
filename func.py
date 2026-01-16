@@ -11,6 +11,8 @@ import time
 import glob
 from itertools import islice
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import logging
+
 from comfy.model_management import unload_all_models, soft_empty_cache
 
 _xfade_transitions_cache = None
@@ -116,11 +118,11 @@ def get_xfade_transitions():
         return _xfade_transitions_cache
 
     except subprocess.CalledProcessError as e:
-        print(f"执行ffmpeg命令出错: {e}")
-        print(f"错误输出: {e.stderr}")
+        logging.error(f"执行ffmpeg命令出错: {e}")
+        logging.error(f"错误输出: {e.stderr}")
         return []
     except FileNotFoundError:
-        print("错误: 找不到ffmpeg程序，请确保ffmpeg已安装并添加到系统PATH")
+        logging.error("错误: 找不到ffmpeg程序，请确保ffmpeg已安装并添加到系统PATH")
         return []
 
 
@@ -144,7 +146,7 @@ def copy_image(image_path, destination_directory):
             shutil.copy(image_path, destination_path)
         return destination_path
     except Exception as e:
-        print(f"Error copying image {image_path}: {e}")
+        logging.error(f"Error copying image {image_path}: {e}")
         return None
 
 
@@ -303,8 +305,12 @@ def getVideoInfo(video_path):
     # 将输出转化为字符串
     output = result.stdout.decode("utf-8").strip()
     # TODO: usage of print detected. Use logging or raise Error instead.
-    print(output)
-    data = json.loads(output)
+    # print(output)
+    try:
+        data = json.loads(output)
+    except json.JSONDecodeError as e:
+        logging.error(f"Error parsing FFprobe output: {e}\nOutput was: {output}")
+        return {}
     # 查找视频流信息
     if "streams" in data and len(data["streams"]) > 0:
         stream = data["streams"][0]  # 获取第一个视频流
@@ -444,8 +450,10 @@ def get_video_files(directory):
     Returns:
         list: A sorted list of video file paths.
     """
+
     # TODO: Centralize extension definitions with video_type() and audio_type()
-    video_extensions = ["*.mp4", "*.avi", "*.mov", "*.mkv", "*.rmvb", "*.wmv", "*.flv"]
+    # video_extensions = ["*.mp4", "*.avi", "*.mov", "*.mkv", "*.rmvb", "*.wmv", "*.flv"]
+    video_extensions = [f"*{ext}" for ext in video_type()]
     video_files = []
     for ext in video_extensions:
         video_files.extend(glob.glob(os.path.join(directory, ext)))
