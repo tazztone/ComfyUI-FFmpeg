@@ -1,18 +1,34 @@
+import pytest
+from unittest.mock import patch
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import pytest
-from unittest.mock import patch, MagicMock
+# Note: conftest.py handles sys.path setup to include project root
+try:
+    from func import (
+        validate_time_format,
+        set_file_name,
+        generate_template_string,
+        video_type,
+        audio_type,
+        clear_memory,
+    )
+except ImportError:
+    # If conftest hasn't run or path isn't set, try relative
+    sys.path.insert(
+        0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    )
+    from func import (
+        validate_time_format,
+        set_file_name,
+        generate_template_string,
+        video_type,
+        audio_type,
+        clear_memory,
+    )
 
-# Mock the comfy and folder_paths modules
-sys.modules['comfy'] = MagicMock()
-sys.modules['comfy.model_management'] = MagicMock()
-sys.modules['folder_paths'] = MagicMock()
 
-from func import validate_time_format, set_file_name, generate_template_string, video_type, audio_type, clear_memory
-
-
+@pytest.mark.unit
 def test_validate_time_format():
     assert validate_time_format("12:34:56") == True
     assert validate_time_format("01:02:03") == True
@@ -27,7 +43,9 @@ def test_validate_time_format():
     assert validate_time_format("") == False
     assert validate_time_format("1:2:3") == False
 
-@patch('func.time')
+
+@pytest.mark.unit
+@patch("func.time")
 def test_set_file_name(mock_time):
     mock_time.localtime.return_value = "localtime_return"
     mock_time.strftime.return_value = "20250101000000"
@@ -38,6 +56,8 @@ def test_set_file_name(mock_time):
     mock_time.localtime.assert_called_once()
     mock_time.strftime.assert_called_once_with("%Y%m%d%H%M%S", "localtime_return")
 
+
+@pytest.mark.unit
 def test_generate_template_string():
     assert generate_template_string("frame123.jpg") == "frame%03d.jpg"
     assert generate_template_string("img_001.png") == "img_%03d.png"
@@ -45,29 +65,35 @@ def test_generate_template_string():
     assert generate_template_string("no_digits.jpg") == "no_digits.jpg"
     assert generate_template_string("file0000.exr") == "file%04d.exr"
 
+
+@pytest.mark.unit
 def test_video_type():
     types = video_type()
     assert isinstance(types, tuple)
     assert len(types) > 0
     for t in types:
-        assert t.startswith('.')
-    assert '.mp4' in types
-    assert '.avi' in types
-    assert '.mov' in types
+        assert t.startswith(".")
+    assert ".mp4" in types
+    assert ".avi" in types
+    assert ".mov" in types
 
+
+@pytest.mark.unit
 def test_audio_type():
     types = audio_type()
     assert isinstance(types, tuple)
     assert len(types) > 0
     for t in types:
-        assert t.startswith('.')
-    assert '.mp3' in types
-    assert '.wav' in types
-    assert '.aac' in types
+        assert t.startswith(".")
+    assert ".mp3" in types
+    assert ".wav" in types
+    assert ".aac" in types
 
-@patch('func.gc')
-@patch('func.unload_all_models')
-@patch('func.soft_empty_cache')
+
+@pytest.mark.unit
+@patch("func.gc")
+@patch("func.unload_all_models")
+@patch("func.soft_empty_cache")
 def test_clear_memory(mock_soft_empty_cache, mock_unload_all_models, mock_gc):
     clear_memory()
     mock_gc.collect.assert_called_once()

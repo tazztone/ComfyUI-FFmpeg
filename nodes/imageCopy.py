@@ -4,21 +4,25 @@ import folder_paths
 from PIL import Image
 import numpy as np
 
+
 class CopyImages:
     """
+    # TODO: [BLOAT] This node functionality is redundant with SaveImages. Checks if it can be deprecated.
     A node to copy a list of images to a specified directory.
     """
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "images": ("IMAGE", {
-                    "tooltip": "The images to be copied."
-                }),
-                "directory": ("STRING", {
-                    "default": "copied_images",
-                    "tooltip": "The directory to copy the images to. This will be created in the ComfyUI output directory."
-                }),
+                "images": ("IMAGE", {"tooltip": "The images to be copied."}),
+                "directory": (
+                    "STRING",
+                    {
+                        "default": "copied_images",
+                        "tooltip": "The directory to copy the images to. This will be created in the ComfyUI output directory.",
+                    },
+                ),
             },
         }
 

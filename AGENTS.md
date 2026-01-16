@@ -39,12 +39,14 @@ This document provides comprehensive guidelines for agents and developers workin
     *   The JS frontend fetches this file asynchronously via `/output/filename.json?t=${Date.now()}` (using a timestamp to bypass caching).
 
 ### Testing
-*   **Framework**: Use `pytest`.
-*   **Running Tests**: `pytest tests/test_nodes.py` (from root).
-*   **Mocking**: Mock ComfyUI-specific modules (`folder_paths`, `torch`) in unit tests using `unittest.mock` or `sys.modules` manipulation to run tests in isolation.
-*   **Environment**: `pip install -r tests/requirements-test.txt`.
-*   **Known Issues**:
-    *   `test_keyframe_aware_cutting`: This test is known to fail in some environments. It is acceptable to proceed if this test continues to fail, provided no *new* regressions are introduced.
+*   **Guide**: See `docs/TESTING.md` for full instructions.
+*   **Infrastructure**:
+    *   `tests/unit/`: Unit tests (no server needed).
+    *   `tests/integration/`: Integration tests (require FFmpeg).
+    *   `tests/run_tests.py`: **Wrapper script to run tests**.
+*   **Running Tests**: `python tests/run_tests.py` (from package root) or `python -m pytest .` (from `tests/` directory).
+*   **Mocking**: Centralized in `tests/conftest.py`.
+*   **Environment**: `pip install -r requirements.txt`.
 
 ### Dependencies
 *   **Core**: `numpy`, `Pillow`, `torch`, `torchaudio` are assumed to be present in the ComfyUI environment.
@@ -141,3 +143,18 @@ This document provides a brief overview of the ComfyUI-FFmpeg project structure,
 *   **`nodes/loadImageFromDir.py`**: Scans a directory for images.
 *   **`nodes/imageCopy.py`**: Copies images to a destination.
 *   **`nodes/imagesSave.py`**: Saves an image batch to disk.
+
+## Project Roadmap & TODOs
+
+### 🧹 Cleanup & Bloat Removal
+*   **Legacy Nodes**: Deprecate and remove `nodes/addAudioLegacy.py` (`AddAudioFile`). Use `nodes/addAudio.py` instead.
+*   **Redundancy**: `nodes/imageCopy.py` (`CopyImages`) appears to be a subset of `nodes/imagesSave.py` (`SaveImages`). Consolidate or remove `CopyImages`.
+*   **Feature Creep Policy**: Avoid adding generic file manipulation nodes unless they are strictly required for FFmpeg workflows (e.g., handling specific tensor formats).
+
+### 🛠️ Reliability & Quality
+*   **`func.py`**:
+    *   Remove `print()` statements in production code. Use proper logging.
+    *   Improve error handling in `getVideoInfo` (JSON parsing).
+    *   Centralize file extension definitions.
+*   **Testing**: Investigate and fix `test_keyframe_aware_cutting` failure mentioned in Testing section.
+*   **Security**: Ensure all new nodes using `subprocess` utilize `shlex.split()` or list-based arguments.
