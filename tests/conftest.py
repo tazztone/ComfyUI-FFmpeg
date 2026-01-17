@@ -65,7 +65,9 @@ class MockInputType:
 
     @staticmethod
     def Input(name, *args, **kwargs):
-        return MagicMock(name=name)
+        m = MagicMock(name=name)
+        m.name = name
+        return m
 
     @staticmethod
     def Output(**kwargs):
@@ -77,7 +79,9 @@ class MockHidden:
 
     @staticmethod
     def Input(name, *args, **kwargs):
-        return MagicMock(name=name)
+        m = MagicMock(name=name)
+        m.name = name
+        return m
 
 
 # Build mock io module

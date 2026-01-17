@@ -17,7 +17,7 @@ class ApplyStreamMapV3(io.ComfyNode):
             display_name="🔥Apply Stream Map (V3)",
             category="🔥FFmpeg/Advanced",
             inputs=[
-                io.String.Input("video", default="video.mp4", tooltip="Input video."),
+                io.String.Input("video", tooltip="Input video."),
                 io.String.Input(
                     "stream_map",
                     default="-map 0:v -map 0:a:0?",

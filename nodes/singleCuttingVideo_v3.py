@@ -16,9 +16,7 @@ class TrimVideoV3(io.ComfyNode):
             display_name="🔥Trim Video (V3)",
             category="🔥FFmpeg/Editing",
             inputs=[
-                io.String.Input(
-                    "video", default="video.mp4", tooltip="The video file to trim."
-                ),
+                io.String.Input("video", tooltip="The video file to trim."),
                 io.String.Input(
                     "start_time", default="00:00:00", tooltip="Start time (HH:MM:SS)."
                 ),

@@ -16,9 +16,7 @@ class VideoFlipV3(io.ComfyNode):
             display_name="🔥Flip Video (V3)",
             category="🔥FFmpeg/Editing",
             inputs=[
-                io.String.Input(
-                    "video", default="video.mp4", tooltip="The video file to flip."
-                ),
+                io.String.Input("video", tooltip="The video file to flip."),
                 io.Combo.Input(
                     "flip_type",
                     ["horizontal", "vertical", "both"],

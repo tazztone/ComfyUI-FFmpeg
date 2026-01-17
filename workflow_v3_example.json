@@ -1,0 +1,515 @@
+{
+  "version": 0.4,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImagesFromDirectoryV3",
+      "pos": [
+        100,
+        100
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImagesFromDirectoryV3"
+      },
+      "widgets_values": [
+        "images"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "Frames2VideoV3",
+      "pos": [
+        500,
+        100
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Frames2VideoV3"
+      },
+      "widgets_values": [
+        24,
+        "h264_cpu",
+        23,
+        "medium",
+        "video_from_frames.mp4"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "AddTextWatermarkV3",
+      "pos": [
+        900,
+        100
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "STRING",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AddTextWatermarkV3"
+      },
+      "widgets_values": [
+        "ComfyUI",
+        48,
+        "white",
+        10,
+        10,
+        "default"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "VideoFlipV3",
+      "pos": [
+        1300,
+        100
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "STRING",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VideoFlipV3"
+      },
+      "widgets_values": [
+        "horizontal",
+        "flipped_video_v3.mp4"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "ReverseVideoV3",
+      "pos": [
+        1700,
+        100
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "STRING",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ReverseVideoV3"
+      },
+      "widgets_values": [
+        true,
+        "reversed_video.mp4"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "ExtractAudioV3",
+      "pos": [
+        900,
+        400
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "STRING",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": []
+        },
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ExtractAudioV3"
+      },
+      "widgets_values": [
+        "extracted_audio.wav"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "TrimVideoV3",
+      "pos": [
+        100,
+        400
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TrimVideoV3"
+      },
+      "widgets_values": [
+        "sample.mp4",
+        "00:00:00",
+        "00:00:05",
+        "trimmed_video.mp4"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "SplitVideoV3",
+      "pos": [
+        500,
+        400
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SplitVideoV3"
+      },
+      "widgets_values": [
+        5,
+        "split_"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "MergeVideosV3",
+      "pos": [
+        900,
+        700
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video1",
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "video2",
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MergeVideosV3"
+      },
+      "widgets_values": [
+        "1080p",
+        "merged_video.mp4"
+      ]
+    },
+    {
+      "id": 10,
+      "type": "PictureInPictureV3",
+      "pos": [
+        1300,
+        700
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "background_video",
+          "type": "STRING",
+          "link": 4
+        },
+        {
+          "name": "foreground_video",
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "foreground_image",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PictureInPictureV3"
+      },
+      "widgets_values": [
+        "top_right",
+        0.5,
+        "background",
+        "pip.mp4",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 11,
+      "type": "GenericFFmpegV3",
+      "pos": [
+        100,
+        700
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenericFFmpegV3"
+      },
+      "widgets_values": [
+        "-vf hflip",
+        "generic_out.mp4"
+      ]
+    },
+    {
+      "id": 12,
+      "type": "SaveImagesV3",
+      "pos": [
+        500,
+        700
+      ],
+      "size": [
+        300,
+        100
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveImagesV3"
+      },
+      "widgets_values": [
+        "saved_images",
+        "img"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "IMAGE"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      0,
+      "STRING"
+    ],
+    [
+      3,
+      3,
+      0,
+      4,
+      0,
+      "STRING"
+    ],
+    [
+      4,
+      4,
+      0,
+      5,
+      0,
+      "STRING"
+    ],
+    [
+      5,
+      4,
+      0,
+      10,
+      0,
+      "STRING"
+    ],
+    [
+      6,
+      1,
+      0,
+      12,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {}
+}

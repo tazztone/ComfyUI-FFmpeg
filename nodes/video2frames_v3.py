@@ -22,7 +22,7 @@ class Video2FramesV3(io.ComfyNode):
             display_name="🔥Video to Frames (V3)",
             category="🔥FFmpeg/Conversion",
             inputs=[
-                io.String.Input("video", default="sample.mp4", tooltip="Video file."),
+                io.String.Input("video", tooltip="Video file."),
                 io.Int.Input(
                     "max_width",
                     default=0,
@@ -48,7 +48,9 @@ class Video2FramesV3(io.ComfyNode):
         )
 
     @classmethod
-    def execute(cls, video, max_width, save_frames, output_dir="frames") -> io.NodeOutput:
+    def execute(
+        cls, video, max_width, save_frames, output_dir="frames"
+    ) -> io.NodeOutput:
         if not os.path.exists(video):
             raise FileNotFoundError(f"Video file not found: {video}")
 

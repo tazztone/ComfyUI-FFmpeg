@@ -16,9 +16,7 @@ class SplitVideoV3(io.ComfyNode):
             display_name="🔥Split Video (V3)",
             category="🔥FFmpeg/Editing",
             inputs=[
-                io.String.Input(
-                    "video", default="video.mp4", tooltip="The video file to split."
-                ),
+                io.String.Input("video", tooltip="The video file to split."),
                 io.Int.Input(
                     "segment_duration",
                     default=10,

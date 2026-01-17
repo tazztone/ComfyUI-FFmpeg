@@ -17,7 +17,7 @@ class ApplyFiltergraphV3(io.ComfyNode):
             display_name="🔥Apply Filtergraph (V3)",
             category="🔥FFmpeg/Advanced",
             inputs=[
-                io.String.Input("video", default="video.mp4", tooltip="Video file."),
+                io.String.Input("video", tooltip="Video file."),
                 io.String.Input(
                     "filtergraph",
                     default="vf hflip",

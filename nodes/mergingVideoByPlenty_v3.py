@@ -18,7 +18,6 @@ class MergeVideoBatchV3(io.ComfyNode):
             inputs=[
                 io.String.Input(
                     "video_directory",
-                    default="videos",
                     tooltip="Directory containing video files.",
                 ),
                 io.Combo.Input(

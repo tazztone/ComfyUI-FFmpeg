@@ -16,12 +16,8 @@ class StitchVideosV3(io.ComfyNode):
             display_name="🔥Stitch Videos (V3)",
             category="🔥FFmpeg/Editing",
             inputs=[
-                io.String.Input(
-                    "video1", default="video1.mp4", tooltip="The first video file."
-                ),
-                io.String.Input(
-                    "video2", default="video2.mp4", tooltip="The second video file."
-                ),
+                io.String.Input("video1", tooltip="The first video file."),
+                io.String.Input("video2", tooltip="The second video file."),
                 io.Combo.Input(
                     "layout",
                     ["horizontal", "vertical"],
@@ -53,9 +49,9 @@ class StitchVideosV3(io.ComfyNode):
         output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
         filter_complex = (
-            f"[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[v]"
+            "[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[v]"
             if layout == "horizontal"
-            else f"[0:v]pad=iw:ih*2[int];[int][1:v]overlay=0:H/2[v]"
+            else "[0:v]pad=iw:ih*2[int];[int][1:v]overlay=0:H/2[v]"
         )
 
         command = [

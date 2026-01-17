@@ -16,9 +16,7 @@ class RemuxVideoV3(io.ComfyNode):
             display_name="🔥Remux Video (V3)",
             category="🔥FFmpeg/Advanced",
             inputs=[
-                io.String.Input(
-                    "video", default="video.mp4", tooltip="The video file to remux."
-                ),
+                io.String.Input("video", tooltip="The video file to remux."),
                 # Using io.Combo for container selection
                 io.Combo.Input(
                     "container",

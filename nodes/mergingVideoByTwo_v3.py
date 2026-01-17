@@ -16,12 +16,8 @@ class MergeVideosV3(io.ComfyNode):
             display_name="🔥Merge Videos (V3)",
             category="🔥FFmpeg/Editing",
             inputs=[
-                io.String.Input(
-                    "video1", default="video1.mp4", tooltip="The first video file."
-                ),
-                io.String.Input(
-                    "video2", default="video2.mp4", tooltip="The second video file."
-                ),
+                io.String.Input("video1", tooltip="The first video file."),
+                io.String.Input("video2", tooltip="The second video file."),
                 io.Combo.Input(
                     "resolution",
                     ["720p", "1080p", "4K"],

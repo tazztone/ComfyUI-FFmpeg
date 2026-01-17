@@ -32,7 +32,7 @@ class AddTextWatermarkV3(io.ComfyNode):
             display_name="🔥Add Text Watermark (V3)",
             category="🔥FFmpeg/Watermark",
             inputs=[
-                io.String.Input("video", default="sample.mp4", tooltip="Video file."),
+                io.String.Input("video", tooltip="Video file."),
                 io.String.Input("text", default="ComfyUI", tooltip="Watermark text."),
                 io.Int.Input("font_size", default=48, min=1, tooltip="Font size."),
                 io.String.Input("font_color", default="white", tooltip="Font color."),
@@ -48,8 +48,8 @@ class AddTextWatermarkV3(io.ComfyNode):
         )
 
     @classmethod
-    def execute(cls, 
-        video, text, font_size, font_color, position_x, position_y, font_file
+    def execute(
+        cls, video, text, font_size, font_color, position_x, position_y, font_file
     ) -> io.NodeOutput:
         if not os.path.exists(video):
             raise FileNotFoundError(f"Video file not found: {video}")

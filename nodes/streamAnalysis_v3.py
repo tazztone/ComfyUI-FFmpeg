@@ -16,9 +16,7 @@ class AnalyzeStreamsV3(io.ComfyNode):
             display_name="🔥Analyze Streams (V3)",
             category="🔥FFmpeg/TestV3",
             inputs=[
-                io.String.Input(
-                    "video", default="video.mp4", tooltip="The video file to analyze."
-                ),
+                io.String.Input("video", tooltip="The video file to analyze."),
             ],
             outputs=[
                 io.String.Output(tooltip="JSON string containing stream information."),

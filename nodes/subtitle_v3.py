@@ -16,7 +16,7 @@ class HandleSubtitlesV3(io.ComfyNode):
             display_name="🔥Handle Subtitles (V3)",
             category="🔥FFmpeg/Advanced",
             inputs=[
-                io.String.Input("video", default="video.mp4", tooltip="Input video."),
+                io.String.Input("video", tooltip="Input video."),
                 io.String.Input(
                     "subtitle_file", default="subtitle.srt", tooltip="Subtitle file."
                 ),

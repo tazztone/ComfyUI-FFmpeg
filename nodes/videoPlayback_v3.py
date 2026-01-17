@@ -16,9 +16,7 @@ class ReverseVideoV3(io.ComfyNode):
             display_name="🔥Reverse Video (V3)",
             category="🔥FFmpeg/IO",
             inputs=[
-                io.String.Input(
-                    "video", default="video.mp4", tooltip="The video file to reverse."
-                ),
+                io.String.Input("video", tooltip="The video file to reverse."),
                 io.Boolean.Input(
                     "reverse_audio", default=True, tooltip="Reverse audio as well."
                 ),

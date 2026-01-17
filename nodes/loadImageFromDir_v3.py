@@ -19,7 +19,6 @@ class LoadImagesFromDirectoryV3(io.ComfyNode):
             inputs=[
                 io.String.Input(
                     "directory",
-                    default="images",
                     tooltip="The directory to load images from.",
                 ),
                 # TODO: Expose start_index and length inputs when ready

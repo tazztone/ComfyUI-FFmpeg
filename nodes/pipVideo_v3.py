@@ -23,7 +23,6 @@ class PictureInPictureV3(io.ComfyNode):
             inputs=[
                 io.String.Input(
                     "background_video",
-                    default="background.mp4",
                     tooltip="Background video.",
                 ),
                 io.Combo.Input(
@@ -51,9 +50,7 @@ class PictureInPictureV3(io.ComfyNode):
                 io.String.Input(
                     "foreground_video", default="", tooltip="Foreground video path."
                 ),
-                io.Image.Input(
-                    "foreground_image", tooltip="Foreground image tensor."
-                ),
+                io.Image.Input("foreground_image", tooltip="Foreground image tensor."),
             ],
             outputs=[
                 io.String.Output(tooltip="The path to the output video file."),
@@ -61,7 +58,8 @@ class PictureInPictureV3(io.ComfyNode):
         )
 
     @classmethod
-    def execute(cls, 
+    def execute(
+        cls,
         background_video,
         position,
         scale,

@@ -17,7 +17,7 @@ class ExtractAudioV3(io.ComfyNode):
             display_name="🔥Extract Audio (V3)",
             category="🔥FFmpeg/Audio",
             inputs=[
-                io.String.Input("video", default="video.mp4", tooltip="Video file."),
+                io.String.Input("video", tooltip="Video file."),
                 io.String.Input(
                     "filename",
                     default="extracted_audio.wav",

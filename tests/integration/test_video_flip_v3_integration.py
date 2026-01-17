@@ -38,10 +38,9 @@ def create_test_video():
 
 
 @pytest.mark.integration
-@pytest.mark.asyncio
-async def test_videoflip_v3_execution(create_test_video):
+def test_videoflip_v3_execution(create_test_video):
     """Test the execution of VideoFlipV3."""
-    node = VideoFlipV3()
+    # node = VideoFlipV3() # It's a classmethod, don't need instance really, or can call on class
 
     # We need to mock folder_paths.get_output_directory since it's used in the node
     # conftest.py should have already mocked 'folder_paths', but let's double check usage.
@@ -51,15 +50,18 @@ async def test_videoflip_v3_execution(create_test_video):
 
     output_filename = "flipped_v3_test.mp4"
 
-    # Call the async method
-    # Note: The real decorator might wrap this.
-    # If imports failed in the node file, define_schema is a dummy decorator
-    # and async_comfy_entrypoint is a dummy identity function.
-    # So we can call it directly.
+    # Call the synchronous execute method
+    # It returns io.NodeOutput which is a tuple subclass (via conftest mock)
+    # The real V3 implementation returns io.NodeOutput which holds the value.
+    # In conftest: class MockNodeOutput(tuple): ...
+    # So output_path should be result[0]
 
-    output_path = await node.flip_video(
+    result = VideoFlipV3.execute(
         video=TEST_VIDEO_PATH, flip_type="horizontal", filename=output_filename
     )
+
+    # result is a MockNodeOutput which is a tuple.
+    output_path = result[0]
 
     assert os.path.exists(output_path)
     assert output_filename in output_path

@@ -17,9 +17,7 @@ class GenericFFmpegV3(io.ComfyNode):
             display_name="🔥Generic FFmpeg (V3)",
             category="🔥FFmpeg/Advanced",
             inputs=[
-                io.String.Input(
-                    "video", default="video.mp4", tooltip="The input video file."
-                ),
+                io.String.Input("video", tooltip="The input video file."),
                 io.String.Input(
                     "ffmpeg_command",
                     default="-vf hflip",

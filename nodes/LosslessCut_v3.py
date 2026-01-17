@@ -18,7 +18,7 @@ class LosslessCutV3(io.ComfyNode):
             display_name="🔥Lossless Cut (V3)",
             category="🔥FFmpeg/Editing",
             inputs=[
-                io.String.Input("video", default="video.mp4", tooltip="Video file."),
+                io.String.Input("video", tooltip="Video file."),
                 io.String.Input(
                     "action", default="", tooltip="Action (internal usage)."
                 ),

@@ -19,12 +19,8 @@ class VideoTransitionV3(io.ComfyNode):
             display_name="🔥Video Transition (V3)",
             category="🔥FFmpeg/Editing",
             inputs=[
-                io.String.Input(
-                    "video1", default="video1.mp4", tooltip="The first video file."
-                ),
-                io.String.Input(
-                    "video2", default="video2.mp4", tooltip="The second video file."
-                ),
+                io.String.Input("video1", tooltip="The first video file."),
+                io.String.Input("video2", tooltip="The second video file."),
                 io.Combo.Input(
                     "transition",
                     get_xfade_transitions(),
@@ -56,8 +52,8 @@ class VideoTransitionV3(io.ComfyNode):
         )
 
     @classmethod
-    def execute(cls, 
-        video1, video2, transition, duration, offset, filename
+    def execute(
+        cls, video1, video2, transition, duration, offset, filename
     ) -> io.NodeOutput:
         if not os.path.exists(video1):
             raise FileNotFoundError(f"Video 1 not found: {video1}")

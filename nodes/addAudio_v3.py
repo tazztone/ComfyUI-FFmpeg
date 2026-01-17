@@ -18,7 +18,7 @@ class AddAudioV3(io.ComfyNode):
             display_name="🔥Add Audio (V3)",
             category="🔥FFmpeg/Audio",
             inputs=[
-                io.String.Input("video", default="video.mp4", tooltip="Video file."),
+                io.String.Input("video", tooltip="Video file."),
                 io.Audio.Input("audio", tooltip="Audio input."),
                 io.String.Input(
                     "filename",
