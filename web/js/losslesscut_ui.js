@@ -61,25 +61,25 @@ export class LosslessCutUI {
             min-width: 30px;
         `;
 
-        this.addButton(controlsDiv, '|<', buttonStyle, () => this.core.goToStart(), 'Jump to start');
-        this.addButton(controlsDiv, '<< KF', buttonStyle, () => this.core.gotoPrevKeyframe(), 'Prev Keyframe');
-        this.addButton(controlsDiv, '-1', buttonStyle, () => this.core.stepBackward(), 'Step back 1 frame');
+        this.addButton(controlsDiv, '|<', buttonStyle, () => this.core.goToStart(), 'Jump to start (Home)');
+        this.addButton(controlsDiv, '<< KF', buttonStyle, () => this.core.gotoPrevKeyframe(), 'Prev Keyframe (Left Arrow)');
+        this.addButton(controlsDiv, '-1', buttonStyle, () => this.core.stepBackward(), 'Step back 1 frame (Shift + Left Arrow)');
 
         // Play/Pause button needs state update
-        this.playButton = this.addButton(controlsDiv, '▶', buttonStyle, () => this.core.togglePlay(), 'Play/Pause');
+        this.playButton = this.addButton(controlsDiv, '▶', buttonStyle, () => this.core.togglePlay(), 'Play/Pause (Space)');
 
-        this.addButton(controlsDiv, '+1', buttonStyle, () => this.core.stepForward(), 'Step forward 1 frame');
-        this.addButton(controlsDiv, 'KF >>', buttonStyle, () => this.core.gotoNextKeyframe(), 'Next Keyframe');
-        this.addButton(controlsDiv, '>|', buttonStyle, () => this.core.goToEnd(), 'Jump to end');
+        this.addButton(controlsDiv, '+1', buttonStyle, () => this.core.stepForward(), 'Step forward 1 frame (Shift + Right Arrow)');
+        this.addButton(controlsDiv, 'KF >>', buttonStyle, () => this.core.gotoNextKeyframe(), 'Next Keyframe (Right Arrow)');
+        this.addButton(controlsDiv, '>|', buttonStyle, () => this.core.goToEnd(), 'Jump to end (End)');
 
         const separator = document.createElement('div');
         separator.style.width = '10px';
         controlsDiv.appendChild(separator);
 
-        const inButton = this.addButton(controlsDiv, '[ IN', buttonStyle, () => this.core.setInPoint(), 'Set IN point');
+        const inButton = this.addButton(controlsDiv, '[ IN', buttonStyle, () => this.core.setInPoint(), 'Set IN point (I)');
         inButton.style.background = '#006600';
 
-        const outButton = this.addButton(controlsDiv, 'OUT ]', buttonStyle, () => this.core.setOutPoint(), 'Set OUT point');
+        const outButton = this.addButton(controlsDiv, 'OUT ]', buttonStyle, () => this.core.setOutPoint(), 'Set OUT point (O)');
         outButton.style.background = '#660000';
 
         const separator2 = document.createElement('div');

@@ -1,9 +1,7 @@
 from server import PromptServer
 from aiohttp import web
-import subprocess
 import json
 import os
-import folder_paths
 
 routes = PromptServer.instance.routes
 

@@ -14,7 +14,7 @@ export class LosslessCutTimeline {
     setupCanvas() {
         this.canvas = document.createElement('canvas');
         this.canvas.style.width = '100%';
-        this.canvas.style.height = '100px';
+        this.canvas.style.height = '40px';
         this.canvas.style.border = '1px solid #333';
         this.canvas.style.backgroundColor = '#1a1a1a'; // Dark bg to ensure visibility
 

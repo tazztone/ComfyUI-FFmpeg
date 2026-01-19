@@ -119,17 +119,17 @@ export class LosslessCutEvents {
             case 'ArrowLeft':
                 e.preventDefault();
                 if (e.shiftKey) {
-                    this.core.gotoPrevKeyframe();
-                } else {
                     this.core.stepBackward();
+                } else {
+                    this.core.gotoPrevKeyframe();
                 }
                 break;
             case 'ArrowRight':
                 e.preventDefault();
                 if (e.shiftKey) {
-                    this.core.gotoNextKeyframe();
-                } else {
                     this.core.stepForward();
+                } else {
+                    this.core.gotoNextKeyframe();
                 }
                 break;
             case 'i':
