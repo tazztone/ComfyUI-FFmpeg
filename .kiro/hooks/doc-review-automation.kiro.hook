@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Auto-Review Node Docs",
+  "description": "Automatically reviews and suggests improvements for node documentation files when they are edited in web/docs directory",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "web/docs/*.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the edited documentation file for completeness, clarity, and consistency with the ComfyUI-FFmpeg documentation standards. Check that it includes: node purpose, input/output descriptions, usage examples, and any relevant warnings or tips. Suggest improvements if needed."
+  }
+}

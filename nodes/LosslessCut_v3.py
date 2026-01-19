@@ -156,9 +156,24 @@ class LosslessCutV3(io.ComfyNode):
             subprocess.run(command, check=True)
             return io.NodeOutput(output_path)  # Return output path
 
-        # If not cutting, return None or empty string?
-        # V3 enforces returning correct type. String.
-        # Return video path (input) as fallback? or empty?
-        # V1 returned (None,) when not cutting.
-        # I'll return None.
+        # For UI updates, we send a message to the frontend
+        # and stay on the current inputs (conceptually).
+        # Since the node has executed, we just return the previous output or None.
+
+        try:
+            from server import PromptServer
+
+            PromptServer.instance.send_sync(
+                "comfyui-ffmpeg-losslesscut-update",
+                {
+                    "node_id": node_id,
+                    "in_point": in_point,
+                    "out_point": out_point,
+                    "current_position": current_position,
+                },
+            )
+        except ImportError:
+            # Fallback if server cannot be imported (e.g. in tests)
+            pass
+
         return io.NodeOutput(None)

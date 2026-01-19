@@ -1,0 +1,388 @@
+{
+    "LosslessCutV3": {
+        "title": "Lossless Cut (V3)",
+        "description": "Interactive video cutting tool using keyframes for lossless processing.",
+        "input": {
+            "required": {
+                "video": "Video File"
+            },
+            "optional": {
+                "action": "Action",
+                "in_point": "In Point (s)",
+                "out_point": "Out Point (s)",
+                "current_position": "Current Position (s)"
+            }
+        },
+        "output": {
+            "output": "Cut Video Path"
+        }
+    },
+    "VideoFlipV3": {
+        "title": "Video Flip (V3)",
+        "description": "Flips the input video horizontally or vertically.",
+        "input": {
+            "required": {
+                "video": "Video Path",
+                "flip_method": "Flip Method"
+            }
+        },
+        "output": {
+            "output": "Flipped Video Path"
+        }
+    },
+    "AddTextWatermarkV3": {
+        "title": "Add Text Watermark (V3)",
+        "description": "Overlays text watermark on a video.",
+        "input": {
+            "required": {
+                "video": "Video Path",
+                "text": "Watermark Text"
+            }
+        }
+    },
+    "AddAudioV3": {
+        "title": "Add Audio (V3)",
+        "description": "Adds an audio track to a video file.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "audio": "Audio Input",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Output Video Path"
+        }
+    },
+    "ExtractAudioV3": {
+        "title": "Extract Audio (V3)",
+        "description": "Extracts the audio track from a video file.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "audio": "Extracted Audio",
+            "output": "Output Audio Path"
+        }
+    },
+    "ApplyAudioFilterV3": {
+        "title": "Apply Audio Filter (V3)",
+        "description": "Applies an FFmpeg audio filtergraph.",
+        "input": {
+            "required": {
+                "audio": "Audio Input",
+                "filtergraph": "Filtergraph",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "audio": "Filtered Audio",
+            "output": "Output Audio Path"
+        }
+    },
+    "TrimVideoV3": {
+        "title": "Trim Video (V3)",
+        "description": "Cuts a segment from a video file.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "start_time": "Start Time",
+                "end_time": "End Time",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Trimmed Video Path"
+        }
+    },
+    "SplitVideoV3": {
+        "title": "Split Video (V3)",
+        "description": "Splits a video into multiple segments.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "segment_duration": "Segment Duration (s)",
+                "output_prefix": "Output Prefix"
+            }
+        },
+        "output": {
+            "output": "Segments Directory"
+        }
+    },
+    "ReverseVideoV3": {
+        "title": "Reverse Video (V3)",
+        "description": "Reverses a video file.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "reverse_audio": "Reverse Audio",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Reversed Video Path"
+        }
+    },
+    "RemuxVideoV3": {
+        "title": "Remux Video (V3)",
+        "description": "Changes the video container without re-encoding.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "container": "Target Container",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Remuxed Video Path"
+        }
+    },
+    "KeyframeTrimV3": {
+        "title": "Keyframe Trim (V3)",
+        "description": "Cuts video at nearest keyframes for lossless editing.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "start_time": "Start Time",
+                "end_time": "End Time",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Trimmed Video Path"
+        }
+    },
+    "MergeVideosV3": {
+        "title": "Merge Videos (V3)",
+        "description": "Combines two videos into one continuous file.",
+        "input": {
+            "required": {
+                "video1": "First Video",
+                "video2": "Second Video",
+                "resolution": "Resolution",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Merged Video Path"
+        }
+    },
+    "MergeVideoBatchV3": {
+        "title": "Merge Video Batch (V3)",
+        "description": "Merges all MP4 files from a directory.",
+        "input": {
+            "required": {
+                "video_directory": "Directory Path",
+                "resolution": "Resolution",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Merged Video Path"
+        }
+    },
+    "StitchVideosV3": {
+        "title": "Stitch Videos (V3)",
+        "description": "Combines two videos side-by-side or vertically.",
+        "input": {
+            "required": {
+                "video1": "Video 1 (Left/Top)",
+                "video2": "Video 2 (Right/Bottom)",
+                "layout": "Layout",
+                "audio_source": "Audio Source",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Stitched Video Path"
+        }
+    },
+    "PictureInPictureV3": {
+        "title": "Picture In Picture (V3)",
+        "description": "Overlays a video or image onto a background video.",
+        "input": {
+            "required": {
+                "background_video": "Background Video",
+                "position": "Position",
+                "scale": "Scale",
+                "audio_source": "Audio Source",
+                "filename": "Output Filename"
+            },
+            "optional": {
+                "foreground_video": "Foreground Video",
+                "foreground_image": "Foreground Image"
+            }
+        },
+        "output": {
+            "output": "PiP Video Path"
+        }
+    },
+    "AddImgWatermarkV3": {
+        "title": "Add Image Watermark (V3)",
+        "description": "Overlays an image watermark on a video.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "width": "Watermark Width",
+                "position_x": "Position X",
+                "position_y": "Position Y"
+            },
+            "optional": {
+                "watermark_image_tensor": "Watermark Tensor",
+                "watermark_image": "Watermark Path"
+            }
+        },
+        "output": {
+            "output": "Watermarked Video Path"
+        }
+    },
+    "VideoTransitionV3": {
+        "title": "Video Transition (V3)",
+        "description": "Creates a transition effect between two videos.",
+        "input": {
+            "required": {
+                "video1": "First Video",
+                "video2": "Second Video",
+                "transition": "Transition Type",
+                "duration": "Duration (s)",
+                "offset": "Offset (s)",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Transformed Video Path"
+        }
+    },
+    "ApplyFiltergraphV3": {
+        "title": "Apply Filtergraph (V3)",
+        "description": "Applies a custom FFmpeg filtergraph.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "filtergraph": "Filtergraph String",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Filtered Video Path"
+        }
+    },
+    "HandleSubtitlesV3": {
+        "title": "Handle Subtitles (V3)",
+        "description": "Burn, add, or extract subtitles.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "subtitle_file": "Subtitle File",
+                "action": "Action",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Output Path"
+        }
+    },
+    "Video2FramesV3": {
+        "title": "Video to Frames (V3)",
+        "description": "Extracts frames from a video.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "max_width": "Max Width",
+                "save_frames": "Save Frames",
+                "output_dir": "Output Directory"
+            }
+        },
+        "output": {
+            "images": "Frames",
+            "count": "Frame Count"
+        }
+    },
+    "Frames2VideoV3": {
+        "title": "Frames to Video (V3)",
+        "description": "Converts image frames to a video.",
+        "input": {
+            "required": {
+                "images": "Input Images",
+                "fps": "Frame Rate",
+                "codec": "Codec",
+                "crf": "Quality (CRF)",
+                "preset": "Preset",
+                "filename": "Output Filename"
+            },
+            "optional": {
+                "audio": "Audio Track"
+            }
+        },
+        "output": {
+            "output": "Output Video Path"
+        }
+    },
+    "GenericFFmpegV3": {
+        "title": "Generic FFmpeg (V3)",
+        "description": "Executes a custom FFmpeg command.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "ffmpeg_command": "FFmpeg Arguments",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Output Video Path"
+        }
+    },
+    "AnalyzeStreamsV3": {
+        "title": "Analyze Streams (V3)",
+        "description": "Analyzes video streams (ffprobe).",
+        "input": {
+            "required": {
+                "video": "Video File"
+            }
+        },
+        "output": {
+            "info": "Stream Info (JSON)"
+        }
+    },
+    "ApplyStreamMapV3": {
+        "title": "Apply Stream Map (V3)",
+        "description": "Applies FFmpeg stream mapping.",
+        "input": {
+            "required": {
+                "video": "Video File",
+                "stream_map": "Stream Map",
+                "filename": "Output Filename"
+            }
+        },
+        "output": {
+            "output": "Mapped Video Path"
+        }
+    },
+    "LoadImagesFromDirectoryV3": {
+        "title": "Load Images from Dir (V3)",
+        "description": "Loads images from a directory.",
+        "input": {
+            "required": {
+                "directory": "Directory Path"
+            }
+        },
+        "output": {
+            "images": "Images"
+        }
+    },
+    "SaveImagesV3": {
+        "title": "Save Images (V3)",
+        "description": "Saves images to a directory.",
+        "input": {
+            "required": {
+                "images": "Images",
+                "directory": "Output Directory",
+                "filename_prefix": "Filename Prefix"
+            }
+        },
+        "output": {}
+    }
+}
