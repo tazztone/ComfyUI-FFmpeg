@@ -78,15 +78,34 @@ export class LosslessCutEvents {
     handleWheel(e) {
         e.preventDefault();
 
-        if (e.ctrlKey) {
+        const rect = this.core.timeline.canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+
+        // Calculate time at mouse position BEFORE zoom
+        const mouseTime = this.core.timeline.pixelToTime(x, rect.width);
+
+        if (e.ctrlKey || e.deltaY !== 0) { // Always Zoom on wheel
+            const zoomFactor = 1.1; // Smoother zoom
+
             if (e.deltaY < 0) {
-                this.core.zoomIn();
+                // Zoom In
+                this.core.timeline.zoomLevel = Math.min(this.core.timeline.zoomLevel * zoomFactor, 200);
             } else {
-                this.core.zoomOut();
+                // Zoom Out
+                this.core.timeline.zoomLevel = Math.max(this.core.timeline.zoomLevel / zoomFactor, 1);
             }
-        } else {
-            const scrollAmount = (e.deltaY / 100) * (this.core.videoData.duration / 10);
-            this.core.timeline.scrollOffset += scrollAmount;
+
+            // Calculate new scroll offset to keep mouseTime at the same pixel position
+            // pixel = (time - scrollOffset) / duration * width * zoom
+            // mouseTime = scrollOffset + (pixel / width) * (duration / zoom)
+            // scrollOffset = mouseTime - (pixel / width) * (duration / zoom)
+
+            const visibleDuration = this.core.videoData.duration / this.core.timeline.zoomLevel;
+            const newScrollOffset = mouseTime - (x / rect.width) * visibleDuration;
+
+            // Clamp scroll offset
+            this.core.timeline.scrollOffset = Math.max(0, Math.min(newScrollOffset, this.core.videoData.duration - visibleDuration));
+
             this.core.timeline.drawTimeline();
         }
     }
