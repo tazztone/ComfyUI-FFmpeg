@@ -152,50 +152,137 @@ export class LosslessCutTimeline {
     }
 
     drawInOutRegion(ctx, width, height) {
-        const inX = this.timeToPixel(this.inPoint, width);
-        const outX = this.timeToPixel(this.outPoint, width);
+        const segments = this.core.segments;
+        const activeIndex = this.core.activeSegmentIndex;
 
-        // 1. Darken areas OUTSIDE the selection
+        // If no segments yet, fall back to simple in/out display
+        if (!segments || segments.length === 0) {
+            this.drawSingleSegment(ctx, width, height, this.inPoint, this.outPoint, true);
+            return;
+        }
+
+        // 1. Darken the entire timeline first
         ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
-        // Left side (start to IN)
-        if (inX > 0) {
-            ctx.fillRect(0, 0, inX, height);
-        }
-        // Right side (OUT to end)
-        if (outX < width) {
-            ctx.fillRect(outX, 0, width - outX, height);
+        ctx.fillRect(0, 0, width, height);
+
+        // 2. Draw each segment
+        for (let i = 0; i < segments.length; i++) {
+            const seg = segments[i];
+            const isActive = (i === activeIndex);
+            const inX = this.timeToPixel(seg.in, width);
+            const outX = this.timeToPixel(seg.out, width);
+
+            // Clear the segment area (make it visible)
+            if (isActive) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            } else {
+                ctx.fillStyle = 'rgba(100, 100, 100, 0.3)';
+            }
+            ctx.fillRect(inX, 0, outX - inX, height - 25);
+
+            // Draw IN marker
+            ctx.fillStyle = isActive ? '#00ff00' : '#006600';
+            ctx.fillRect(inX - 2, 0, 4, height);
+
+            // Draw OUT marker
+            ctx.fillStyle = isActive ? '#ff3333' : '#660000';
+            ctx.fillRect(outX - 2, 0, 4, height);
+
+            // Draw segment number label
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillStyle = isActive ? '#ffffff' : '#888888';
+            ctx.textAlign = 'center';
+            const centerX = (inX + outX) / 2;
+            ctx.fillText(`${i + 1}`, centerX, 12);
+
+            // Draw delete icon for non-active segments (small X)
+            if (!isActive && (outX - inX) > 30) {
+                // Store delete button bounds for click detection
+                const deleteX = centerX;
+                const deleteY = height - 35;
+                const deleteRadius = 8;
+
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.6)';
+                ctx.beginPath();
+                ctx.arc(deleteX, deleteY, deleteRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(deleteX - 4, deleteY - 4);
+                ctx.lineTo(deleteX + 4, deleteY + 4);
+                ctx.moveTo(deleteX + 4, deleteY - 4);
+                ctx.lineTo(deleteX - 4, deleteY + 4);
+                ctx.stroke();
+                ctx.lineWidth = 1;
+
+                // Store hit area for event handler
+                if (!this.deleteButtonAreas) this.deleteButtonAreas = [];
+                this.deleteButtonAreas[i] = { x: deleteX, y: deleteY, radius: deleteRadius, segmentIndex: i };
+            }
         }
 
-        // 2. Highlight SELECTED region slightly
+        // Draw labels for active segment
+        if (activeIndex >= 0 && activeIndex < segments.length) {
+            const active = segments[activeIndex];
+            const inX = this.timeToPixel(active.in, width);
+            const outX = this.timeToPixel(active.out, width);
+
+            ctx.font = 'bold 12px sans-serif';
+            const labelDistance = outX - inX;
+
+            if (labelDistance < 60) {
+                ctx.fillStyle = '#00ff00';
+                ctx.textAlign = 'center';
+                ctx.fillText('IN', inX, 25);
+
+                ctx.fillStyle = '#ff3333';
+                ctx.fillText('OUT', outX, 25);
+            } else {
+                ctx.fillStyle = '#00ff00';
+                ctx.textAlign = 'left';
+                ctx.fillText('IN', inX + 6, 25);
+
+                ctx.fillStyle = '#ff3333';
+                ctx.textAlign = 'right';
+                ctx.fillText('OUT', outX - 6, 25);
+            }
+        }
+    }
+
+    drawSingleSegment(ctx, width, height, inPoint, outPoint, isActive) {
+        const inX = this.timeToPixel(inPoint, width);
+        const outX = this.timeToPixel(outPoint, width);
+
+        // Darken outside
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+        if (inX > 0) ctx.fillRect(0, 0, inX, height);
+        if (outX < width) ctx.fillRect(outX, 0, width - outX, height);
+
+        // Highlight selected
         ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
         ctx.fillRect(inX, 0, outX - inX, height - 25);
 
-        // 3. Draw IN Marker
+        // IN/OUT markers
         ctx.fillStyle = '#00ff00';
-        ctx.fillRect(inX - 2, 0, 4, height); // Full height line
-
-        // 4. Draw OUT Marker
+        ctx.fillRect(inX - 2, 0, 4, height);
         ctx.fillStyle = '#ff3333';
-        ctx.fillRect(outX - 2, 0, 4, height); // Full height line
+        ctx.fillRect(outX - 2, 0, 4, height);
 
-        // 5. Draw labels (handle overlap)
+        // Labels
         ctx.font = 'bold 12px sans-serif';
         const labelDistance = outX - inX;
-
         if (labelDistance < 60) {
-            // Too close - put IN above, OUT below
             ctx.fillStyle = '#00ff00';
             ctx.textAlign = 'center';
             ctx.fillText('IN', inX, 15);
-
             ctx.fillStyle = '#ff3333';
             ctx.fillText('OUT', outX, 30);
         } else {
-            // Normal - labels next to markers
             ctx.fillStyle = '#00ff00';
             ctx.textAlign = 'left';
             ctx.fillText('IN', inX + 6, 15);
-
             ctx.fillStyle = '#ff3333';
             ctx.textAlign = 'right';
             ctx.fillText('OUT', outX - 6, 15);

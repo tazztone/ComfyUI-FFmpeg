@@ -11,7 +11,7 @@ app.registerExtension({
             nodeType.prototype.onNodeCreated = function () {
                 onNodeCreated?.apply(this, arguments);
 
-                const widgetsToHide = ['in_point', 'out_point'];
+                const widgetsToHide = ['in_point', 'out_point', 'segments', 'export_screenshot', 'screenshot_time', 'smart_cut'];
 
                 // Store hidden widget references
                 this._hiddenWidgets = {};

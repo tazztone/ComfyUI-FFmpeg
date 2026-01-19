@@ -137,6 +137,10 @@ export class LosslessCutUI {
         cutButton.style.background = '#0066cc';
         cutButton.style.fontWeight = 'bold';
 
+        // Screenshot button
+        const screenshotButton = this.addButton(controlsDiv, '📷', buttonStyle, () => this.core.takeScreenshot(), 'Take Screenshot at current position');
+        screenshotButton.style.background = '#666600';
+
         // Zoom controls
         this.addButton(controlsDiv, '-', buttonStyle, () => this.core.zoomOut(), 'Zoom Out');
         this.addButton(controlsDiv, '+', buttonStyle, () => this.core.zoomIn(), 'Zoom In');
@@ -235,9 +239,11 @@ export class LosslessCutUI {
 
     updateLockButton(isLocked) {
         if (this.lockButton) {
-            this.lockButton.textContent = isLocked ? '🔒 KF' : '🔓';
-            this.lockButton.style.background = isLocked ? '#ff8800' : '#444';
-            this.lockButton.title = isLocked ? 'Keyframe Lock ON (Click to disable)' : 'Keyframe Lock OFF (Click to enable)';
+            this.lockButton.textContent = isLocked ? '🔒 KF' : '🧠 SC';
+            this.lockButton.style.background = isLocked ? '#ff8800' : '#8800ff';
+            this.lockButton.title = isLocked
+                ? 'Keyframe Lock ON - Fast lossless cuts (Click for Smart Cut)'
+                : 'Smart Cut ON - Frame-accurate cuts with re-encoding (Click for Lossless)';
         }
     }
 }

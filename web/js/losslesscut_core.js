@@ -14,6 +14,10 @@ export class LosslessCutCore {
         this.isPlaying = false;
         this.losslessLock = true; // Constrain IN/OUT to keyframes for lossless cuts
 
+        // Multiple Segments Support
+        this.segments = []; // Array of {in: number, out: number}
+        this.activeSegmentIndex = 0; // Currently editing segment
+
         this.timeline = new LosslessCutTimeline(this);
         this.ui = new LosslessCutUI(this);
         this.events = new LosslessCutEvents(this);
@@ -51,6 +55,16 @@ export class LosslessCutCore {
         return container;
     }
 
+    initializeDefaultSegment() {
+        // Create initial segment covering full video
+        if (this.videoData && this.segments.length === 0) {
+            this.segments = [{ in: 0, out: this.videoData.duration }];
+            this.activeSegmentIndex = 0;
+            this.inPoint = 0;
+            this.outPoint = this.videoData.duration;
+        }
+    }
+
     setInPoint(time = null) {
         if (!this.videoData) return;
         let targetTime = time !== null ? time : this.currentRawTime;
@@ -59,7 +73,29 @@ export class LosslessCutCore {
             targetTime = this.snapToKeyframe(targetTime);
         }
 
+        // Check if this IN point is outside all existing segments
+        const isInsideExisting = this.segments.some(seg =>
+            targetTime >= seg.in && targetTime <= seg.out
+        );
+
+        if (!isInsideExisting && this.segments.length > 0) {
+            // Auto-create new segment starting at this point
+            const newSegment = {
+                in: targetTime,
+                out: this.videoData.duration // Default to end, user will adjust
+            };
+            this.segments.push(newSegment);
+            this.activeSegmentIndex = this.segments.length - 1;
+            console.log(`[LosslessCut] Created new segment #${this.activeSegmentIndex}`);
+        }
+
         this.inPoint = targetTime;
+
+        // Update active segment
+        if (this.segments.length > 0 && this.activeSegmentIndex < this.segments.length) {
+            this.segments[this.activeSegmentIndex].in = targetTime;
+        }
+
         this.timeline.inPoint = this.inPoint;
         this.timeline.drawTimeline();
         this.ui.updateDisplays();
@@ -74,6 +110,47 @@ export class LosslessCutCore {
         }
 
         this.outPoint = targetTime;
+
+        // Update active segment
+        if (this.segments.length > 0 && this.activeSegmentIndex < this.segments.length) {
+            this.segments[this.activeSegmentIndex].out = targetTime;
+        }
+
+        this.timeline.outPoint = this.outPoint;
+        this.timeline.drawTimeline();
+        this.ui.updateDisplays();
+    }
+
+    deleteSegment(index) {
+        if (index < 0 || index >= this.segments.length) return;
+        if (this.segments.length <= 1) {
+            // Can't delete last segment, just reset it
+            this.segments[0] = { in: 0, out: this.videoData.duration };
+            this.activeSegmentIndex = 0;
+        } else {
+            this.segments.splice(index, 1);
+            if (this.activeSegmentIndex >= this.segments.length) {
+                this.activeSegmentIndex = this.segments.length - 1;
+            }
+        }
+
+        // Sync active segment to inPoint/outPoint
+        const active = this.segments[this.activeSegmentIndex];
+        this.inPoint = active.in;
+        this.outPoint = active.out;
+        this.timeline.inPoint = this.inPoint;
+        this.timeline.outPoint = this.outPoint;
+        this.timeline.drawTimeline();
+        this.ui.updateDisplays();
+    }
+
+    selectSegment(index) {
+        if (index < 0 || index >= this.segments.length) return;
+        this.activeSegmentIndex = index;
+        const seg = this.segments[index];
+        this.inPoint = seg.in;
+        this.outPoint = seg.out;
+        this.timeline.inPoint = this.inPoint;
         this.timeline.outPoint = this.outPoint;
         this.timeline.drawTimeline();
         this.ui.updateDisplays();
@@ -137,6 +214,15 @@ export class LosslessCutCore {
 
     performCut() {
         this.nodeIntegration.syncWidgets();
+        // Trigger graph execution
+        if (window.app && window.app.queuePrompt) {
+            window.app.queuePrompt(0, 1);
+        }
+    }
+
+    takeScreenshot() {
+        // Set screenshot widget to export at current playhead
+        this.nodeIntegration.syncWidgetsForScreenshot();
         // Trigger graph execution
         if (window.app && window.app.queuePrompt) {
             window.app.queuePrompt(0, 1);
@@ -210,3 +296,4 @@ export class LosslessCutCore {
         }
     }
 }
+

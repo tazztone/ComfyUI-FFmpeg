@@ -40,6 +40,9 @@ export class LosslessCutNodeIntegration {
             this.core.currentFrame = 0;
             this.core.timeline.currentFrame = 0;
 
+            // Initialize default segment for multi-segment support
+            this.core.initializeDefaultSegment();
+
             this.core.timeline.drawTimeline();
             this.core.ui.updateDisplays();
 
@@ -71,8 +74,40 @@ export class LosslessCutNodeIntegration {
         const node = this.core.node;
         const inWidget = node._hiddenWidgets?.['in_point'] || node.widgets?.find(w => w.name === 'in_point');
         const outWidget = node._hiddenWidgets?.['out_point'] || node.widgets?.find(w => w.name === 'out_point');
+        const screenshotTimeWidget = node._hiddenWidgets?.['screenshot_time'] || node.widgets?.find(w => w.name === 'screenshot_time');
+        const segmentsWidget = node._hiddenWidgets?.['segments'] || node.widgets?.find(w => w.name === 'segments');
+        const exportScreenshotWidget = node._hiddenWidgets?.['export_screenshot'] || node.widgets?.find(w => w.name === 'export_screenshot');
+        const smartCutWidget = node._hiddenWidgets?.['smart_cut'] || node.widgets?.find(w => w.name === 'smart_cut');
 
         if (inWidget) inWidget.value = this.core.inPoint;
         if (outWidget) outWidget.value = this.core.outPoint;
+        // Sync screenshot time to current playhead position
+        if (screenshotTimeWidget) screenshotTimeWidget.value = this.core.currentRawTime;
+
+        // For regular cuts, don't export screenshot
+        if (exportScreenshotWidget) exportScreenshotWidget.value = false;
+
+        // Sync segments JSON
+        if (segmentsWidget && this.core.segments && this.core.segments.length > 0) {
+            segmentsWidget.value = JSON.stringify(this.core.segments);
+        }
+
+        // Smart cut is ON when lossless lock is OFF (user wants frame-accurate cuts)
+        if (smartCutWidget) {
+            smartCutWidget.value = !this.core.losslessLock;
+        }
+    }
+
+    syncWidgetsForScreenshot() {
+        const node = this.core.node;
+        const screenshotTimeWidget = node._hiddenWidgets?.['screenshot_time'] || node.widgets?.find(w => w.name === 'screenshot_time');
+        const exportScreenshotWidget = node._hiddenWidgets?.['export_screenshot'] || node.widgets?.find(w => w.name === 'export_screenshot');
+
+        // Set screenshot time to current playhead
+        if (screenshotTimeWidget) screenshotTimeWidget.value = this.core.currentRawTime;
+
+        // Enable screenshot export
+        if (exportScreenshotWidget) exportScreenshotWidget.value = true;
     }
 }
+

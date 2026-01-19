@@ -40,8 +40,14 @@ We have fully modernized the repository structure to align with ComfyUI V3 best 
 Expanding the capabilities to cover more FFmpeg features and improve user experience.
 
 *   **Interactive Features**:
-    *   [ ] Improve `LosslessCut` UI with better timeline controls and scrubbing.
     *   [ ] Add interactive cropping/region-of-interest selection node.
+*   **Advanced LosslessCut Features**:
+    *   [x] **Multiple Segments (Edit Decision List)**: Support for defining and exporting/merging multiple cut zones.
+    *   [x] **Stream Selection (Tracks)**: Allow users to select specific video/audio tracks to keep or drop.
+    *   [x] **Smart Cut (Frame Accurate)**: Implement smart re-encoding of GOP boundaries for frame-perfect cuts.
+    *   [x] **Format Remuxing**: Implemented as separate `RemuxVideo` node.
+    *   [x] **Screenshots / Keyframe Export**: Ability to export specific frames as ComfyUI Images.
+    *   [x] **Metadata Preservation**: Options to toggle preservation of metadata.
 *   **Advanced Audio**:
     *   [ ] Add visual equalizer/spectrum analyzer node.
     *   [ ] Support for VST plugins (via FFmpeg filters where applicable) or complex audio filter graphs.

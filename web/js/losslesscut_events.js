@@ -29,9 +29,40 @@ export class LosslessCutEvents {
     handleMouseDown(e) {
         const rect = this.core.timeline.canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
         const time = this.core.timeline.pixelToTime(x, rect.width);
 
         if (e.button === 0) { // Left click
+            // Check for delete button clicks first
+            const deleteAreas = this.core.timeline.deleteButtonAreas;
+            if (deleteAreas) {
+                for (const area of deleteAreas) {
+                    if (area) {
+                        const dist = Math.sqrt(Math.pow(x - area.x, 2) + Math.pow(y - area.y, 2));
+                        if (dist <= area.radius + 2) { // Small buffer for easier clicking
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.core.deleteSegment(area.segmentIndex);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // Check for segment selection (click inside a non-active segment)
+            const segments = this.core.segments;
+            if (segments && segments.length > 1) {
+                for (let i = 0; i < segments.length; i++) {
+                    if (i === this.core.activeSegmentIndex) continue;
+                    const seg = segments[i];
+                    if (time >= seg.in && time <= seg.out) {
+                        // Clicked inside a non-active segment, select it
+                        this.core.selectSegment(i);
+                        return;
+                    }
+                }
+            }
+
             // Check if clicking near IN or OUT marker (within 10px)
             const inX = this.core.timeline.timeToPixel(this.core.inPoint, rect.width);
             const outX = this.core.timeline.timeToPixel(this.core.outPoint, rect.width);
