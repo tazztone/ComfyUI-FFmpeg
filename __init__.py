@@ -1,5 +1,6 @@
 from .nodes_map import NODE_CLASS_MAPPINGS_V3
 from comfy_api.latest import ComfyExtension, io
+from . import api_routes
 
 WEB_DIRECTORY = "./web/js"
 

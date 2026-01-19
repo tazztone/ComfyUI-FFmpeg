@@ -2,18 +2,38 @@ export class LosslessCutUI {
     constructor(core) {
         this.core = core;
         this.container = null;
+        this.videoElement = null;
+        this.inDisplay = null;
+        this.outDisplay = null;
+        this.posDisplay = null;
     }
 
     createInterface() {
         this.container = document.createElement('div');
         this.container.className = 'losslesscut-interface';
+        this.container.style.display = 'flex';
+        this.container.style.flexDirection = 'column';
+        this.container.style.height = '100%';
+        this.container.style.background = '#222';
+        this.container.style.color = '#ddd';
 
+        // 1. Video Preview
+        this.videoElement = document.createElement('video');
+        this.videoElement.style.width = '100%';
+        this.videoElement.style.maxHeight = '300px';
+        this.videoElement.style.background = '#000';
+        this.videoElement.controls = false; // We use our own controls
+        this.container.appendChild(this.videoElement);
+
+        // 2. Timeline
         const timeline = this.core.timeline.setupCanvas();
         this.container.appendChild(timeline);
 
+        // 3. Controls (Buttons)
         const controls = this.createControls();
         this.container.appendChild(controls);
 
+        // 4. Info Panel (Timecodes)
         const infoPanel = this.createInfoPanel();
         this.container.appendChild(infoPanel);
 
@@ -27,6 +47,7 @@ export class LosslessCutUI {
             gap: 5px;
             margin-top: 10px;
             flex-wrap: wrap;
+            justify-content: center;
         `;
 
         const buttonStyle = `
@@ -37,29 +58,43 @@ export class LosslessCutUI {
             border-radius: 3px;
             cursor: pointer;
             font-size: 12px;
+            min-width: 30px;
         `;
 
-        this.addButton(controlsDiv, '|< Start', buttonStyle, () => this.core.goToStart(), 'Jump to start');
-        this.addButton(controlsDiv, '<< Prev KF', buttonStyle, () => this.core.gotoPrevKeyframe(), 'Go to previous keyframe');
-        this.addButton(controlsDiv, '< Frame', buttonStyle, () => this.core.stepBackward(), 'Step back 1 frame');
-        this.addButton(controlsDiv, '▶️ Play', buttonStyle, () => this.core.togglePlay(), 'Play/Pause (not fully implemented)');
-        this.addButton(controlsDiv, 'Frame >', buttonStyle, () => this.core.stepForward(), 'Step forward 1 frame');
-        this.addButton(controlsDiv, 'Next KF >>', buttonStyle, () => this.core.gotoNextKeyframe(), 'Go to next keyframe');
-        this.addButton(controlsDiv, 'End >|', buttonStyle, () => this.core.goToEnd(), 'Jump to end');
+        this.addButton(controlsDiv, '|<', buttonStyle, () => this.core.goToStart(), 'Jump to start');
+        this.addButton(controlsDiv, '<< KF', buttonStyle, () => this.core.gotoPrevKeyframe(), 'Prev Keyframe');
+        this.addButton(controlsDiv, '-1', buttonStyle, () => this.core.stepBackward(), 'Step back 1 frame');
 
-        const inButton = this.addButton(controlsDiv, '[ Set IN', buttonStyle, () => this.core.setInPoint(), 'Mark IN point at current position');
+        // Play/Pause button needs state update
+        this.playButton = this.addButton(controlsDiv, '▶', buttonStyle, () => this.core.togglePlay(), 'Play/Pause');
+
+        this.addButton(controlsDiv, '+1', buttonStyle, () => this.core.stepForward(), 'Step forward 1 frame');
+        this.addButton(controlsDiv, 'KF >>', buttonStyle, () => this.core.gotoNextKeyframe(), 'Next Keyframe');
+        this.addButton(controlsDiv, '>|', buttonStyle, () => this.core.goToEnd(), 'Jump to end');
+
+        const separator = document.createElement('div');
+        separator.style.width = '10px';
+        controlsDiv.appendChild(separator);
+
+        const inButton = this.addButton(controlsDiv, '[ IN', buttonStyle, () => this.core.setInPoint(), 'Set IN point');
         inButton.style.background = '#006600';
 
-        const outButton = this.addButton(controlsDiv, 'Set OUT ]', buttonStyle, () => this.core.setOutPoint(), 'Mark OUT point at current position');
+        const outButton = this.addButton(controlsDiv, 'OUT ]', buttonStyle, () => this.core.setOutPoint(), 'Set OUT point');
         outButton.style.background = '#660000';
 
-        const cutButton = this.addButton(controlsDiv, '✂️ Cut', buttonStyle, () => this.core.performCut(), 'Cut video from IN to OUT');
+        const separator2 = document.createElement('div');
+        separator2.style.width = '10px';
+        controlsDiv.appendChild(separator2);
+
+        const cutButton = this.addButton(controlsDiv, '✂ CUT', buttonStyle, () => this.core.performCut(), 'Execute Cut');
         cutButton.style.background = '#0066cc';
         cutButton.style.fontWeight = 'bold';
 
-        this.addButton(controlsDiv, 'Zoom -', buttonStyle, () => this.core.zoomOut(), 'Zoom out timeline');
-        this.addButton(controlsDiv, 'Zoom +', buttonStyle, () => this.core.zoomIn(), 'Zoom in timeline');
-        this.addButton(controlsDiv, 'Fit', buttonStyle, () => this.core.resetZoom(), 'Fit entire video in timeline');
+        // Zoom controls
+        const zoomDiv = document.createElement('div');
+        zoomDiv.style.marginLeft = 'auto';
+        this.addButton(controlsDiv, '-', buttonStyle, () => this.core.zoomOut(), 'Zoom Out');
+        this.addButton(controlsDiv, '+', buttonStyle, () => this.core.zoomIn(), 'Zoom In');
 
         return controlsDiv;
     }
@@ -73,6 +108,7 @@ export class LosslessCutUI {
             margin-top: 10px;
             font-family: monospace;
             font-size: 11px;
+            padding: 5px;
         `;
 
         this.inDisplay = this.createInfoBox(infoDiv, 'IN Point', '00:00:00:00', '#006600');
@@ -87,7 +123,7 @@ export class LosslessCutUI {
         box.style.cssText = `
             background: ${color}22;
             border: 2px solid ${color};
-            padding: 8px;
+            padding: 4px;
             border-radius: 4px;
             text-align: center;
         `;
@@ -100,10 +136,10 @@ export class LosslessCutUI {
         valueSpan.textContent = value;
         valueSpan.style.cssText = `
             color: ${color}; 
-            font-size: 16px; 
+            font-size: 14px; 
             font-weight: bold; 
             font-family: 'Courier New', monospace;
-            margin-top: 4px;
+            margin-top: 2px;
         `;
 
         box.appendChild(labelSpan);
@@ -120,18 +156,8 @@ export class LosslessCutUI {
         if (tooltip) btn.title = tooltip;
 
         btn.addEventListener('click', onClick);
-        btn.addEventListener('mouseenter', () => btn.style.background = '#555');
-        btn.addEventListener('mouseleave', () => {
-            if (text.includes('Set IN')) {
-                btn.style.background = '#006600';
-            } else if (text.includes('Set OUT')) {
-                btn.style.background = '#660000';
-            } else if (text.includes('Cut')) {
-                btn.style.background = '#0066cc';
-            } else {
-                btn.style.background = '#444';
-            }
-        });
+        btn.addEventListener('mouseenter', () => btn.style.opacity = '0.8');
+        btn.addEventListener('mouseleave', () => btn.style.opacity = '1');
         parent.appendChild(btn);
         return btn;
     }
@@ -143,6 +169,12 @@ export class LosslessCutUI {
             this.posDisplay.textContent = this.core.timeline.formatTimecode(
                 this.core.currentFrame / this.core.videoData.fps
             );
+        }
+    }
+
+    updatePlayButton(isPlaying) {
+        if (this.playButton) {
+            this.playButton.textContent = isPlaying ? '⏸' : '▶';
         }
     }
 }

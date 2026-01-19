@@ -21,7 +21,30 @@ export class LosslessCutCore {
     setupInterface() {
         const container = this.ui.createInterface();
         this.events.setupEventListeners();
-        this.nodeIntegration.loadVideoMetadata();
+
+        // Sync video player time updates to timeline
+        if (this.ui.videoElement) {
+            this.ui.videoElement.addEventListener('timeupdate', () => {
+                if (this.videoData) {
+                    const time = this.ui.videoElement.currentTime;
+                    this.currentFrame = Math.floor(time * this.videoData.fps);
+                    this.timeline.currentFrame = this.currentFrame;
+                    this.timeline.drawTimeline();
+                    this.ui.updateDisplays();
+                }
+            });
+
+            this.ui.videoElement.addEventListener('play', () => {
+                this.isPlaying = true;
+                this.ui.updatePlayButton(true);
+            });
+
+            this.ui.videoElement.addEventListener('pause', () => {
+                this.isPlaying = false;
+                this.ui.updatePlayButton(false);
+            });
+        }
+
         return container;
     }
 
@@ -29,7 +52,6 @@ export class LosslessCutCore {
         if (!this.videoData) return;
         this.inPoint = time !== null ? time : (this.currentFrame / this.videoData.fps);
         this.timeline.inPoint = this.inPoint;
-        this.nodeIntegration.queueAction('set_in');
         this.timeline.drawTimeline();
         this.ui.updateDisplays();
     }
@@ -38,27 +60,60 @@ export class LosslessCutCore {
         if (!this.videoData) return;
         this.outPoint = time !== null ? time : (this.currentFrame / this.videoData.fps);
         this.timeline.outPoint = this.outPoint;
-        this.nodeIntegration.queueAction('set_out');
         this.timeline.drawTimeline();
         this.ui.updateDisplays();
     }
 
     gotoPrevKeyframe() {
-        this.nodeIntegration.queueAction('prev_kf');
+        if (!this.videoData || !this.videoData.keyframes) return;
+        const currentTime = this.currentFrame / this.videoData.fps;
+
+        // Find nearest keyframe before current time (with small tolerance)
+        const prev = this.videoData.keyframes
+            .filter(k => k < currentTime - 0.01)
+            .sort((a, b) => b - a)[0]; // max of values smaller than current
+
+        if (prev !== undefined) {
+            this.seekTo(prev);
+        } else {
+            this.seekTo(0);
+        }
     }
 
     gotoNextKeyframe() {
-        this.nodeIntegration.queueAction('next_kf');
+        if (!this.videoData || !this.videoData.keyframes) return;
+        const currentTime = this.currentFrame / this.videoData.fps;
+
+        const next = this.videoData.keyframes
+            .filter(k => k > currentTime + 0.01)
+            .sort((a, b) => a - b)[0]; // min of values larger
+
+        if (next !== undefined) {
+            this.seekTo(next);
+        }
     }
 
     performCut() {
-        this.nodeIntegration.queueAction('cut');
+        this.nodeIntegration.syncWidgets();
+        // Trigger graph execution
+        if (window.app && window.app.queuePrompt) {
+            window.app.queuePrompt(0, 1);
+        }
     }
 
     seekTo(time) {
         if (!this.videoData) return;
+
+        // Clamp time
+        time = Math.max(0, Math.min(time, this.videoData.duration));
+
         this.currentFrame = Math.floor(time * this.videoData.fps);
         this.timeline.currentFrame = this.currentFrame;
+
+        if (this.ui.videoElement && Math.abs(this.ui.videoElement.currentTime - time) > 0.1) {
+            this.ui.videoElement.currentTime = time;
+        }
+
         this.timeline.drawTimeline();
         this.ui.updateDisplays();
     }
@@ -93,15 +148,22 @@ export class LosslessCutCore {
 
     stepBackward() {
         if (!this.videoData) return;
-        this.seekTo((this.currentFrame - 1) / this.videoData.fps);
+        const time = (this.currentFrame - 1) / this.videoData.fps;
+        this.seekTo(time);
     }
 
     stepForward() {
         if (!this.videoData) return;
-        this.seekTo((this.currentFrame + 1) / this.videoData.fps);
+        const time = (this.currentFrame + 1) / this.videoData.fps;
+        this.seekTo(time);
     }
 
     togglePlay() {
-        // Not implemented yet
+        if (!this.ui.videoElement) return;
+        if (this.ui.videoElement.paused) {
+            this.ui.videoElement.play();
+        } else {
+            this.ui.videoElement.pause();
+        }
     }
 }

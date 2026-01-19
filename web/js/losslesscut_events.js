@@ -3,18 +3,27 @@ export class LosslessCutEvents {
         this.core = core;
         this.isDragging = false;
         this.dragType = null;
+        this.dragStartX = 0;
     }
 
     setupEventListeners() {
         const canvas = this.core.timeline.canvas;
 
         canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-        canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-        canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+        window.addEventListener('mousemove', (e) => this.handleMouseMove(e)); // Window for drag outside
+        window.addEventListener('mouseup', (e) => this.handleMouseUp(e));
         canvas.addEventListener('wheel', (e) => this.handleWheel(e));
         canvas.addEventListener('dblclick', (e) => this.handleDoubleClick(e));
 
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+
+        // Ensure container can take focus for key events
+        if (this.core.ui.container) {
+            this.core.ui.container.tabIndex = 0;
+            this.core.ui.container.addEventListener('click', () => {
+                this.core.ui.container.focus();
+            });
+        }
     }
 
     handleMouseDown(e) {
@@ -49,8 +58,13 @@ export class LosslessCutEvents {
             const time = this.core.timeline.pixelToTime(x, rect.width);
             this.core.seekTo(time);
         } else if (this.dragType === 'pan') {
-            const timeDelta = this.core.timeline.pixelToTime(x - this.dragStartX, rect.width);
-            this.core.timeline.scrollOffset -= timeDelta;
+            const timeDelta = this.core.timeline.pixelToTime(x - this.dragStartX, rect.width) - this.core.timeline.pixelToTime(0, rect.width);
+            // Fix pan calculation (rough approx, can be improved)
+            // Ideally: (dx / width) * visibleDuration
+            const visibleDuration = this.core.videoData.duration / this.core.timeline.zoomLevel;
+            const dt = ((x - this.dragStartX) / rect.width) * visibleDuration;
+
+            this.core.timeline.scrollOffset -= dt;
             this.core.timeline.drawTimeline();
             this.dragStartX = x;
         }
@@ -89,9 +103,15 @@ export class LosslessCutEvents {
     }
 
     handleKeyDown(e) {
-        if (!this.core.timeline.canvas.contains(document.activeElement)) return;
+        // Check if focus is within our UI container OR the video element
+        const active = document.activeElement;
+        const container = this.core.ui.container;
 
-        switch(e.key) {
+        if (!container || (!container.contains(active) && container !== active)) {
+            return;
+        }
+
+        switch (e.key) {
             case ' ':
                 e.preventDefault();
                 this.core.togglePlay();
@@ -130,7 +150,7 @@ export class LosslessCutEvents {
     }
 
     findNearestKeyframe(time) {
-        if (!this.core.videoData.keyframes) return null;
+        if (!this.core.videoData || !this.core.videoData.keyframes) return null;
 
         let nearest = null;
         let minDist = Infinity;
