@@ -32,6 +32,22 @@ export class LosslessCutEvents {
         const time = this.core.timeline.pixelToTime(x, rect.width);
 
         if (e.button === 0) { // Left click
+            // Check if clicking near IN or OUT marker (within 10px)
+            const inX = this.core.timeline.timeToPixel(this.core.inPoint, rect.width);
+            const outX = this.core.timeline.timeToPixel(this.core.outPoint, rect.width);
+
+            const hitThreshold = 10;
+
+            if (Math.abs(x - inX) < hitThreshold) {
+                this.isDragging = true;
+                this.dragType = 'in_marker';
+                return;
+            } else if (Math.abs(x - outX) < hitThreshold) {
+                this.isDragging = true;
+                this.dragType = 'out_marker';
+                return;
+            }
+
             if (e.shiftKey) {
                 this.core.setInPoint(time);
             } else if (e.ctrlKey) {
@@ -53,14 +69,15 @@ export class LosslessCutEvents {
 
         const rect = this.core.timeline.canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
+        const time = this.core.timeline.pixelToTime(x, rect.width);
 
         if (this.dragType === 'seek') {
-            const time = this.core.timeline.pixelToTime(x, rect.width);
             this.core.seekTo(time);
+        } else if (this.dragType === 'in_marker') {
+            this.core.setInPoint(time);
+        } else if (this.dragType === 'out_marker') {
+            this.core.setOutPoint(time);
         } else if (this.dragType === 'pan') {
-            const timeDelta = this.core.timeline.pixelToTime(x - this.dragStartX, rect.width) - this.core.timeline.pixelToTime(0, rect.width);
-            // Fix pan calculation (rough approx, can be improved)
-            // Ideally: (dx / width) * visibleDuration
             const visibleDuration = this.core.videoData.duration / this.core.timeline.zoomLevel;
             const dt = ((x - this.dragStartX) / rect.width) * visibleDuration;
 

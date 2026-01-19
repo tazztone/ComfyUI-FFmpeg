@@ -132,10 +132,12 @@ export class LosslessCutUI {
         cutButton.style.fontWeight = 'bold';
 
         // Zoom controls
-        const zoomDiv = document.createElement('div');
-        zoomDiv.style.marginLeft = 'auto';
         this.addButton(controlsDiv, '-', buttonStyle, () => this.core.zoomOut(), 'Zoom Out');
         this.addButton(controlsDiv, '+', buttonStyle, () => this.core.zoomIn(), 'Zoom In');
+
+        // Lossless Lock Toggle
+        this.lockButton = this.addButton(controlsDiv, '🔒 KF', buttonStyle, () => this.core.toggleLosslessLock(), 'Toggle Keyframe Lock (Lossless Mode)');
+        this.updateLockButton(this.core.losslessLock);
 
         return controlsDiv;
     }
@@ -222,6 +224,14 @@ export class LosslessCutUI {
     toggleLoadButton(visible) {
         if (this.loadButton) {
             this.loadButton.style.display = visible ? 'block' : 'none';
+        }
+    }
+
+    updateLockButton(isLocked) {
+        if (this.lockButton) {
+            this.lockButton.textContent = isLocked ? '🔒 KF' : '🔓';
+            this.lockButton.style.background = isLocked ? '#ff8800' : '#444';
+            this.lockButton.title = isLocked ? 'Keyframe Lock ON (Click to disable)' : 'Keyframe Lock OFF (Click to enable)';
         }
     }
 }

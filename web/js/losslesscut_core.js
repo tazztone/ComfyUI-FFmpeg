@@ -12,7 +12,7 @@ export class LosslessCutCore {
         this.currentFrame = 0;
         this.currentRawTime = 0; // Track precise float time to avoid rounding errors
         this.isPlaying = false;
-        this.isPlaying = false;
+        this.losslessLock = true; // Constrain IN/OUT to keyframes for lossless cuts
 
         this.timeline = new LosslessCutTimeline(this);
         this.ui = new LosslessCutUI(this);
@@ -53,7 +53,13 @@ export class LosslessCutCore {
 
     setInPoint(time = null) {
         if (!this.videoData) return;
-        this.inPoint = time !== null ? time : (this.currentFrame / this.videoData.fps);
+        let targetTime = time !== null ? time : this.currentRawTime;
+
+        if (this.losslessLock) {
+            targetTime = this.snapToKeyframe(targetTime);
+        }
+
+        this.inPoint = targetTime;
         this.timeline.inPoint = this.inPoint;
         this.timeline.drawTimeline();
         this.ui.updateDisplays();
@@ -61,10 +67,40 @@ export class LosslessCutCore {
 
     setOutPoint(time = null) {
         if (!this.videoData) return;
-        this.outPoint = time !== null ? time : (this.currentFrame / this.videoData.fps);
+        let targetTime = time !== null ? time : this.currentRawTime;
+
+        if (this.losslessLock) {
+            targetTime = this.snapToKeyframe(targetTime);
+        }
+
+        this.outPoint = targetTime;
         this.timeline.outPoint = this.outPoint;
         this.timeline.drawTimeline();
         this.ui.updateDisplays();
+    }
+
+    snapToKeyframe(time) {
+        if (!this.videoData || !this.videoData.keyframes || this.videoData.keyframes.length === 0) {
+            return time;
+        }
+
+        let nearest = this.videoData.keyframes[0];
+        let minDist = Math.abs(time - nearest);
+
+        for (const kf of this.videoData.keyframes) {
+            const dist = Math.abs(time - kf);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = kf;
+            }
+        }
+
+        return nearest;
+    }
+
+    toggleLosslessLock() {
+        this.losslessLock = !this.losslessLock;
+        if (this.ui) this.ui.updateLockButton(this.losslessLock);
     }
 
     gotoPrevKeyframe() {
