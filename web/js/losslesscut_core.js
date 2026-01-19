@@ -10,6 +10,8 @@ export class LosslessCutCore {
         this.inPoint = 0;
         this.outPoint = 0;
         this.currentFrame = 0;
+        this.currentRawTime = 0; // Track precise float time to avoid rounding errors
+        this.isPlaying = false;
         this.isPlaying = false;
 
         this.timeline = new LosslessCutTimeline(this);
@@ -27,6 +29,7 @@ export class LosslessCutCore {
             this.ui.videoElement.addEventListener('timeupdate', () => {
                 if (this.videoData) {
                     const time = this.ui.videoElement.currentTime;
+                    this.currentRawTime = time;
                     this.currentFrame = Math.floor(time * this.videoData.fps);
                     this.timeline.currentFrame = this.currentFrame;
                     this.timeline.drawTimeline();
@@ -66,7 +69,7 @@ export class LosslessCutCore {
 
     gotoPrevKeyframe() {
         if (!this.videoData || !this.videoData.keyframes) return;
-        const currentTime = this.currentFrame / this.videoData.fps;
+        const currentTime = this.currentRawTime;
 
         // Find nearest keyframe before current time (with small tolerance)
         const prev = this.videoData.keyframes
@@ -82,7 +85,7 @@ export class LosslessCutCore {
 
     gotoNextKeyframe() {
         if (!this.videoData || !this.videoData.keyframes) return;
-        const currentTime = this.currentFrame / this.videoData.fps;
+        const currentTime = this.currentRawTime;
 
         const next = this.videoData.keyframes
             .filter(k => k > currentTime + 0.01)
@@ -90,6 +93,9 @@ export class LosslessCutCore {
 
         if (next !== undefined) {
             this.seekTo(next);
+        } else {
+            // No more keyframes, go to end
+            this.seekTo(this.videoData.duration);
         }
     }
 
@@ -107,6 +113,7 @@ export class LosslessCutCore {
         // Clamp time
         time = Math.max(0, Math.min(time, this.videoData.duration));
 
+        this.currentRawTime = time;
         this.currentFrame = Math.floor(time * this.videoData.fps);
         this.timeline.currentFrame = this.currentFrame;
 

@@ -14,7 +14,7 @@ export class LosslessCutTimeline {
     setupCanvas() {
         this.canvas = document.createElement('canvas');
         this.canvas.style.width = '100%';
-        this.canvas.style.height = '150px';
+        this.canvas.style.height = '100px';
         this.canvas.style.border = '1px solid #333';
         this.canvas.style.backgroundColor = '#1a1a1a'; // Dark bg to ensure visibility
 
@@ -174,16 +174,32 @@ export class LosslessCutTimeline {
         ctx.fillStyle = '#00ff00';
         ctx.fillRect(inX - 2, 0, 4, height); // Full height line
 
-        ctx.font = 'bold 14px sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText('IN', inX + 6, 20);
-
         // 4. Draw OUT Marker
         ctx.fillStyle = '#ff3333';
         ctx.fillRect(outX - 2, 0, 4, height); // Full height line
 
-        ctx.textAlign = 'right';
-        ctx.fillText('OUT', outX - 6, 20);
+        // 5. Draw labels (handle overlap)
+        ctx.font = 'bold 12px sans-serif';
+        const labelDistance = outX - inX;
+
+        if (labelDistance < 60) {
+            // Too close - put IN above, OUT below
+            ctx.fillStyle = '#00ff00';
+            ctx.textAlign = 'center';
+            ctx.fillText('IN', inX, 15);
+
+            ctx.fillStyle = '#ff3333';
+            ctx.fillText('OUT', outX, 30);
+        } else {
+            // Normal - labels next to markers
+            ctx.fillStyle = '#00ff00';
+            ctx.textAlign = 'left';
+            ctx.fillText('IN', inX + 6, 15);
+
+            ctx.fillStyle = '#ff3333';
+            ctx.textAlign = 'right';
+            ctx.fillText('OUT', outX - 6, 15);
+        }
     }
 
     drawPlayhead(ctx, width, height) {
