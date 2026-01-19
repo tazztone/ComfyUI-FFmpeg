@@ -27,6 +27,7 @@ We have fully modernized the repository structure to align with ComfyUI V3 best 
     *   [x] Establish `comfy.plugins` entry point in `pyproject.toml`.
     *   [x] Implement `comfy_entrypoint` registration mechanism.
     *   [x] Separate V3 node mappings.
+    *   [x] **Remove Legacy V1 Nodes**: Deleted all V1 files and mappings.
 *   **Documentation & Usability**:
     *   [x] Implement Integrated Help (`web/docs/`).
     *   [x] Standardize Workflow Templates (`example_workflows/`).

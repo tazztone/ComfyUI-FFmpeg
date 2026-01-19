@@ -1,8 +1,4 @@
-from .nodes_map import (
-    NODE_CLASS_MAPPINGS,
-    NODE_DISPLAY_NAME_MAPPINGS,
-    NODE_CLASS_MAPPINGS_V3,
-)
+from .nodes_map import NODE_CLASS_MAPPINGS_V3
 from comfy_api.latest import ComfyExtension, io
 
 WEB_DIRECTORY = "js"
@@ -18,8 +14,6 @@ async def comfy_entrypoint() -> FFmpegExtension:
 
 
 __all__ = [
-    "NODE_CLASS_MAPPINGS",
-    "NODE_DISPLAY_NAME_MAPPINGS",
     "WEB_DIRECTORY",
     "comfy_entrypoint",
 ]

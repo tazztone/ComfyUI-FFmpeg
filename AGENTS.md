@@ -26,7 +26,7 @@ In **ComfyUI-FFmpeg**, this communication often involves:
 
 *   **`nodes/`**: Contains the Python source code for individual nodes. Each file typically corresponds to one node class.
 *   **`func.py`**: A shared utility module containing core FFmpeg wrapper logic, file handling helpers, and validation functions.
-*   **`nodes_map.py`**: The registry file that imports node classes and defines `NODE_CLASS_MAPPINGS` and `NODE_DISPLAY_NAME_MAPPINGS`.
+*   **`nodes_map.py`**: The registry file that imports V3 node classes.
 *   **`web/`**: Contains frontend assets.
     *   **`web/js/`**: JavaScript files for custom node UIs (e.g., hidden widgets, interactive canvases).
 *   **`fonts/`**: Directory for font files used by nodes like `AddTextWatermark`.
@@ -38,25 +38,11 @@ In **ComfyUI-FFmpeg**, this communication often involves:
 
 ### Backend Development (Python)
 
-#### Node Schema: V1 Legacy vs V3 Modern
+#### Node Schema: V3 Architecture
 
-This repository supports **both** V1 and V3 node schemas, but **V1 nodes are deprecated and will be removed**. All new development should effectively ignore V1 patterns and strictly follow V3 standards.
+This repository strictly follows the ComfyUI V3 node schema.
 
-V3 nodes are currently suffixed with `V3` in their class names and display names, but this will eventually become the standard.
-
-**V1 Structure (Legacy):**
-```python
-class MyNode:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {"required": {"input": ("STRING", {"default": "value"})}}
-    RETURN_TYPES = ("STRING",)
-    FUNCTION = "execute"
-    CATEGORY = "🔥FFmpeg"
-    
-    def execute(self, input):
-        return (result,)  # Must be a tuple!
-```
+**V3 Structure:**
 
 **V3 Structure (Modern):**
 ```python
