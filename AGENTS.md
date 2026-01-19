@@ -40,7 +40,9 @@ In **ComfyUI-FFmpeg**, this communication often involves:
 
 #### Node Schema: V1 Legacy vs V3 Modern
 
-This repository supports **both** V1 and V3 node schemas. V3 nodes are suffixed with `V3` in their class names and display names.
+This repository supports **both** V1 and V3 node schemas, but **V1 nodes are deprecated and will be removed**. All new development should effectively ignore V1 patterns and strictly follow V3 standards.
+
+V3 nodes are currently suffixed with `V3` in their class names and display names, but this will eventually become the standard.
 
 **V1 Structure (Legacy):**
 ```python
@@ -167,12 +169,18 @@ sys.modules["comfy_api.latest.io"] = mock_io
     *   The JS frontend fetches this file asynchronously via `/output/filename.json?t=${Date.now()}` (using a timestamp to bypass caching).
 
 ### Testing
-*   **Guide**: See `docs/TESTING.md` for full instructions.
+*   **Guide**: See `tests/TESTING.md` for full instructions.
 *   **Infrastructure**:
     *   `tests/unit/`: Unit tests (no server needed).
     *   `tests/integration/`: Integration tests (require FFmpeg).
     *   `tests/run_tests.py`: **Wrapper script to run tests**.
-*   **Running Tests**: `python tests/run_tests.py` (from package root) or `python -m pytest .` (from `tests/` directory).
+*   **Running Tests**: 
+    > [!WARNING] 
+    > **CRITICAL**: You MUST use the environment's python executable and the wrapper script to avoid path/import errors.
+    
+    ```powershell
+    ..\..\venv\Scripts\python tests\run_tests.py
+    ```
 *   **Mocking**: Centralized in `tests/conftest.py`.
 *   **Environment**: `pip install -r requirements.txt`.
 
@@ -235,6 +243,33 @@ Run `./environment_setup.sh` to install FFmpeg and Python dependencies.
 *   **`INPUT_TYPES` Caching**: Avoid expensive operations inside `INPUT_TYPES` as it is called frequently. Cache results where possible.
 *   **`RETURN_NAMES`**: Always define `RETURN_NAMES` in your node class to provide clear output labels in the UI.
 *   **Optional Inputs**: To create a connectable input socket (optional input), omit the `default` value in `INPUT_TYPES`. Providing a `default` value creates a widget instead.
+
+### Useful Documentation Links
+
+**Core & Migration**
+*   [V3 Migration](https://docs.comfy.org/custom-nodes/v3_migration.md): How to migrate your existing V1 nodes to the new V3 schema.
+*   [Overview](https://docs.comfy.org/custom-nodes/overview.md)
+*   [Getting Started](https://docs.comfy.org/custom-nodes/walkthrough.md)
+
+**Documentation & Templates**
+*   [Add node docs for your ComfyUI custom node](https://docs.comfy.org/custom-nodes/help_page.md): How to create rich documentation for your custom nodes.
+*   [Workflow templates](https://docs.comfy.org/custom-nodes/workflow_templates.md)
+
+**Backend Development**
+*   [Datatypes](https://docs.comfy.org/custom-nodes/backend/datatypes.md)
+*   [Node Expansion](https://docs.comfy.org/custom-nodes/backend/expansion.md)
+*   [Images, Latents, and Masks](https://docs.comfy.org/custom-nodes/backend/images_and_masks.md)
+*   [Lazy Evaluation](https://docs.comfy.org/custom-nodes/backend/lazy_evaluation.md)
+*   [Lifecycle](https://docs.comfy.org/custom-nodes/backend/lifecycle.md)
+*   [Hidden and Flexible inputs](https://docs.comfy.org/custom-nodes/backend/more_on_inputs.md)
+*   [Working with torch.Tensor](https://docs.comfy.org/custom-nodes/backend/tensors.md)
+
+**Frontend (JavaScript)**
+*   [Javascript Extensions](https://docs.comfy.org/custom-nodes/js/javascript_overview.md)
+*   [Comfy Hooks](https://docs.comfy.org/custom-nodes/js/javascript_hooks.md)
+*   [Dialog API](https://docs.comfy.org/custom-nodes/js/javascript_dialog.md)
+*   [Settings](https://docs.comfy.org/custom-nodes/js/javascript_settings.md)
+*   [Context Menu Migration Guide](https://docs.comfy.org/custom-nodes/js/context-menu-migration.md)
 
 ---
 

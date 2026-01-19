@@ -11,4 +11,6 @@ Repository = "https://github.com/MoonHugo/ComfyUI-FFmpeg.git"
 [tool.comfy]
 PublisherId = "tazztone"
 DisplayName = "tazztone"
-Icon = ""
+
+[project.entry-points."comfy.plugins"]
+comfyui_ffmpeg = "custom_nodes.ComfyUI_FFmpeg:comfy_entrypoint"

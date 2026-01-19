@@ -103,6 +103,15 @@ mock_comfy_api = MagicMock()
 mock_comfy_api_latest = MagicMock()
 mock_comfy_api_latest.io = mock_io
 
+
+class MockComfyExtension:
+    """Mock ComfyExtension class."""
+
+    pass
+
+
+mock_comfy_api_latest.ComfyExtension = MockComfyExtension
+
 if "comfy_api" not in sys.modules:
     sys.modules["comfy_api"] = mock_comfy_api
 if "comfy_api.latest" not in sys.modules:

@@ -1,0 +1,2236 @@
+{
+  "id": "5e86d449-a175-4f95-9278-26c3e6b1f4b8",
+  "revision": 0,
+  "last_node_id": 127,
+  "last_link_id": 102,
+  "nodes": [
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [
+        1200,
+        96
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "samples",
+          "name": "samples",
+          "type": "LATENT",
+          "link": 7
+        },
+        {
+          "localized_name": "vae",
+          "name": "vae",
+          "type": "VAE",
+          "link": 53
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            51
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "VAEDecode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 9,
+      "type": "SaveImage",
+      "pos": [
+        1440,
+        96
+      ],
+      "size": [
+        952.51,
+        1007.93
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "link": 51
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "ComfyUI"
+      ]
+    },
+    {
+      "id": 40,
+      "type": "CLIPTextEncode",
+      "pos": [
+        384,
+        336
+      ],
+      "size": [
+        432,
+        192
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "clip",
+          "name": "clip",
+          "type": "CLIP",
+          "link": 102
+        },
+        {
+          "localized_name": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "CONDITIONING",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            80
+          ]
+        }
+      ],
+      "title": "Negative Prompt",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "CLIPTextEncode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 53,
+      "type": "EmptySD3LatentImage",
+      "pos": [
+        480,
+        576
+      ],
+      "size": [
+        315,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "width",
+          "name": "width",
+          "type": "INT",
+          "widget": {
+            "name": "width"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "height",
+          "name": "height",
+          "type": "INT",
+          "widget": {
+            "name": "height"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "batch_size",
+          "name": "batch_size",
+          "type": "INT",
+          "widget": {
+            "name": "batch_size"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "LATENT",
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            100
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "EmptySD3LatentImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ]
+    },
+    {
+      "id": 4,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -48,
+        96
+      ],
+      "size": [
+        384.76,
+        98
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "ckpt_name",
+          "name": "ckpt_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "ckpt_name"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "MODEL",
+          "name": "MODEL",
+          "type": "MODEL",
+          "slot_index": 0,
+          "links": [
+            99
+          ]
+        },
+        {
+          "localized_name": "CLIP",
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 1,
+          "links": [
+            101,
+            102
+          ]
+        },
+        {
+          "localized_name": "VAE",
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 2,
+          "links": [
+            53
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "CheckpointLoaderSimple",
+        "models": [
+          {
+            "name": "sd3.5_large_fp8_scaled.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/resolve/main/sd3.5_large_fp8_scaled.safetensors?download=true",
+            "directory": "checkpoints"
+          }
+        ],
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "sd3.5_large_fp8_scaled.safetensors"
+      ]
+    },
+    {
+      "id": 16,
+      "type": "CLIPTextEncode",
+      "pos": [
+        384,
+        96
+      ],
+      "size": [
+        432,
+        192
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "clip",
+          "name": "clip",
+          "type": "CLIP",
+          "link": 101
+        },
+        {
+          "localized_name": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "CONDITIONING",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            21
+          ]
+        }
+      ],
+      "title": "Positive Prompt",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "CLIPTextEncode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "a bottle with a pink and red galaxy inside it on top of a wooden table on a table in the middle of a modern kitchen with a window to the outdoors mountain range bright sun clouds forest"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 3,
+      "type": "KSampler",
+      "pos": [
+        864,
+        96
+      ],
+      "size": [
+        315,
+        262
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model",
+          "name": "model",
+          "type": "MODEL",
+          "link": 99
+        },
+        {
+          "localized_name": "positive",
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 21
+        },
+        {
+          "localized_name": "negative",
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 80
+        },
+        {
+          "localized_name": "latent_image",
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 100
+        },
+        {
+          "localized_name": "seed",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "steps",
+          "name": "steps",
+          "type": "INT",
+          "widget": {
+            "name": "steps"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "cfg",
+          "name": "cfg",
+          "type": "FLOAT",
+          "widget": {
+            "name": "cfg"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "sampler_name",
+          "name": "sampler_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "sampler_name"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "scheduler",
+          "name": "scheduler",
+          "type": "COMBO",
+          "widget": {
+            "name": "scheduler"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "denoise",
+          "name": "denoise",
+          "type": "FLOAT",
+          "widget": {
+            "name": "denoise"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "LATENT",
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "KSampler",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        585483408983215,
+        "randomize",
+        20,
+        4.01,
+        "euler",
+        "sgm_uniform",
+        1
+      ]
+    },
+    {
+      "id": 101,
+      "type": "LoadImagesFromDirectoryV3",
+      "pos": [
+        -100,
+        600
+      ],
+      "size": [
+        336.0611328125,
+        58
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "directory",
+          "name": "directory",
+          "type": "STRING",
+          "widget": {
+            "name": "directory"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "LoadImagesFromDirectoryV3"
+      },
+      "widgets_values": [
+        "images"
+      ]
+    },
+    {
+      "id": 102,
+      "type": "SaveImagesV3",
+      "pos": [
+        200,
+        600
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "localized_name": "directory",
+          "name": "directory",
+          "type": "STRING",
+          "widget": {
+            "name": "directory"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "SaveImagesV3"
+      },
+      "widgets_values": [
+        "saved_images",
+        "image"
+      ]
+    },
+    {
+      "id": 103,
+      "type": "GenericFFmpegV3",
+      "pos": [
+        500,
+        600
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "ffmpeg_command",
+          "name": "ffmpeg_command",
+          "type": "STRING",
+          "widget": {
+            "name": "ffmpeg_command"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "GenericFFmpegV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "-vf hflip",
+        "generic_output.mp4"
+      ]
+    },
+    {
+      "id": 104,
+      "type": "AnalyzeStreamsV3",
+      "pos": [
+        800,
+        600
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "AnalyzeStreamsV3"
+      },
+      "widgets_values": [
+        "video.mp4"
+      ]
+    },
+    {
+      "id": 105,
+      "type": "RemuxVideoV3",
+      "pos": [
+        1100,
+        600
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "container",
+          "name": "container",
+          "type": "COMBO",
+          "widget": {
+            "name": "container"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "RemuxVideoV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "mp4",
+        "remuxed_video.mkv"
+      ]
+    },
+    {
+      "id": 106,
+      "type": "TrimVideoV3",
+      "pos": [
+        -100,
+        975.0
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "start_time",
+          "name": "start_time",
+          "type": "STRING",
+          "widget": {
+            "name": "start_time"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "end_time",
+          "name": "end_time",
+          "type": "STRING",
+          "widget": {
+            "name": "end_time"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "TrimVideoV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "00:00:00",
+        "00:00:10",
+        "trimmed_video.mp4"
+      ]
+    },
+    {
+      "id": 107,
+      "type": "SplitVideoV3",
+      "pos": [
+        200,
+        975.0
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "segment_duration",
+          "name": "segment_duration",
+          "type": "INT",
+          "widget": {
+            "name": "segment_duration"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "output_prefix",
+          "name": "output_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "output_prefix"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "SplitVideoV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        10,
+        "segment_"
+      ]
+    },
+    {
+      "id": 108,
+      "type": "ReverseVideoV3",
+      "pos": [
+        500,
+        975.0
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "reverse_audio",
+          "name": "reverse_audio",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "reverse_audio"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "ReverseVideoV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        true,
+        "reversed_video.mp4"
+      ]
+    },
+    {
+      "id": 109,
+      "type": "VideoFlipV3",
+      "pos": [
+        800,
+        975.0
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "flip_type",
+          "name": "flip_type",
+          "type": "COMBO",
+          "widget": {
+            "name": "flip_type"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "VideoFlipV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "horizontal",
+        "flipped_video_v3.mp4"
+      ]
+    },
+    {
+      "id": 110,
+      "type": "KeyframeTrimV3",
+      "pos": [
+        1100,
+        975.0
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "start_time",
+          "name": "start_time",
+          "type": "STRING",
+          "widget": {
+            "name": "start_time"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "end_time",
+          "name": "end_time",
+          "type": "STRING",
+          "widget": {
+            "name": "end_time"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "KeyframeTrimV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "00:00:00",
+        "00:00:10",
+        "keyframe_trimmed_video.mp4"
+      ]
+    },
+    {
+      "id": 111,
+      "type": "LosslessCutV3",
+      "pos": [
+        1400,
+        975.0
+      ],
+      "size": [
+        250,
+        150
+      ],
+      "flags": {},
+      "order": 111,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "LosslessCutV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "",
+        0.0,
+        -1.0,
+        0.0,
+        null,
+        null,
+        "0"
+      ]
+    },
+    {
+      "id": 112,
+      "type": "MergeVideosV3",
+      "pos": [
+        -100,
+        1350.0
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video1",
+          "name": "video1",
+          "type": "STRING",
+          "widget": {
+            "name": "video1"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "video2",
+          "name": "video2",
+          "type": "STRING",
+          "widget": {
+            "name": "video2"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "resolution",
+          "name": "resolution",
+          "type": "COMBO",
+          "widget": {
+            "name": "resolution"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "MergeVideosV3"
+      },
+      "widgets_values": [
+        "video1.mp4",
+        "video2.mp4",
+        "1080p",
+        "merged_video.mp4"
+      ]
+    },
+    {
+      "id": 113,
+      "type": "MergeVideoBatchV3",
+      "pos": [
+        200,
+        1350.0
+      ],
+      "size": [
+        277.9693359375,
+        106
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video_directory",
+          "name": "video_directory",
+          "type": "STRING",
+          "widget": {
+            "name": "video_directory"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "resolution",
+          "name": "resolution",
+          "type": "COMBO",
+          "widget": {
+            "name": "resolution"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "MergeVideoBatchV3"
+      },
+      "widgets_values": [
+        "videos",
+        "1080p",
+        "merged_video_batch.mp4"
+      ]
+    },
+    {
+      "id": 114,
+      "type": "StitchVideosV3",
+      "pos": [
+        500,
+        1350.0
+      ],
+      "size": [
+        270,
+        154
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video1",
+          "name": "video1",
+          "type": "STRING",
+          "widget": {
+            "name": "video1"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "video2",
+          "name": "video2",
+          "type": "STRING",
+          "widget": {
+            "name": "video2"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "layout",
+          "name": "layout",
+          "type": "COMBO",
+          "widget": {
+            "name": "layout"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audio_source",
+          "name": "audio_source",
+          "type": "COMBO",
+          "widget": {
+            "name": "audio_source"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "StitchVideosV3"
+      },
+      "widgets_values": [
+        "video1.mp4",
+        "video2.mp4",
+        "horizontal",
+        "video1",
+        "stitched_video.mp4"
+      ]
+    },
+    {
+      "id": 115,
+      "type": "VideoTransitionV3",
+      "pos": [
+        800,
+        1350.0
+      ],
+      "size": [
+        270,
+        178
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video1",
+          "name": "video1",
+          "type": "STRING",
+          "widget": {
+            "name": "video1"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "video2",
+          "name": "video2",
+          "type": "STRING",
+          "widget": {
+            "name": "video2"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "transition",
+          "name": "transition",
+          "type": "COMBO",
+          "widget": {
+            "name": "transition"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "duration",
+          "name": "duration",
+          "type": "FLOAT",
+          "widget": {
+            "name": "duration"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "offset",
+          "name": "offset",
+          "type": "FLOAT",
+          "widget": {
+            "name": "offset"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "VideoTransitionV3"
+      },
+      "widgets_values": [
+        "video1.mp4",
+        "video2.mp4",
+        "fade",
+        1,
+        2,
+        "transition_video.mp4"
+      ]
+    },
+    {
+      "id": 116,
+      "type": "PictureInPictureV3",
+      "pos": [
+        1100,
+        1350.0
+      ],
+      "size": [
+        250,
+        150
+      ],
+      "flags": {},
+      "order": 116,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PictureInPictureV3"
+      },
+      "widgets_values": [
+        "bg.mp4",
+        "top_right",
+        0.5,
+        "background",
+        "pip.mp4",
+        "",
+        null
+      ]
+    },
+    {
+      "id": 117,
+      "type": "AddTextWatermarkV3",
+      "pos": [
+        -100,
+        1725.0
+      ],
+      "size": [
+        286.8833984375,
+        202
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "font_size",
+          "name": "font_size",
+          "type": "INT",
+          "widget": {
+            "name": "font_size"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "font_color",
+          "name": "font_color",
+          "type": "STRING",
+          "widget": {
+            "name": "font_color"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "position_x",
+          "name": "position_x",
+          "type": "INT",
+          "widget": {
+            "name": "position_x"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "position_y",
+          "name": "position_y",
+          "type": "INT",
+          "widget": {
+            "name": "position_y"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "font_file",
+          "name": "font_file",
+          "type": "COMBO",
+          "widget": {
+            "name": "font_file"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "AddTextWatermarkV3"
+      },
+      "widgets_values": [
+        "sample.mp4",
+        "ComfyUI",
+        48,
+        "white",
+        10,
+        10,
+        "default"
+      ]
+    },
+    {
+      "id": 118,
+      "type": "AddImgWatermarkV3",
+      "pos": [
+        200,
+        1725.0
+      ],
+      "size": [
+        250,
+        150
+      ],
+      "flags": {},
+      "order": 118,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "AddImgWatermarkV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        100,
+        10,
+        10,
+        null,
+        "logo.png"
+      ]
+    },
+    {
+      "id": 119,
+      "type": "ApplyFiltergraphV3",
+      "pos": [
+        500,
+        1725.0
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filtergraph",
+          "name": "filtergraph",
+          "type": "STRING",
+          "widget": {
+            "name": "filtergraph"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "ApplyFiltergraphV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "vf hflip",
+        "filtered_video.mp4"
+      ]
+    },
+    {
+      "id": 120,
+      "type": "ApplyStreamMapV3",
+      "pos": [
+        800,
+        1725.0
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "stream_map",
+          "name": "stream_map",
+          "type": "STRING",
+          "widget": {
+            "name": "stream_map"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "ApplyStreamMapV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "-map 0:v -map 0:a:0?",
+        "mapped_video.mp4"
+      ]
+    },
+    {
+      "id": 121,
+      "type": "AddAudioV3",
+      "pos": [
+        -100,
+        2100.0
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "AddAudioV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "video_with_audio.mp4"
+      ]
+    },
+    {
+      "id": 122,
+      "type": "ExtractAudioV3",
+      "pos": [
+        200,
+        2100.0
+      ],
+      "size": [
+        270,
+        102
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "AUDIO",
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "ExtractAudioV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "extracted_audio.wav"
+      ]
+    },
+    {
+      "id": 123,
+      "type": "ApplyAudioFilterV3",
+      "pos": [
+        500,
+        2100.0
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "localized_name": "filtergraph",
+          "name": "filtergraph",
+          "type": "STRING",
+          "widget": {
+            "name": "filtergraph"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "AUDIO",
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "ApplyAudioFilterV3"
+      },
+      "widgets_values": [
+        "loudnorm",
+        "filtered_audio.wav"
+      ]
+    },
+    {
+      "id": 124,
+      "type": "HandleSubtitlesV3",
+      "pos": [
+        800,
+        2100.0
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "subtitle_file",
+          "name": "subtitle_file",
+          "type": "STRING",
+          "widget": {
+            "name": "subtitle_file"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "action",
+          "name": "action",
+          "type": "COMBO",
+          "widget": {
+            "name": "action"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "filename",
+          "name": "filename",
+          "type": "STRING",
+          "widget": {
+            "name": "filename"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "HandleSubtitlesV3"
+      },
+      "widgets_values": [
+        "video.mp4",
+        "subtitle.srt",
+        "burn",
+        "video_with_subs.mp4"
+      ]
+    },
+    {
+      "id": 125,
+      "type": "Video2FramesV3",
+      "pos": [
+        -100,
+        2475.0
+      ],
+      "size": [
+        270,
+        150
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "STRING",
+          "widget": {
+            "name": "video"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "max_width",
+          "name": "max_width",
+          "type": "INT",
+          "widget": {
+            "name": "max_width"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "save_frames",
+          "name": "save_frames",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "save_frames"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "output_dir",
+          "name": "output_dir",
+          "type": "STRING",
+          "widget": {
+            "name": "output_dir"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "localized_name": "INT",
+          "name": "INT",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "tazztone/ComfyUI-FFmpeg",
+        "ver": "894186ee8a21c13d23b4db079193a1e761370167",
+        "Node name for S&R": "Video2FramesV3"
+      },
+      "widgets_values": [
+        "sample.mp4",
+        0,
+        false,
+        "frames"
+      ]
+    },
+    {
+      "id": 126,
+      "type": "Frames2VideoV3",
+      "pos": [
+        200,
+        2475.0
+      ],
+      "size": [
+        250,
+        150
+      ],
+      "flags": {},
+      "order": 126,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Frames2VideoV3"
+      },
+      "widgets_values": [
+        24,
+        "h264_cpu",
+        23,
+        "medium",
+        "video_from_frames.mp4"
+      ]
+    }
+  ],
+  "links": [
+    [
+      7,
+      3,
+      0,
+      8,
+      0,
+      "LATENT"
+    ],
+    [
+      21,
+      16,
+      0,
+      3,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      51,
+      8,
+      0,
+      9,
+      0,
+      "IMAGE"
+    ],
+    [
+      53,
+      4,
+      2,
+      8,
+      1,
+      "VAE"
+    ],
+    [
+      80,
+      40,
+      0,
+      3,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      99,
+      4,
+      0,
+      3,
+      0,
+      "MODEL"
+    ],
+    [
+      100,
+      53,
+      0,
+      3,
+      3,
+      "LATENT"
+    ],
+    [
+      101,
+      4,
+      1,
+      16,
+      0,
+      "CLIP"
+    ],
+    [
+      102,
+      4,
+      1,
+      40,
+      0,
+      "CLIP"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7078503082874367,
+      "offset": [
+        954.9492920435858,
+        1216.9009583801812
+      ]
+    },
+    "workflowRendererVersion": "LG",
+    "ue_links": []
+  },
+  "version": 0.4
+}
