@@ -17,7 +17,11 @@ export class LosslessCutNodeIntegration {
             if (!response.ok) {
                 const err = await response.json();
                 console.error("[LosslessCut] Metadata error:", err);
-                // Optionally show error in UI
+                if (window.app && window.app.ui && window.app.ui.dialog) {
+                    window.app.ui.dialog.show(`LosslessCut Error: ${err.error || "Unknown error"}`);
+                } else {
+                    alert(`LosslessCut Error: ${err.error || "Unknown error"}`);
+                }
                 return;
             }
 

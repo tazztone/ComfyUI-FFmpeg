@@ -9,28 +9,8 @@ routes = PromptServer.instance.routes
 
 
 def validate_path(path):
-    if not path:
-        return False
-
-    # Normalize path to handle different OS separators
-    path = os.path.abspath(path)
-
-    # Get allowed directories
-    input_dir = os.path.abspath(folder_paths.get_input_directory())
-    output_dir = os.path.abspath(folder_paths.get_output_directory())
-    temp_dir = os.path.abspath(folder_paths.get_temp_directory())
-
-    # Check if path is within allowed directories
-    allowed_dirs = [input_dir, output_dir, temp_dir]
-
-    # Also check user configured extra model paths if relevant,
-    # but for LosslessCut we primarily care about input/output videos.
-
-    for safe_dir in allowed_dirs:
-        if path.startswith(safe_dir):
-            return True
-
-    return False
+    # Security disabled allowed for all local paths (power-user mode)
+    return os.path.exists(path)
 
 
 @routes.post("/comfyui-ffmpeg/metadata")
