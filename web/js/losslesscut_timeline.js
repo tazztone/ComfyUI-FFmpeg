@@ -127,8 +127,10 @@ export class LosslessCutTimeline {
     drawKeyframes(ctx, width, height) {
         if (!this.videoData.keyframes) return;
 
-        ctx.fillStyle = '#00ff00';
-        ctx.strokeStyle = '#00ff00';
+        // Make keyframes less intrusive
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.4)';
+        ctx.strokeStyle = 'rgba(0, 255, 0, 0.4)';
+        ctx.lineWidth = 1;
 
         for (let kfTime of this.videoData.keyframes) {
             const x = this.timeToPixel(kfTime, width);
@@ -138,6 +140,7 @@ export class LosslessCutTimeline {
             ctx.lineTo(x, height - 25);
             ctx.stroke();
 
+            // Small triangle at top
             ctx.beginPath();
             ctx.moveTo(x, 0);
             ctx.lineTo(x + 3, 3);
@@ -152,16 +155,35 @@ export class LosslessCutTimeline {
         const inX = this.timeToPixel(this.inPoint, width);
         const outX = this.timeToPixel(this.outPoint, width);
 
-        ctx.fillStyle = 'rgba(255, 255, 0, 0.2)';
+        // 1. Darken areas OUTSIDE the selection
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+        // Left side (start to IN)
+        if (inX > 0) {
+            ctx.fillRect(0, 0, inX, height);
+        }
+        // Right side (OUT to end)
+        if (outX < width) {
+            ctx.fillRect(outX, 0, width - outX, height);
+        }
+
+        // 2. Highlight SELECTED region slightly
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
         ctx.fillRect(inX, 0, outX - inX, height - 25);
 
+        // 3. Draw IN Marker
         ctx.fillStyle = '#00ff00';
-        ctx.fillRect(inX - 2, 0, 4, height - 25);
-        ctx.fillText('IN', inX + 5, 15);
+        ctx.fillRect(inX - 2, 0, 4, height); // Full height line
 
-        ctx.fillStyle = '#ff0000';
-        ctx.fillRect(outX - 2, 0, 4, height - 25);
-        ctx.fillText('OUT', outX - 50, 15);
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('IN', inX + 6, 20);
+
+        // 4. Draw OUT Marker
+        ctx.fillStyle = '#ff3333';
+        ctx.fillRect(outX - 2, 0, 4, height); // Full height line
+
+        ctx.textAlign = 'right';
+        ctx.fillText('OUT', outX - 6, 20);
     }
 
     drawPlayhead(ctx, width, height) {
