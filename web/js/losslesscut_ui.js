@@ -61,6 +61,12 @@ export class LosslessCutUI {
             const widget = this.core.node.widgets.find(w => w.name === 'video');
             if (widget && widget.value) {
                 this.core.nodeIntegration.fetchMetadata(widget.value);
+            } else {
+                if (window.app && window.app.ui && window.app.ui.dialog) {
+                    window.app.ui.dialog.show(`Please enter a valid video file path in the 'video' widget above.`);
+                } else {
+                    alert(`Please enter a valid video file path.`);
+                }
             }
         };
 
