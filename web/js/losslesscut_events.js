@@ -65,18 +65,33 @@ export class LosslessCutEvents {
     }
 
     handleMouseMove(e) {
-        if (!this.isDragging) return;
-
         const rect = this.core.timeline.canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
+
+        if (!this.isDragging) {
+            // Hover logic for cursor
+            const inX = this.core.timeline.timeToPixel(this.core.inPoint, rect.width);
+            const outX = this.core.timeline.timeToPixel(this.core.outPoint, rect.width);
+            const hitThreshold = 10;
+
+            if (Math.abs(x - inX) < hitThreshold || Math.abs(x - outX) < hitThreshold) {
+                this.core.timeline.canvas.style.cursor = 'ew-resize';
+            } else {
+                this.core.timeline.canvas.style.cursor = 'default';
+            }
+            return;
+        }
+
         const time = this.core.timeline.pixelToTime(x, rect.width);
 
         if (this.dragType === 'seek') {
             this.core.seekTo(time);
         } else if (this.dragType === 'in_marker') {
             this.core.setInPoint(time);
+            this.core.seekTo(time); // Update video preview
         } else if (this.dragType === 'out_marker') {
             this.core.setOutPoint(time);
+            this.core.seekTo(time); // Update video preview
         } else if (this.dragType === 'pan') {
             const visibleDuration = this.core.videoData.duration / this.core.timeline.zoomLevel;
             const dt = ((x - this.dragStartX) / rect.width) * visibleDuration;
