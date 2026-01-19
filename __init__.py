@@ -1,7 +1,7 @@
 from .nodes_map import NODE_CLASS_MAPPINGS_V3
 from comfy_api.latest import ComfyExtension, io
 
-WEB_DIRECTORY = "js"
+WEB_DIRECTORY = "./web/js"
 
 
 class FFmpegExtension(ComfyExtension):

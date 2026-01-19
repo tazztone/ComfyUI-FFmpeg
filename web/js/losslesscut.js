@@ -1,4 +1,5 @@
 import { app } from "/scripts/app.js";
+import { api } from "/scripts/api.js";
 import { LosslessCutCore } from './losslesscut_core.js';
 
 app.registerExtension({
@@ -8,19 +9,44 @@ app.registerExtension({
         if (nodeData.name === "LosslessCutV3") {
             const onNodeCreated = nodeType.prototype.onNodeCreated;
 
-            nodeType.prototype.onNodeCreated = function() {
+            nodeType.prototype.onNodeCreated = function () {
                 onNodeCreated?.apply(this, arguments);
 
                 const widgetsToHide = ['action', 'in_point', 'out_point', 'current_position'];
-                widgetsToHide.forEach(name => {
-                    const widget = this.widgets.find(w => w.name === name);
-                    if (widget) widget.type = "hidden";
+
+                // Store hidden widget references for later access by queueAction
+                this._hiddenWidgets = {};
+
+                // Hide widgets properly by removing them from render
+                requestAnimationFrame(() => {
+                    // Filter out the widgets we want to hide from the widgets array
+                    // but keep references so we can still update their values
+                    const newWidgets = [];
+                    for (const widget of this.widgets || []) {
+                        if (widgetsToHide.includes(widget.name)) {
+                            this._hiddenWidgets[widget.name] = widget;
+                            // Keep the widget functional but hidden
+                            widget.type = "tschide"; // Custom type that won't render
+                            widget.computeSize = () => [0, 0];
+                            widget.draw = () => { }; // Don't draw anything
+                        }
+                        newWidgets.push(widget);
+                    }
+                    this.widgets = newWidgets;
+
+                    // Set a larger default size for the video editor
+                    this.setSize([650, 480]);
+                    this.setDirtyCanvas(true, true);
                 });
 
                 this.losslessCutCore = new LosslessCutCore(this);
                 const interfaceContainer = this.losslessCutCore.setupInterface();
 
-                this.addDOMWidget("losslesscut_ui", "customtext", interfaceContainer);
+                // Add the custom widget
+                this.addDOMWidget("losslesscut_ui", "customtext", interfaceContainer, {
+                    getValue() { return ""; },
+                    setValue() { },
+                });
 
                 // Listen for server-side updates
                 api.addEventListener("comfyui-ffmpeg-losslesscut-update", (event) => {
@@ -42,11 +68,10 @@ app.registerExtension({
                 });
             };
 
-            // onExecuted fallback or removal - V3 might not trigger this with UI data anymore
+            // onExecuted fallback
             const onExecuted = nodeType.prototype.onExecuted;
             nodeType.prototype.onExecuted = function (message) {
                 onExecuted?.apply(this, arguments);
-                // Legacy support or if we decide to pass data via output in the future
             };
         }
     }

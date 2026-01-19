@@ -9,7 +9,10 @@ export class LosslessCutNodeIntegration {
 
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error('Metadata not found');
+            if (!response.ok) {
+                console.warn(`[LosslessCut] Metadata not found at ${url}. Run the node first.`);
+                return;
+            }
 
             const metadata = await response.json();
             this.core.videoData = metadata;
@@ -27,12 +30,38 @@ export class LosslessCutNodeIntegration {
     }
 
     queueAction(action) {
-        const actionWidget = this.core.node.widgets.find(w => w.name === 'action');
-        if (actionWidget) {
-            actionWidget.value = action;
-            window.app.queuePrompt();
+        // Access widgets directly from the node (stored in _hiddenWidgets or find them)
+        const node = this.core.node;
+        const actionWidget = node._hiddenWidgets?.['action'] || node.widgets?.find(w => w.name === 'action');
+        const inWidget = node._hiddenWidgets?.['in_point'] || node.widgets?.find(w => w.name === 'in_point');
+        const outWidget = node._hiddenWidgets?.['out_point'] || node.widgets?.find(w => w.name === 'out_point');
+        const posWidget = node._hiddenWidgets?.['current_position'] || node.widgets?.find(w => w.name === 'current_position');
 
-            setTimeout(() => this.loadVideoMetadata(), 2000);
+        if (!actionWidget) {
+            console.error('[LosslessCut] Action widget not found');
+            return;
         }
+
+        // Set action
+        actionWidget.value = action;
+        // console.log(`[LosslessCut] Queuing action: ${action}`);
+
+        // Sync current state to widgets so backend receives correct values
+        if (this.core.videoData) {
+            if (inWidget) inWidget.value = this.core.inPoint;
+            if (outWidget) outWidget.value = this.core.outPoint;
+            if (posWidget) posWidget.value = this.core.currentFrame / this.core.videoData.fps;
+        }
+
+        // Trigger graph update to ensure values are picked up
+        node.graph?.setDirtyCanvas(true, false);
+
+        // Queue prompt execution
+        if (window.app && window.app.queuePrompt) {
+            window.app.queuePrompt(0, 1);
+        }
+
+        // Reload metadata after execution (give it time to process)
+        setTimeout(() => this.loadVideoMetadata(), 1500);
     }
 }

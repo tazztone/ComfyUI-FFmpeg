@@ -17,28 +17,44 @@ class LosslessCutV3(io.ComfyNode):
             node_id="LosslessCutV3",
             display_name="🔥Lossless Cut (V3)",
             category="🔥FFmpeg/Editing",
+            description="Interactive video cutter that cuts at keyframes for lossless output.",
+            is_output_node=True,
             inputs=[
-                io.String.Input("video", tooltip="Video file."),
+                io.String.Input("video", tooltip="Path to the input video file."),
                 io.String.Input(
-                    "action", default="", tooltip="Action (internal usage)."
+                    "action",
+                    default="",
+                    tooltip="Internal action (set by UI buttons).",
                 ),
                 io.Float.Input(
-                    "in_point", default=0.0, min=0.0, step=0.01, tooltip="In point."
+                    "in_point",
+                    default=0.0,
+                    min=0.0,
+                    step=0.01,
+                    tooltip="Start time in seconds.",
                 ),
                 io.Float.Input(
-                    "out_point", default=-1.0, min=-1.0, step=0.01, tooltip="Out point."
+                    "out_point",
+                    default=-1.0,
+                    min=-1.0,
+                    step=0.01,
+                    tooltip="End time in seconds (-1 = end of video).",
                 ),
                 io.Float.Input(
                     "current_position",
                     default=0.0,
                     min=0.0,
                     step=0.01,
-                    tooltip="Current cursor pos.",
+                    tooltip="Current playhead position (set by UI).",
                 ),
             ],
             outputs=[
-                io.String.Output(tooltip="The path to the cut video file."),
+                io.String.Output(
+                    display_name="file_path",
+                    tooltip="Path to the cut video file.",
+                ),
             ],
+            hidden=[io.Hidden.unique_id],
         )
 
     @staticmethod
@@ -58,6 +74,8 @@ class LosslessCutV3(io.ComfyNode):
             video_path,
         ]
         result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            raise RuntimeError(f"ffprobe failed: {result.stderr}")
         data = json.loads(result.stdout)
 
         keyframes = []
@@ -66,20 +84,23 @@ class LosslessCutV3(io.ComfyNode):
                 if "K" in packet.get("flags", ""):
                     keyframes.append(float(packet["pts_time"]))
 
+        if not data.get("streams"):
+            raise RuntimeError("No video stream found in file.")
+
         fps_str = data["streams"][0]["r_frame_rate"]
         num, den = map(int, fps_str.split("/"))
         fps = num / den
 
         return {
-            "duration": float(data["streams"][0]["duration"]),
+            "duration": float(data["streams"][0].get("duration", 0)),
             "fps": fps,
             "keyframes": keyframes,
         }
 
     @staticmethod
     def save_metadata_for_web(metadata, node_id):
-        temp_dir = folder_paths.get_temp_directory()
-        temp_file = os.path.join(temp_dir, f"losslesscut_data_{node_id}.json")
+        output_dir = folder_paths.get_output_directory()
+        temp_file = os.path.join(output_dir, f"losslesscut_data_{node_id}.json")
         with open(temp_file, "w") as f:
             json.dump(metadata, f, indent=2)
 
@@ -91,51 +112,64 @@ class LosslessCutV3(io.ComfyNode):
         in_point,
         out_point,
         current_position,
-        node_id="0",
-        prompt=None,
-        extra_pnginfo=None,
     ) -> io.NodeOutput:
         if not os.path.exists(video):
             raise FileNotFoundError(f"Video file not found: {video}")
+
+        node_id = cls.hidden.unique_id
+
+        # Debug logging to console
+        print(
+            f"[LosslessCut] Execute: node_id={node_id}, action='{action}', in={in_point:.2f}, out={out_point:.2f}, pos={current_position:.2f}"
+        )
 
         metadata = cls.extract_video_metadata(video)
         cls.save_metadata_for_web(metadata, node_id)
 
         keyframes = metadata["keyframes"]
-        if out_point == -1:
-            out_point = keyframes[-1] if keyframes else 0
+        duration = metadata["duration"]
 
-        # UI Logic handling - simplified for V3 backbone port
-        # The logic below updates in_point/out_point/current_pos but V3 API execute logic
-        # usually is one-shot.
-        # LosslessCut V1 returns {"ui": ...} to update the widget.
-        # V3 NodeOutput might not support UI update payload directly in the same way?
-        # Or it might pass it through?
-        # For now, I'll replicate the logic and return standard output.
-        # Use io.NodeOutput(output, ui_update={...}) if available?
-        # Checking hypothetical API: io.NodeOutput(*outputs, ui_events=...)
-        # Without confirmation, I just return standard output.
+        # Handle default out_point (-1 means end of video)
+        if out_point < 0:
+            out_point = duration
 
-        # NOTE: This UI interaction might break slightly in V3 without JS update.
-
+        # Sync UI logic for "interactive" usage
         if action == "next_kf":
-            current_position = min(
-                [kf for kf in keyframes if kf > current_position] or [current_position]
-            )
+            next_kfs = [kf for kf in keyframes if kf > current_position]
+            current_position = min(next_kfs) if next_kfs else current_position
         elif action == "prev_kf":
-            current_position = max(
-                [kf for kf in keyframes if kf < current_position] or [current_position]
-            )
+            prev_kfs = [kf for kf in keyframes if kf < current_position]
+            current_position = max(prev_kfs) if prev_kfs else current_position
         elif action == "set_in":
             in_point = current_position
         elif action == "set_out":
             out_point = current_position
         elif action == "cut":
-            start_keyframe = min(keyframes, key=lambda x: abs(x - in_point))
-            end_keyframe = min(keyframes, key=lambda x: abs(x - out_point))
+            # Swap if in/out are reversed
+            if in_point > out_point:
+                in_point, out_point = out_point, in_point
 
-            if start_keyframe >= end_keyframe:
-                raise ValueError("Start time must be before end time.")
+            # Find nearest keyframes
+            start_keyframe = (
+                min(keyframes, key=lambda x: abs(x - in_point))
+                if keyframes
+                else in_point
+            )
+            end_keyframe = (
+                min(keyframes, key=lambda x: abs(x - out_point))
+                if keyframes
+                else out_point
+            )
+
+            # Swap if keyframes are reversed
+            if start_keyframe > end_keyframe:
+                start_keyframe, end_keyframe = end_keyframe, start_keyframe
+
+            if start_keyframe == end_keyframe:
+                raise ValueError(
+                    f"IN and OUT points are the same keyframe ({start_keyframe:.2f}s). "
+                    "Select a wider range."
+                )
 
             filename = f"lossless_cut_{datetime.now().strftime('%Y%m%d%H%M%S')}.mp4"
             output_path = os.path.join(folder_paths.get_output_directory(), filename)
@@ -153,13 +187,13 @@ class LosslessCutV3(io.ComfyNode):
                 "copy",
                 output_path,
             ]
-            subprocess.run(command, check=True)
-            return io.NodeOutput(output_path)  # Return output path
+            result = subprocess.run(command, capture_output=True, text=True)
+            if result.returncode != 0:
+                raise RuntimeError(f"FFmpeg cut failed: {result.stderr}")
 
-        # For UI updates, we send a message to the frontend
-        # and stay on the current inputs (conceptually).
-        # Since the node has executed, we just return the previous output or None.
+            return io.NodeOutput(output_path)
 
+        # Notify frontend of updated state
         try:
             from server import PromptServer
 
@@ -173,7 +207,6 @@ class LosslessCutV3(io.ComfyNode):
                 },
             )
         except ImportError:
-            # Fallback if server cannot be imported (e.g. in tests)
             pass
 
         return io.NodeOutput(None)

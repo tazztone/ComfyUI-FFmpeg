@@ -39,27 +39,27 @@ export class LosslessCutUI {
             font-size: 12px;
         `;
 
-        this.addButton(controlsDiv, '|< Start', buttonStyle, () => this.core.goToStart());
-        this.addButton(controlsDiv, '<< Prev KF', buttonStyle, () => this.core.gotoPrevKeyframe());
-        this.addButton(controlsDiv, '< Frame', buttonStyle, () => this.core.stepBackward());
-        this.addButton(controlsDiv, '▶️ Play', buttonStyle, () => this.core.togglePlay());
-        this.addButton(controlsDiv, 'Frame >', buttonStyle, () => this.core.stepForward());
-        this.addButton(controlsDiv, 'Next KF >>', buttonStyle, () => this.core.gotoNextKeyframe());
-        this.addButton(controlsDiv, 'End >|', buttonStyle, () => this.core.goToEnd());
+        this.addButton(controlsDiv, '|< Start', buttonStyle, () => this.core.goToStart(), 'Jump to start');
+        this.addButton(controlsDiv, '<< Prev KF', buttonStyle, () => this.core.gotoPrevKeyframe(), 'Go to previous keyframe');
+        this.addButton(controlsDiv, '< Frame', buttonStyle, () => this.core.stepBackward(), 'Step back 1 frame');
+        this.addButton(controlsDiv, '▶️ Play', buttonStyle, () => this.core.togglePlay(), 'Play/Pause (not fully implemented)');
+        this.addButton(controlsDiv, 'Frame >', buttonStyle, () => this.core.stepForward(), 'Step forward 1 frame');
+        this.addButton(controlsDiv, 'Next KF >>', buttonStyle, () => this.core.gotoNextKeyframe(), 'Go to next keyframe');
+        this.addButton(controlsDiv, 'End >|', buttonStyle, () => this.core.goToEnd(), 'Jump to end');
 
-        const inButton = this.addButton(controlsDiv, '[ Set IN', buttonStyle, () => this.core.setInPoint());
+        const inButton = this.addButton(controlsDiv, '[ Set IN', buttonStyle, () => this.core.setInPoint(), 'Mark IN point at current position');
         inButton.style.background = '#006600';
 
-        const outButton = this.addButton(controlsDiv, 'Set OUT ]', buttonStyle, () => this.core.setOutPoint());
+        const outButton = this.addButton(controlsDiv, 'Set OUT ]', buttonStyle, () => this.core.setOutPoint(), 'Mark OUT point at current position');
         outButton.style.background = '#660000';
 
-        const cutButton = this.addButton(controlsDiv, '✂️ Cut', buttonStyle, () => this.core.performCut());
+        const cutButton = this.addButton(controlsDiv, '✂️ Cut', buttonStyle, () => this.core.performCut(), 'Cut video from IN to OUT');
         cutButton.style.background = '#0066cc';
         cutButton.style.fontWeight = 'bold';
 
-        this.addButton(controlsDiv, 'Zoom -', buttonStyle, () => this.core.zoomOut());
-        this.addButton(controlsDiv, 'Zoom +', buttonStyle, () => this.core.zoomIn());
-        this.addButton(controlsDiv, 'Fit', buttonStyle, () => this.core.resetZoom());
+        this.addButton(controlsDiv, 'Zoom -', buttonStyle, () => this.core.zoomOut(), 'Zoom out timeline');
+        this.addButton(controlsDiv, 'Zoom +', buttonStyle, () => this.core.zoomIn(), 'Zoom in timeline');
+        this.addButton(controlsDiv, 'Fit', buttonStyle, () => this.core.resetZoom(), 'Fit entire video in timeline');
 
         return controlsDiv;
     }
@@ -85,19 +85,26 @@ export class LosslessCutUI {
     createInfoBox(parent, label, value, color) {
         const box = document.createElement('div');
         box.style.cssText = `
-            background: ${color}33;
-            border: 1px solid ${color};
-            padding: 5px;
-            border-radius: 3px;
+            background: ${color}22;
+            border: 2px solid ${color};
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
         `;
 
         const labelSpan = document.createElement('div');
         labelSpan.textContent = label;
-        labelSpan.style.cssText = 'color: #999; font-size: 9px;';
+        labelSpan.style.cssText = 'color: #aaa; font-size: 10px; font-weight: bold; text-transform: uppercase;';
 
         const valueSpan = document.createElement('div');
         valueSpan.textContent = value;
-        valueSpan.style.cssText = `color: ${color}; font-size: 14px; font-weight: bold;`;
+        valueSpan.style.cssText = `
+            color: ${color}; 
+            font-size: 16px; 
+            font-weight: bold; 
+            font-family: 'Courier New', monospace;
+            margin-top: 4px;
+        `;
 
         box.appendChild(labelSpan);
         box.appendChild(valueSpan);
@@ -106,10 +113,12 @@ export class LosslessCutUI {
         return valueSpan;
     }
 
-    addButton(parent, text, style, onClick) {
+    addButton(parent, text, style, onClick, tooltip = '') {
         const btn = document.createElement('button');
         btn.textContent = text;
         btn.style.cssText = style;
+        if (tooltip) btn.title = tooltip;
+
         btn.addEventListener('click', onClick);
         btn.addEventListener('mouseenter', () => btn.style.background = '#555');
         btn.addEventListener('mouseleave', () => {

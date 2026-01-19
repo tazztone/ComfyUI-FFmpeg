@@ -16,8 +16,6 @@ export class LosslessCutCore {
         this.ui = new LosslessCutUI(this);
         this.events = new LosslessCutEvents(this);
         this.nodeIntegration = new LosslessCutNodeIntegration(this);
-
-        this.setupInterface();
     }
 
     setupInterface() {

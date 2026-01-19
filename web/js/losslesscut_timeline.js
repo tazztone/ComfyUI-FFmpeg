@@ -16,14 +16,55 @@ export class LosslessCutTimeline {
         this.canvas.style.width = '100%';
         this.canvas.style.height = '150px';
         this.canvas.style.border = '1px solid #333';
+        this.canvas.style.backgroundColor = '#1a1a1a'; // Dark bg to ensure visibility
 
-        const rect = this.canvas.getBoundingClientRect();
-        this.canvas.width = rect.width * devicePixelRatio;
-        this.canvas.height = rect.height * devicePixelRatio;
+        // Set default size
+        this.canvas.width = 600;
+        this.canvas.height = 150;
         this.ctx = this.canvas.getContext('2d');
-        this.ctx.scale(devicePixelRatio, devicePixelRatio);
+
+        // Draw placeholder immediately
+        this.drawPlaceholder();
+
+        // Use ResizeObserver to handle actual size after attachment.
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const rect = entry.contentRect;
+                if (rect.width > 0 && rect.height > 0) {
+                    this.canvas.width = rect.width * devicePixelRatio;
+                    this.canvas.height = rect.height * devicePixelRatio;
+                    this.ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+                    this.ctx.scale(devicePixelRatio, devicePixelRatio);
+
+                    if (this.videoData) {
+                        this.drawTimeline();
+                    } else {
+                        this.drawPlaceholder();
+                    }
+                }
+            }
+        });
+        resizeObserver.observe(this.canvas);
 
         return this.canvas;
+    }
+
+    drawPlaceholder() {
+        // Use CSS pixel dimensions (before devicePixelRatio scaling)
+        const width = this.canvas.width / (window.devicePixelRatio || 1);
+        const height = this.canvas.height / (window.devicePixelRatio || 1);
+
+        this.ctx.fillStyle = '#1a1a1a';
+        this.ctx.fillRect(0, 0, width, height);
+        this.ctx.fillStyle = '#888';
+        this.ctx.font = '14px monospace';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(
+            'No video metadata loaded. Please connect a video.',
+            width / 2,
+            height / 2
+        );
     }
 
     drawTimeline() {
