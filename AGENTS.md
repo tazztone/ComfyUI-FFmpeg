@@ -176,7 +176,7 @@ sys.modules["comfy_api.latest.io"] = mock_io
     *   `tests/run_tests.py`: **Wrapper script to run tests**.
 *   **Running Tests**: 
     > [!WARNING] 
-    > **CRITICAL**: You MUST use the environment's python executable and the wrapper script to avoid path/import errors.
+    > **CRITICAL**: You MUST use the comfyui parent environment's python executable and the wrapper script to avoid path/import errors.
     
     ```powershell
     ..\..\venv\Scripts\python tests\run_tests.py

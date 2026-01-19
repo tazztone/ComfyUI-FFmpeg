@@ -19,17 +19,20 @@ The immediate goal is to ensure the reliability and security of existing nodes.
     *   [x] Update `AGENTS.md` for developer onboarding.
     *   [x] Ensure all nodes have corresponding usage docs in `README.md`.
 
-## 🚀 Phase 2: Architecture Modernization (V3 Migration) - ✅ Complete
+## 🚀 Phase 2: Refined Architecture (V3 & Standards) - ✅ Complete
 
-ComfyUI is moving towards a V3 schema. We have successfully migrated the entire node suite.
+We have fully modernized the repository structure to align with ComfyUI V3 best practices.
 
+*   **Structure & Registration**:
+    *   [x] Establish `comfy.plugins` entry point in `pyproject.toml`.
+    *   [x] Implement `comfy_entrypoint` registration mechanism.
+    *   [x] Separate V3 node mappings.
+*   **Documentation & Usability**:
+    *   [x] Implement Integrated Help (`web/docs/`).
+    *   [x] Standardize Workflow Templates (`example_workflows/`).
 *   **Schema Migration**:
-    *   [x] Prototype nodes using the new `io.ComfyNode` and `define_schema` pattern.
-    *   [x] Full migration of all 26 nodes to V3 (IO, Editing, Audio, Effects, Frame Processing).
-    *   [x] Resolved V3-specific initialization (`@classmethod`) and API compliance issues.
-*   **Type Safety**:
-    *   [x] Add type hints to all Python code in `func.py`.
-    *   [x] Implement strict type checking via V3 `io` schema definitions.
+    *   [x] Full migration of all 26 nodes to V3.
+    *   [x] Strict type checking via V3 `io` schema definitions.
 
 ## ✨ Phase 3: Feature Expansion - 🚧 In Progress
 
@@ -44,6 +47,9 @@ Expanding the capabilities to cover more FFmpeg features and improve user experi
 *   **Streaming & Formats**:
     *   [ ] Support for RTSP/RTMP stream input nodes.
     *   [ ] Better support for animated WebP and AVIF formats.
+*   **Internationalization (i18n) (DEFERRED)**:
+    *   [ ] Implement `locales/` directory structure.
+    *   [ ] Add Chinese (`zh`) translation for node names and tooltips.
 
 ## 🔮 Phase 4: Long-Term Goals
 
