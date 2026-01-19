@@ -21,14 +21,19 @@ export class LosslessCutUI {
         const videoWrapper = document.createElement('div');
         videoWrapper.style.position = 'relative';
         videoWrapper.style.width = '100%';
-        videoWrapper.style.minHeight = '200px'; // Ensure space for button
+        videoWrapper.style.flex = '1'; // Grow to fill available space
+        videoWrapper.style.minHeight = '200px';
         videoWrapper.style.background = '#000';
+        videoWrapper.style.display = 'flex';
+        videoWrapper.style.justifyContent = 'center';
+        videoWrapper.style.alignItems = 'center';
+        videoWrapper.style.overflow = 'hidden';
         this.container.appendChild(videoWrapper);
 
         this.videoElement = document.createElement('video');
         this.videoElement.style.width = '100%';
-        this.videoElement.style.display = 'block';
-        this.videoElement.style.maxHeight = '300px';
+        this.videoElement.style.height = '100%';
+        this.videoElement.style.objectFit = 'contain';
         this.videoElement.controls = false;
         videoWrapper.appendChild(this.videoElement);
 
