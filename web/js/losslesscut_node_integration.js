@@ -22,6 +22,7 @@ export class LosslessCutNodeIntegration {
                 } else {
                     alert(`LosslessCut Error: ${err.error || "Unknown error"}`);
                 }
+                if (this.core.ui) this.core.ui.toggleLoadButton(true);
                 return;
             }
 
@@ -46,8 +47,14 @@ export class LosslessCutNodeIntegration {
 
             console.log(`[LosslessCut] Loaded metadata: ${metadata.duration}s, ${metadata.fps} fps`);
 
+            // Hide load button on success
+            if (this.core.ui) {
+                this.core.ui.toggleLoadButton(false);
+            }
+
         } catch (error) {
             console.error("[LosslessCut] Failed to fetch metadata:", error);
+            if (this.core.ui) this.core.ui.toggleLoadButton(true);
         }
     }
 

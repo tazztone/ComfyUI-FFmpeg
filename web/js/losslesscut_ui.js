@@ -17,13 +17,49 @@ export class LosslessCutUI {
         this.container.style.background = '#222';
         this.container.style.color = '#ddd';
 
-        // 1. Video Preview
+        // 1. Video Preview Wrapper
+        const videoWrapper = document.createElement('div');
+        videoWrapper.style.position = 'relative';
+        videoWrapper.style.width = '100%';
+        videoWrapper.style.minHeight = '200px'; // Ensure space for button
+        videoWrapper.style.background = '#000';
+        this.container.appendChild(videoWrapper);
+
         this.videoElement = document.createElement('video');
         this.videoElement.style.width = '100%';
+        this.videoElement.style.display = 'block';
         this.videoElement.style.maxHeight = '300px';
-        this.videoElement.style.background = '#000';
-        this.videoElement.controls = false; // We use our own controls
-        this.container.appendChild(this.videoElement);
+        this.videoElement.controls = false;
+        videoWrapper.appendChild(this.videoElement);
+
+        // Load Video Button
+        this.loadButton = document.createElement('button');
+        this.loadButton.textContent = 'LOAD VIDEO';
+        this.loadButton.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #e62e2e;
+            color: white;
+            border: 1px solid #ff4d4d;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 10;
+        `;
+
+        this.loadButton.onclick = () => {
+            const widget = this.core.node.widgets.find(w => w.name === 'video');
+            if (widget && widget.value) {
+                this.core.nodeIntegration.fetchMetadata(widget.value);
+            }
+        };
+
+        videoWrapper.appendChild(this.loadButton);
 
         // 2. Timeline
         const timeline = this.core.timeline.setupCanvas();
@@ -175,6 +211,12 @@ export class LosslessCutUI {
     updatePlayButton(isPlaying) {
         if (this.playButton) {
             this.playButton.textContent = isPlaying ? '⏸' : '▶';
+        }
+    }
+
+    toggleLoadButton(visible) {
+        if (this.loadButton) {
+            this.loadButton.style.display = visible ? 'block' : 'none';
         }
     }
 }
