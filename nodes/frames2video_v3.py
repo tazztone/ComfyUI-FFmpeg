@@ -54,7 +54,7 @@ class Frames2VideoV3(io.ComfyNode):
                     "filename", default="output.mp4", tooltip="Output filename."
                 ),
                 # Optional
-                io.Audio.Input("audio", tooltip="Optional audio track."),
+                io.Audio.Input("audio", tooltip="Optional audio track.", optional=True),
             ],
             outputs=[
                 io.String.Output(tooltip="The path to the output video file."),

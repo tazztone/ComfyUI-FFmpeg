@@ -19,7 +19,7 @@ class AddAudioV3(io.ComfyNode):
             category="🔥FFmpeg/Audio",
             inputs=[
                 io.String.Input("video", tooltip="Video file."),
-                io.Audio.Input("audio", tooltip="Audio input."),
+                io.Audio.Input("audio", tooltip="Audio input.", optional=True),
                 io.String.Input(
                     "filename",
                     default="video_with_audio.mp4",
@@ -41,6 +41,20 @@ class AddAudioV3(io.ComfyNode):
         # audio input is likely a dict {'waveform': ..., 'sample_rate': ...}
         # V3 likely passes this dict directly or wrapped?
         # Assuming dict structure from V1 based on usage.
+
+        if audio is None:
+             # Just copy the video to the output path if no audio is provided
+             command = [
+                "ffmpeg",
+                "-y",
+                "-i",
+                video,
+                "-c",
+                "copy",
+                output_path,
+             ]
+             subprocess.run(command, check=True)
+             return io.NodeOutput(output_path)
 
         with tempfile.NamedTemporaryFile(
             suffix=".wav", delete=False

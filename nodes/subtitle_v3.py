@@ -18,7 +18,7 @@ class HandleSubtitlesV3(io.ComfyNode):
             inputs=[
                 io.String.Input("video", tooltip="Input video."),
                 io.String.Input(
-                    "subtitle_file", default="subtitle.srt", tooltip="Subtitle file."
+                    "subtitle_file", default="subtitle.srt", tooltip="Subtitle file.", optional=True
                 ),
                 io.Combo.Input(
                     "action", ["burn", "add", "extract"], tooltip="Action to perform."
@@ -38,8 +38,14 @@ class HandleSubtitlesV3(io.ComfyNode):
     def execute(cls, video, subtitle_file, action, filename) -> io.NodeOutput:
         if not os.path.exists(video):
             raise FileNotFoundError(f"Input video not found: {video}")
-        if action != "extract" and not os.path.exists(subtitle_file):
-            raise FileNotFoundError(f"Subtitle file not found: {subtitle_file}")
+        if action != "extract":
+            if not subtitle_file or not os.path.exists(subtitle_file):
+                 # Fallback: Just copy video if subtitle file is missing for burn/add
+                 print(f"Warning: Subtitle file not found or not provided for action '{action}'. Returning original video.")
+                 output_path = os.path.join(folder_paths.get_output_directory(), filename)
+                 command = ["ffmpeg", "-y", "-i", video, "-c", "copy", output_path]
+                 subprocess.run(command, check=True)
+                 return io.NodeOutput(output_path)
 
         output_path = os.path.join(folder_paths.get_output_directory(), filename)
 

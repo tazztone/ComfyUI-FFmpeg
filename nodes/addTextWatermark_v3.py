@@ -33,7 +33,7 @@ class AddTextWatermarkV3(io.ComfyNode):
             category="🔥FFmpeg/Watermark",
             inputs=[
                 io.String.Input("video", tooltip="Video file."),
-                io.String.Input("text", default="ComfyUI", tooltip="Watermark text."),
+                io.String.Input("text", default="ComfyUI", tooltip="Watermark text.", optional=True),
                 io.Int.Input("font_size", default=48, min=1, tooltip="Font size."),
                 io.String.Input("font_color", default="white", tooltip="Font color."),
                 io.Int.Input("position_x", default=10, tooltip="X position."),
@@ -58,6 +58,19 @@ class AddTextWatermarkV3(io.ComfyNode):
             folder_paths.get_output_directory(),
             f"watermarked_{os.path.basename(video)}",
         )
+
+        if not text:
+             command = [
+                "ffmpeg",
+                "-y",
+                "-i",
+                video,
+                "-c",
+                "copy",
+                output_path,
+             ]
+             subprocess.run(command, check=True)
+             return io.NodeOutput(output_path)
 
         font_path = "default"
         if font_file != "default":

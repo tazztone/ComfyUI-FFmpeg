@@ -48,9 +48,9 @@ class PictureInPictureV3(io.ComfyNode):
                 ),
                 # Optional inputs
                 io.String.Input(
-                    "foreground_video", default="", tooltip="Foreground video path."
+                    "foreground_video", default="", tooltip="Foreground video path.", optional=True
                 ),
-                io.Image.Input("foreground_image", tooltip="Foreground image tensor."),
+                io.Image.Input("foreground_image", tooltip="Foreground image tensor.", optional=True),
             ],
             outputs=[
                 io.String.Output(tooltip="The path to the output video file."),
@@ -110,9 +110,20 @@ class PictureInPictureV3(io.ComfyNode):
                 )
             foreground_path = foreground_video
         else:
-            raise ValueError(
-                "Either foreground_video or foreground_image must be provided"
-            )
+             # Just copy the background video if no foreground is provided
+             print("Warning: No foreground provided for PiP. Returning background video.")
+             # command to copy background to output
+             command = [
+                "ffmpeg",
+                "-y",
+                "-i",
+                background_video,
+                "-c",
+                "copy",
+                os.path.join(folder_paths.get_output_directory(), filename)
+             ]
+             subprocess.run(command, check=True)
+             return io.NodeOutput(os.path.join(folder_paths.get_output_directory(), filename))
 
         output_path = os.path.join(folder_paths.get_output_directory(), filename)
 

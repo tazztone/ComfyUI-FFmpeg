@@ -27,12 +27,13 @@ class AddImgWatermarkV3(io.ComfyNode):
                 io.Int.Input("position_y", default=10, tooltip="Y position."),
                 # Optional inputs
                 io.Image.Input(
-                    "watermark_image_tensor", tooltip="Watermark tensor."
+                    "watermark_image_tensor", tooltip="Watermark tensor.", optional=True
                 ),
                 io.String.Input(
                     "watermark_image",
                     default="logo.png",
                     tooltip="Watermark image path.",
+                    optional=True,
                 ),
             ],
             outputs=[
@@ -69,9 +70,24 @@ class AddImgWatermarkV3(io.ComfyNode):
                 raise FileNotFoundError(f"Watermark image not found: {watermark_image}")
             watermark_path = watermark_image
         else:
-            raise ValueError(
-                "Either watermark_image_tensor or watermark_image (path) must be provided"
-            )
+             # Just copy the video to the output path if no watermark is provided
+             # But we should probably rename it to "watermarked_..." still?
+             # Or just return a copy.
+             output_path = os.path.join(
+                folder_paths.get_output_directory(),
+                f"watermarked_{os.path.basename(video)}",
+             )
+             command = [
+                "ffmpeg",
+                "-y",
+                "-i",
+                video,
+                "-c",
+                "copy",
+                output_path,
+             ]
+             subprocess.run(command, check=True)
+             return io.NodeOutput(output_path)
 
         output_path = os.path.join(
             folder_paths.get_output_directory(),

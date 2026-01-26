@@ -20,7 +20,7 @@ class VideoTransitionV3(io.ComfyNode):
             category="🔥FFmpeg/Editing",
             inputs=[
                 io.String.Input("video1", tooltip="The first video file."),
-                io.String.Input("video2", tooltip="The second video file."),
+                io.String.Input("video2", tooltip="The second video file.", optional=True),
                 io.Combo.Input(
                     "transition",
                     get_xfade_transitions(),
@@ -57,10 +57,15 @@ class VideoTransitionV3(io.ComfyNode):
     ) -> io.NodeOutput:
         if not os.path.exists(video1):
             raise FileNotFoundError(f"Video 1 not found: {video1}")
-        if not os.path.exists(video2):
-            raise FileNotFoundError(f"Video 2 not found: {video2}")
-
+        
         output_path = os.path.join(folder_paths.get_output_directory(), filename)
+
+        if not video2 or not os.path.exists(video2):
+             # Fallback: Just copy video1 if video2 is missing
+             print("Warning: Video 2 not found or not provided for transition. Returning Video 1.")
+             command = ["ffmpeg", "-y", "-i", video1, "-c", "copy", output_path]
+             subprocess.run(command, check=True)
+             return io.NodeOutput(output_path)
 
         command = [
             "ffmpeg",

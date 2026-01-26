@@ -17,7 +17,7 @@ class MergeVideosV3(io.ComfyNode):
             category="🔥FFmpeg/Editing",
             inputs=[
                 io.String.Input("video1", tooltip="The first video file."),
-                io.String.Input("video2", tooltip="The second video file."),
+                io.String.Input("video2", tooltip="The second video file.", optional=True),
                 io.Combo.Input(
                     "resolution",
                     ["720p", "1080p", "4K"],
@@ -37,10 +37,15 @@ class MergeVideosV3(io.ComfyNode):
     def execute(cls, video1, video2, resolution, filename) -> io.NodeOutput:
         if not os.path.exists(video1):
             raise FileNotFoundError(f"Video 1 not found: {video1}")
-        if not os.path.exists(video2):
-            raise FileNotFoundError(f"Video 2 not found: {video2}")
-
+        
         output_path = os.path.join(folder_paths.get_output_directory(), filename)
+
+        if not video2 or not os.path.exists(video2):
+             # Fallback: Just copy video1
+             print("Warning: Video 2 not found or not provided for merging. Returning Video 1.")
+             command = ["ffmpeg", "-y", "-i", video1, "-c", "copy", output_path]
+             subprocess.run(command, check=True)
+             return io.NodeOutput(output_path)
 
         resolution_map = {
             "720p": "1280:720",
