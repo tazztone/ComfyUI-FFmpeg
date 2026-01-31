@@ -21,7 +21,18 @@ class LoadImagesFromDirectoryV3(io.ComfyNode):
                     "directory",
                     tooltip="The directory to load images from.",
                 ),
-                # TODO: Expose start_index and length inputs when ready
+                io.Int.Input(
+                    "start_index",
+                    default=0,
+                    min=0,
+                    tooltip="The starting index of the images to load.",
+                ),
+                io.Int.Input(
+                    "length",
+                    default=0,
+                    min=0,
+                    tooltip="The number of images to load. 0 means all images from start_index.",
+                ),
             ],
             outputs=[
                 io.Image.Output(tooltip="The loaded images as a batch tensor."),
@@ -29,7 +40,7 @@ class LoadImagesFromDirectoryV3(io.ComfyNode):
         )
 
     @classmethod
-    def execute(cls, directory: str) -> io.NodeOutput:
+    def execute(cls, directory: str, start_index: int, length: int) -> io.NodeOutput:
         if not os.path.isdir(directory):
             raise FileNotFoundError(f"Directory not found: {directory}")
 
@@ -39,6 +50,14 @@ class LoadImagesFromDirectoryV3(io.ComfyNode):
         )
         if not image_files:
             raise ValueError("No images found in the directory.")
+
+        if start_index >= len(image_files):
+            raise ValueError("start_index is out of bounds.")
+
+        if length > 0:
+            image_files = image_files[start_index : start_index + length]
+        else:
+            image_files = image_files[start_index:]
 
         images = [Image.open(os.path.join(directory, f)) for f in image_files]
         tensors = [
