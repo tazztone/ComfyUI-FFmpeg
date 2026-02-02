@@ -378,16 +378,26 @@ def test_load_images_v3(setup_test_assets):
         img2 = Image.new("RGB", (64, 64), color="green")
         img2.save(os.path.join(temp_img_dir, "img2.png"))
 
-        result = LoadImagesFromDirectoryV3.execute(directory=temp_img_dir)
+        # Test case 1: Load all images (default behavior)
+        result_all = LoadImagesFromDirectoryV3.execute(
+            directory=temp_img_dir, start_index=0, length=0
+        )
+        images_all = result_all[0]
+        assert images_all.shape == (2, 64, 64, 3)
 
-        # Returns io.NodeOutput(images) -> (images,)
-        images = result[0] if hasattr(result, "__getitem__") else result
+        # Test case 2: Load a slice of images
+        result_slice = LoadImagesFromDirectoryV3.execute(
+            directory=temp_img_dir, start_index=1, length=1
+        )
+        images_slice = result_slice[0]
+        assert images_slice.shape == (1, 64, 64, 3)
 
-        assert images is not None
-        assert len(images.shape) == 4  # [B, H, W, C]
-        assert images.shape[0] == 2
-        assert images.shape[1] == 64
-        assert images.shape[2] == 64
+        # Test case 3: Load from start_index to the end
+        result_from_start = LoadImagesFromDirectoryV3.execute(
+            directory=temp_img_dir, start_index=1, length=0
+        )
+        images_from_start = result_from_start[0]
+        assert images_from_start.shape == (1, 64, 64, 3)
     finally:
         if os.path.exists(temp_img_dir):
             try:
