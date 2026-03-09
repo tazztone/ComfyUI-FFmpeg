@@ -24,6 +24,23 @@ from .nodes.streamMapping_v3 import ApplyStreamMapV3
 from .nodes.video2frames_v3 import Video2FramesV3
 from .nodes.frames2video_v3 import Frames2VideoV3
 from .nodes.LosslessCut_v3 import LosslessCutV3
+from .nodes.videoInfo_v3 import VideoInfoV3
+from .nodes.imagesTensorToVideo_v3 import ImagesTensorToVideoV3
+from .nodes.thumbnailExtract_v3 import ThumbnailExtractV3
+from .nodes.videoFilters_v3 import (
+    VideoSpeedV3,
+    DenoiseV3,
+    ColorGradeV3,
+    ScaleV3,
+    CropV3,
+    DeinterlaceV3,
+    BurnTimecodeV3,
+)
+from .nodes.frameInterpolate_v3 import FrameInterpolateV3
+from .nodes.sceneDetect_v3 import SceneDetectV3
+from .nodes.encodeWithHWAccel_v3 import EncodeWithHWAccelV3
+from .nodes.streamOutput_v3 import StreamOutputV3
+from .nodes.videoPreview_v3 import VideoPreviewV3
 
 NODE_CLASS_MAPPINGS_V3 = [
     LoadImagesFromDirectoryV3,
@@ -52,4 +69,19 @@ NODE_CLASS_MAPPINGS_V3 = [
     Video2FramesV3,
     Frames2VideoV3,
     LosslessCutV3,
+    VideoInfoV3,
+    ImagesTensorToVideoV3,
+    ThumbnailExtractV3,
+    VideoSpeedV3,
+    DenoiseV3,
+    ColorGradeV3,
+    ScaleV3,
+    CropV3,
+    DeinterlaceV3,
+    BurnTimecodeV3,
+    FrameInterpolateV3,
+    SceneDetectV3,
+    EncodeWithHWAccelV3,
+    StreamOutputV3,
+    VideoPreviewV3,
 ]

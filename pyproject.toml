@@ -3,7 +3,15 @@ name = "tazztone"
 description = "ComfyUI-FFmpeg is a powerful extension for ComfyUI that wraps frequently used FFmpeg functionalities into intuitive nodes."
 version = "1.0.0"
 license = { file = "LICENSE" }
-dependencies = ["pathlib", "numpy", "pillow", "torch", "torchaudio"]
+dependencies = [
+    "pathlib",
+    "numpy",
+    "pillow",
+    "torch",
+    "torchaudio",
+    "pytest>=9.0.2",
+    "pytest-mock>=3.15.1",
+]
 
 [project.urls]
 Repository = "https://github.com/MoonHugo/ComfyUI-FFmpeg.git"

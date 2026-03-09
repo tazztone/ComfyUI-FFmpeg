@@ -8,7 +8,7 @@ from comfy_api.latest import io
 
 class AddAudioV3(io.ComfyNode):
     """
-    A V3 node to add an audio track to a video file.
+    A V3 node to add an audio track (native ComfyUI AUDIO dict) to a video file.
     """
 
     @classmethod
@@ -62,8 +62,11 @@ class AddAudioV3(io.ComfyNode):
             temp_name = temp_audio_file.name
 
         # Save audio to temp file
-        # Using V1 logic: audio['waveform'].cpu(), audio['sample_rate']
-        torchaudio.save(temp_name, audio["waveform"].cpu(), audio["sample_rate"])
+        waveform = audio["waveform"]
+        if waveform.dim() == 3:
+            waveform = waveform.squeeze(0)
+            
+        torchaudio.save(temp_name, waveform.cpu(), audio["sample_rate"])
 
         command = [
             "ffmpeg",

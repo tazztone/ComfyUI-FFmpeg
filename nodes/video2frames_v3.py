@@ -44,6 +44,10 @@ class Video2FramesV3(io.ComfyNode):
             outputs=[
                 io.Image.Output(tooltip="The extracted frames."),
                 io.Int.Output(tooltip="Number of frames."),
+                io.Float.Output(tooltip="Frames per second."),
+                io.Float.Output(tooltip="Duration in seconds."),
+                io.Int.Output(tooltip="Width in pixels."),
+                io.Int.Output(tooltip="Height in pixels."),
             ],
         )
 
@@ -64,14 +68,31 @@ class Video2FramesV3(io.ComfyNode):
             "-select_streams",
             "v:0",
             "-show_entries",
-            "stream=width,height",
+            "stream=width,height,r_frame_rate,nb_frames,duration",
             "-of",
             "json",
             video,
         ]
         probe_result = subprocess.run(probe_cmd, capture_output=True, text=True)
         video_info = json.loads(probe_result.stdout)
-        width = video_info["streams"][0]["width"]
+        
+        if "streams" not in video_info or not video_info["streams"]:
+            shutil.rmtree(temp_dir)
+            raise RuntimeError(f"No video streams found in {video}")
+            
+        stream = video_info["streams"][0]
+        width = int(stream["width"])
+        height = int(stream["height"])
+
+        # Parse FPS
+        fps_str = stream.get("r_frame_rate", "0/1")
+        if "/" in fps_str:
+            num, den = map(int, fps_str.split("/"))
+            fps = num / den if den != 0 else 0.0
+        else:
+            fps = float(fps_str)
+
+        duration = float(stream.get("duration", 0.0))
 
         scale_filter = ""
         if max_width > 0 and width > max_width:
@@ -105,4 +126,4 @@ class Video2FramesV3(io.ComfyNode):
 
         shutil.rmtree(temp_dir)
 
-        return io.NodeOutput(batch_tensor, len(images))
+        return io.NodeOutput(batch_tensor, len(images), fps, duration, width, height)
