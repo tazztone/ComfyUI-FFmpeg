@@ -15,7 +15,7 @@ def detect_hw_encoders():
     global _DETECTED_ENCODERS
     if _DETECTED_ENCODERS is not None:
         return _DETECTED_ENCODERS
-    
+   
     try:
         result = subprocess.run(
             ["ffmpeg", "-hide_banner", "-encoders"],
@@ -33,17 +33,17 @@ def detect_hw_encoders():
             "h264_vaapi (Linux/Intel/AMD)": "h264_vaapi",
             "hevc_vaapi (Linux/Intel/AMD)": "hevc_vaapi",
         }
-        
+       
         for friendly, internal in hw_map.items():
             if internal in result.stdout:
                 encoders.append(friendly)
-                
+
         if not encoders:
             encoders = ["libx264 (CPU)"]
         else:
             # Always have CPU fallback at the end
             encoders.append("libx264 (CPU)")
-            
+           
         _DETECTED_ENCODERS = encoders
         return _DETECTED_ENCODERS
     except Exception:
@@ -78,9 +78,20 @@ class EncodeWithHWAccelV3(io.ComfyNode):
         output_path = os.path.join(folder_paths.get_output_directory(), filename)
 
         # Extract internal encoder name
-        internal_encoder = encoder.split(" ")[0]
-        quality_flag = "-cq" if "nvenc" in internal_encoder or "qsv" in internal_encoder or "videotoolbox" in internal_encoder else "-crf"
-        
+        enc = encoder.split(" ")[0]
+       
+        # Quality flag dispatcher
+        if "nvenc" in enc:
+            quality_flag = "-cq"
+        elif "qsv" in enc:
+            quality_flag = "-global_quality"
+        elif "videotoolbox" in enc:
+            quality_flag = "-q:v"
+        elif "vaapi" in enc:
+            quality_flag = "-qp"
+        else:
+            quality_flag = "-crf"
+       
         try:
             for i, img_tensor in enumerate(images):
                 img_np = (img_tensor.cpu().numpy() * 255).astype(np.uint8)
@@ -102,7 +113,7 @@ class EncodeWithHWAccelV3(io.ComfyNode):
                 cmd.extend(["-i", audio_file])
 
             cmd.extend([
-                "-c:v", internal_encoder,
+                "-c:v", enc,
                 quality_flag, str(quality),
                 "-pix_fmt", "yuv420p",
             ])

@@ -17,8 +17,8 @@ class ImagesTensorToVideoV3(io.ComfyNode):
     def define_schema(cls) -> io.Schema:
         return io.Schema(
             node_id="ImagesTensorToVideoV3",
-            display_name="🔥Images (Tensor) to Video (V3)",
-            category="🔥FFmpeg/Conversion",
+            display_name="🔥Images Tensor to Video (V3)",
+            category="🔥FFmpeg/Output",
             inputs=[
                 io.Image.Input("images", tooltip="Input images (tensor batch)."),
                 io.Int.Input("fps", default=24, min=1, tooltip="Frame rate."),
