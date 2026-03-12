@@ -160,19 +160,27 @@ export class LosslessCutCore {
         if (!this.videoData || !this.videoData.keyframes || this.videoData.keyframes.length === 0) {
             return time;
         }
+        const keyframes = this.videoData.keyframes;
 
-        let nearest = this.videoData.keyframes[0];
-        let minDist = Math.abs(time - nearest);
+        let low = 0;
+        let high = keyframes.length - 1;
 
-        for (const kf of this.videoData.keyframes) {
-            const dist = Math.abs(time - kf);
-            if (dist < minDist) {
-                minDist = dist;
-                nearest = kf;
+        if (time <= keyframes[low]) return keyframes[low];
+        if (time >= keyframes[high]) return keyframes[high];
+
+        while (low <= high) {
+            let mid = Math.floor((low + high) / 2);
+            if (keyframes[mid] === time) return keyframes[mid];
+            if (keyframes[mid] < time) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
             }
         }
 
-        return nearest;
+        return (Math.abs(keyframes[low] - time) < Math.abs(keyframes[high] - time))
+            ? keyframes[low]
+            : keyframes[high];
     }
 
     toggleLosslessLock() {
@@ -181,13 +189,24 @@ export class LosslessCutCore {
     }
 
     gotoPrevKeyframe() {
-        if (!this.videoData || !this.videoData.keyframes) return;
+        if (!this.videoData || !this.videoData.keyframes || this.videoData.keyframes.length === 0) return;
         const currentTime = this.currentRawTime;
+        const keyframes = this.videoData.keyframes;
+        const target = currentTime - 0.01;
 
-        // Find nearest keyframe before current time (with small tolerance)
-        const prev = this.videoData.keyframes
-            .filter(k => k < currentTime - 0.01)
-            .sort((a, b) => b - a)[0]; // max of values smaller than current
+        let low = 0;
+        let high = keyframes.length - 1;
+        let prev = undefined;
+
+        while (low <= high) {
+            let mid = Math.floor((low + high) / 2);
+            if (keyframes[mid] < target) {
+                prev = keyframes[mid];
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
 
         if (prev !== undefined) {
             this.seekTo(prev);
@@ -197,12 +216,24 @@ export class LosslessCutCore {
     }
 
     gotoNextKeyframe() {
-        if (!this.videoData || !this.videoData.keyframes) return;
+        if (!this.videoData || !this.videoData.keyframes || this.videoData.keyframes.length === 0) return;
         const currentTime = this.currentRawTime;
+        const keyframes = this.videoData.keyframes;
+        const target = currentTime + 0.01;
 
-        const next = this.videoData.keyframes
-            .filter(k => k > currentTime + 0.01)
-            .sort((a, b) => a - b)[0]; // min of values larger
+        let low = 0;
+        let high = keyframes.length - 1;
+        let next = undefined;
+
+        while (low <= high) {
+            let mid = Math.floor((low + high) / 2);
+            if (keyframes[mid] > target) {
+                next = keyframes[mid];
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
 
         if (next !== undefined) {
             this.seekTo(next);

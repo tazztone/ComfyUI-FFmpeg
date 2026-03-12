@@ -232,19 +232,27 @@ export class LosslessCutEvents {
     }
 
     findNearestKeyframe(time) {
-        if (!this.core.videoData || !this.core.videoData.keyframes) return null;
+        if (!this.core.videoData || !this.core.videoData.keyframes || this.core.videoData.keyframes.length === 0) return null;
+        const keyframes = this.core.videoData.keyframes;
 
-        let nearest = null;
-        let minDist = Infinity;
+        let low = 0;
+        let high = keyframes.length - 1;
 
-        for (let kf of this.core.videoData.keyframes) {
-            const dist = Math.abs(kf - time);
-            if (dist < minDist) {
-                minDist = dist;
-                nearest = kf;
+        if (time <= keyframes[low]) return keyframes[low];
+        if (time >= keyframes[high]) return keyframes[high];
+
+        while (low <= high) {
+            let mid = Math.floor((low + high) / 2);
+            if (keyframes[mid] === time) return keyframes[mid];
+            if (keyframes[mid] < time) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
             }
         }
 
-        return nearest;
+        return (Math.abs(keyframes[low] - time) < Math.abs(keyframes[high] - time))
+            ? keyframes[low]
+            : keyframes[high];
     }
 }
