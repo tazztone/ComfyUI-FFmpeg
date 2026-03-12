@@ -213,7 +213,10 @@ def get_image_paths_from_directory(
                 yield os.path.join(directory, filename)
 
     # 使用islice获取所需的图像路径
-    selected_images = islice(image_generator(), start_index, start_index + length)
+    if length > 0:
+        selected_images = islice(image_generator(), start_index, start_index + length)
+    else:
+        selected_images = islice(image_generator(), start_index, None)
 
     return list(selected_images)
 
@@ -451,16 +454,31 @@ def get_video_files(directory: str) -> List[str]:
     Returns:
         list: A sorted list of video file paths.
     """
-
-    # TODO: Centralize extension definitions with video_type() and audio_type() to avoid inconsistency
-    # video_extensions = ["*.mp4", "*.avi", "*.mov", "*.mkv", "*.rmvb", "*.wmv", "*.flv"]
-    video_extensions = [f"*{ext}" for ext in video_type()]
+    video_extensions = video_type()
     video_files = []
-    for ext in video_extensions:
-        video_files.extend(glob.glob(os.path.join(directory, ext)))
-    # 排序文件名
+    for filename in os.listdir(directory):
+        if os.path.splitext(filename)[1].lower() in video_extensions:
+            video_files.append(os.path.join(directory, filename))
     video_files.sort()
     return video_files
+
+
+def get_audio_files(directory: str) -> List[str]:
+    """Gets all audio files from a directory.
+
+    Args:
+        directory (str): The directory to get the audio files from.
+
+    Returns:
+        list: A sorted list of audio file paths.
+    """
+    audio_extensions = audio_type()
+    audio_files = []
+    for filename in os.listdir(directory):
+        if os.path.splitext(filename)[1].lower() in audio_extensions:
+            audio_files.append(os.path.join(directory, filename))
+    audio_files.sort()
+    return audio_files
 
 
 def save_image(image: torch.Tensor, path: str) -> None:
