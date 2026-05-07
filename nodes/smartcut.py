@@ -8,6 +8,7 @@ while copying the rest of the video stream losslessly.
 import os
 import subprocess
 import tempfile
+import bisect
 from typing import List, Tuple, Optional
 
 
@@ -67,23 +68,17 @@ def find_gop_boundaries(
     if not keyframes:
         return None, None, None, None
 
+    def find_around(point):
+        idx = bisect.bisect_right(keyframes, point)
+        prev_kf = keyframes[idx - 1] if idx > 0 else None
+        next_kf = keyframes[idx] if idx < len(keyframes) else None
+        return prev_kf, next_kf
+
     # Find keyframes around in_point
-    prev_kf_in = None
-    next_kf_in = None
-    for kf in keyframes:
-        if kf <= in_point:
-            prev_kf_in = kf
-        if kf > in_point and next_kf_in is None:
-            next_kf_in = kf
+    prev_kf_in, next_kf_in = find_around(in_point)
 
     # Find keyframes around out_point
-    prev_kf_out = None
-    next_kf_out = None
-    for kf in keyframes:
-        if kf <= out_point:
-            prev_kf_out = kf
-        if kf > out_point and next_kf_out is None:
-            next_kf_out = kf
+    prev_kf_out, next_kf_out = find_around(out_point)
 
     return prev_kf_in, next_kf_in, prev_kf_out, next_kf_out
 
@@ -131,8 +126,13 @@ def smart_cut(
 
     # Check if cut points are already on keyframes
     tolerance = 0.01  # 10ms tolerance
-    in_on_keyframe = any(abs(kf - in_point) < tolerance for kf in keyframes)
-    out_on_keyframe = any(abs(kf - out_point) < tolerance for kf in keyframes)
+
+    def is_on_keyframe(point):
+        idx = bisect.bisect_left(keyframes, point - tolerance)
+        return idx < len(keyframes) and keyframes[idx] <= point + tolerance
+
+    in_on_keyframe = is_on_keyframe(in_point)
+    out_on_keyframe = is_on_keyframe(out_point)
 
     if in_on_keyframe and out_on_keyframe:
         # Perfect keyframe alignment, no re-encoding needed
