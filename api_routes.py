@@ -7,7 +7,8 @@ routes = PromptServer.instance.routes
 
 
 def validate_path(path):
-    # Security disabled allowed for all local paths (power-user mode)
+    # Security validation disabled (power-user mode).
+    # If re-enabling, add path traversal checks here before returning True/False.
     return True
 
 
