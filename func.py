@@ -19,6 +19,26 @@ from comfy.model_management import unload_all_models, soft_empty_cache
 
 _xfade_transitions_cache = None
 
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp"}
+VIDEO_EXTENSIONS = (".mp4", ".avi", ".mov", ".mkv", ".rmvb", ".wmv", ".flv", ".webm")
+AUDIO_EXTENSIONS = (
+    ".mp3",
+    ".wav",
+    ".aac",
+    ".flac",
+    ".m4a",
+    ".wma",
+    ".ogg",
+    ".amr",
+    ".ape",
+    ".ac3",
+    ".aiff",
+    ".opus",
+    ".m4b",
+    ".caf",
+    ".dts",
+)
+
 
 def get_xfade_transitions() -> List[str]:
     """Retrieves a list of available FFmpeg xfade transitions.
@@ -395,7 +415,7 @@ def get_image_extensions() -> Set[str]:
     Returns:
         set: A set of image file extensions.
     """
-    return {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp"}
+    return IMAGE_EXTENSIONS
 
 
 def video_type() -> Tuple[str, ...]:
@@ -404,7 +424,7 @@ def video_type() -> Tuple[str, ...]:
     Returns:
         tuple: A tuple of video file extensions.
     """
-    return (".mp4", ".avi", ".mov", ".mkv", ".rmvb", ".wmv", ".flv", ".webm")
+    return VIDEO_EXTENSIONS
 
 
 def audio_type() -> Tuple[str, ...]:
@@ -413,23 +433,7 @@ def audio_type() -> Tuple[str, ...]:
     Returns:
         tuple: A tuple of audio file extensions.
     """
-    return (
-        ".mp3",
-        ".wav",
-        ".aac",
-        ".flac",
-        ".m4a",
-        ".wma",
-        ".ogg",
-        ".amr",
-        ".ape",
-        ".ac3",
-        ".aiff",
-        ".opus",
-        ".m4b",
-        ".caf",
-        ".dts",
-    )
+    return AUDIO_EXTENSIONS
 
 
 def validate_time_format(time_str: str) -> bool:
