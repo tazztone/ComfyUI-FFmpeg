@@ -111,7 +111,10 @@ class AddImgWatermarkV3(io.ComfyNode):
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"FFmpeg execution failed: {e}")
         finally:
-            if temp_file_created and os.path.exists(watermark_path):
-                os.remove(watermark_path)
+            if temp_file_created:
+                try:
+                    os.remove(watermark_path)
+                except OSError:
+                    pass
 
         return io.NodeOutput(output_path)

@@ -86,7 +86,9 @@ class AddAudioV3(io.ComfyNode):
         try:
             subprocess.run(command, check=True)
         finally:
-            if os.path.exists(temp_name):
+            try:
                 os.remove(temp_name)
+            except OSError:
+                pass
 
         return io.NodeOutput(output_path)

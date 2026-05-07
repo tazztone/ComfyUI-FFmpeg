@@ -386,7 +386,7 @@ class LosslessCutV3(io.ComfyNode):
             for f in segment_files:
                 try:
                     os.unlink(f)
-                except Exception:
+                except OSError:
                     pass
 
             output_path = final_path

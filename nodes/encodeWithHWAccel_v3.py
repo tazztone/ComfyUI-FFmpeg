@@ -124,8 +124,11 @@ class EncodeWithHWAccelV3(io.ComfyNode):
             cmd.append(output_path)
             subprocess.run(cmd, check=True, capture_output=True, text=True)
 
-            if audio_file and os.path.exists(audio_file):
-                os.remove(audio_file)
+            if audio_file:
+                try:
+                    os.remove(audio_file)
+                except OSError:
+                    pass
 
             return io.NodeOutput(output_path)
         except subprocess.CalledProcessError as e:

@@ -170,7 +170,9 @@ class PictureInPictureV3(io.ComfyNode):
             raise RuntimeError(f"FFmpeg execution failed: {e}")
         finally:
             for temp_file in temp_files:
-                if os.path.exists(temp_file):
+                try:
                     os.remove(temp_file)
+                except OSError:
+                    pass
 
         return io.NodeOutput(output_path)
