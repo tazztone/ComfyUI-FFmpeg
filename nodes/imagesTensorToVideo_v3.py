@@ -121,8 +121,11 @@ class ImagesTensorToVideoV3(io.ComfyNode):
             
             subprocess.run(cmd, check=True, capture_output=True, text=True)
 
-            if audio_file and os.path.exists(audio_file):
-                os.remove(audio_file)
+            if audio_file:
+                try:
+                    os.remove(audio_file)
+                except OSError:
+                    pass
 
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"FFmpeg failed: {e.stderr}")

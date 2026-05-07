@@ -124,8 +124,11 @@ class Frames2VideoV3(io.ComfyNode):
             cmd.append(output_path)
             subprocess.run(cmd, check=True)
 
-            if audio_file and os.path.exists(audio_file):
-                os.remove(audio_file)
+            if audio_file:
+                try:
+                    os.remove(audio_file)
+                except OSError:
+                    pass
 
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"FFmpeg execution failed: {e}")

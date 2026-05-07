@@ -56,7 +56,9 @@ class ApplyAudioFilterV3(io.ComfyNode):
                 "sample_rate": sample_rate,
             }
         finally:
-            if os.path.exists(temp_name):
+            try:
                 os.remove(temp_name)
+            except OSError:
+                pass
 
         return io.NodeOutput(filtered_audio, output_path)
