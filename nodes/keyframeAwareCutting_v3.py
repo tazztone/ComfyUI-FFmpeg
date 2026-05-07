@@ -2,6 +2,7 @@ import os
 import subprocess
 import json
 from datetime import datetime, timedelta
+from bisect import bisect_left
 import folder_paths
 from comfy_api.latest import io
 
@@ -66,7 +67,10 @@ class KeyframeTrimV3(io.ComfyNode):
 
     @staticmethod
     def _find_nearest_keyframe(time_sec, keyframes):
-        return min(keyframes, key=lambda x: abs(x - time_sec))
+        if not keyframes:
+            return None
+        pos = bisect_left(keyframes, time_sec)
+        return min(keyframes[max(0, pos - 1) : pos + 1], key=lambda x: abs(x - time_sec))
 
     @classmethod
     def execute(cls, video, start_time, end_time, filename) -> io.NodeOutput:
