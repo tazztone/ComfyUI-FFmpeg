@@ -454,7 +454,7 @@ def get_video_files(directory: str) -> List[str]:
     Returns:
         list: A sorted list of video file paths.
     """
-    video_extensions = video_type()
+    video_extensions = set(video_type())
     video_files = []
     for filename in os.listdir(directory):
         if os.path.splitext(filename)[1].lower() in video_extensions:
@@ -472,7 +472,7 @@ def get_audio_files(directory: str) -> List[str]:
     Returns:
         list: A sorted list of audio file paths.
     """
-    audio_extensions = audio_type()
+    audio_extensions = set(audio_type())
     audio_files = []
     for filename in os.listdir(directory):
         if os.path.splitext(filename)[1].lower() in audio_extensions:
