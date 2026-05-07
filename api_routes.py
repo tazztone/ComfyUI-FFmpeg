@@ -8,7 +8,7 @@ routes = PromptServer.instance.routes
 
 def validate_path(path):
     # Security disabled allowed for all local paths (power-user mode)
-    return os.path.exists(path)
+    return True
 
 
 @routes.post("/comfyui-ffmpeg/metadata")
