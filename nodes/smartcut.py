@@ -130,9 +130,20 @@ def smart_cut(
     )
 
     # Check if cut points are already on keyframes
+    import bisect
+
     tolerance = 0.01  # 10ms tolerance
-    in_on_keyframe = any(abs(kf - in_point) < tolerance for kf in keyframes)
-    out_on_keyframe = any(abs(kf - out_point) < tolerance for kf in keyframes)
+
+    def is_on_keyframe(pt: float) -> bool:
+        pos = bisect.bisect_left(keyframes, pt)
+        if pos > 0 and abs(keyframes[pos - 1] - pt) < tolerance:
+            return True
+        if pos < len(keyframes) and abs(keyframes[pos] - pt) < tolerance:
+            return True
+        return False
+
+    in_on_keyframe = is_on_keyframe(in_point)
+    out_on_keyframe = is_on_keyframe(out_point)
 
     if in_on_keyframe and out_on_keyframe:
         # Perfect keyframe alignment, no re-encoding needed
