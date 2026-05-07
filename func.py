@@ -208,8 +208,9 @@ def get_image_paths_from_directory(
 
     # 创建排序后的文件生成器，直接在生成器中过滤
     def image_generator():
+        image_ext_tuple = tuple(image_extensions)
         for filename in sorted(os.listdir(directory)):
-            if os.path.splitext(filename)[1].lower() in image_extensions:
+            if filename.lower().endswith(image_ext_tuple):
                 yield os.path.join(directory, filename)
 
     # 使用islice获取所需的图像路径
@@ -455,10 +456,11 @@ def get_video_files(directory: str) -> List[str]:
         list: A sorted list of video file paths.
     """
     video_extensions = video_type()
-    video_files = []
-    for filename in os.listdir(directory):
-        if os.path.splitext(filename)[1].lower() in video_extensions:
-            video_files.append(os.path.join(directory, filename))
+    video_files = [
+        os.path.join(directory, f)
+        for f in os.listdir(directory)
+        if f.lower().endswith(video_extensions)
+    ]
     video_files.sort()
     return video_files
 
@@ -473,10 +475,11 @@ def get_audio_files(directory: str) -> List[str]:
         list: A sorted list of audio file paths.
     """
     audio_extensions = audio_type()
-    audio_files = []
-    for filename in os.listdir(directory):
-        if os.path.splitext(filename)[1].lower() in audio_extensions:
-            audio_files.append(os.path.join(directory, filename))
+    audio_files = [
+        os.path.join(directory, f)
+        for f in os.listdir(directory)
+        if f.lower().endswith(audio_extensions)
+    ]
     audio_files.sort()
     return audio_files
 
