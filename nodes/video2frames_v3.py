@@ -110,8 +110,8 @@ class Video2FramesV3(io.ComfyNode):
 
         if save_frames:
             os.makedirs(output_dir, exist_ok=True)
-            for i, frame in enumerate(images):
-                frame.save(os.path.join(output_dir, f"frame_{i:05d}.png"))
+            for i, frame_file in enumerate(frame_files):
+                shutil.copy2(frame_file, os.path.join(output_dir, f"frame_{i:05d}.png"))
 
         tensors = [
             torch.from_numpy(np.array(img).astype(np.float32) / 255.0) for img in images
