@@ -8,12 +8,10 @@ import os
 import gc
 import shutil
 import time
-import glob
 from itertools import islice
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
-from typing import List, Tuple, Set, Dict, Any, Optional, Union, Generator
+from typing import List, Tuple, Set, Dict, Optional, Union
 
 from comfy.model_management import unload_all_models, soft_empty_cache
 
